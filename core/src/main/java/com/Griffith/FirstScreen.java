@@ -10,17 +10,8 @@ public class FirstScreen implements Screen {
 
     private ShapeRenderer shapeRenderer;
 
-    // Fireboy
-    float fireX = 100, fireY = 100;
-    float fireVelocityY = 0;
-
-    // Watergirl
-    float waterX = 200, waterY = 100;
-    float waterVelocityY = 0;
-
-    float speed = 200;
-    float gravity = -500;
-    float jumpPower = 300;
+   Player fireboy;
+    Player watergirl;
 
     float groundY = 50;
 
@@ -28,76 +19,39 @@ public class FirstScreen implements Screen {
     float hazardX = 300;
     float hazardWidth = 100;
 
-      // Goal (door)
+    // Goal (door)
     float doorX = 550;
 
     @Override
     public void show() {
         shapeRenderer = new ShapeRenderer();
+
+        fireboy = new Player(100, 100, Input.Keys.A, Input.Keys.D, Input.Keys.W);
+        watergirl = new Player(200, 100, Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP);
     }
 
     @Override
     public void render(float delta) {
 
-        // Clear screen
+        // CLEAR SCREEN
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // INPUTS FOR MOVEMENT 
-
-        // Fireboy (A, D)
-        if (Gdx.input.isKeyPressed(Input.Keys.A)) fireX -= speed * delta;
-        if (Gdx.input.isKeyPressed(Input.Keys.D)) fireX += speed * delta;
-
-        // Watergirl (LEFT, RIGHT)
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) waterX -= speed * delta;
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) waterX += speed * delta;
-
-        // JUMP
-
-        // Fireboy jump (W)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.W) && fireY <= groundY) {
-            fireVelocityY = jumpPower;
-        }
-        // Watergirl jump (UP)
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && waterY <= groundY) {
-            waterVelocityY = jumpPower;
-        }
-
-        // GRAVITY
-
-        fireVelocityY += gravity * delta;
-        fireY += fireVelocityY * delta;
-
-        waterVelocityY += gravity * delta;
-        waterY += waterVelocityY * delta;
-
-        // GROUND COLLISION
-
-        if (fireY < groundY) {
-            fireY = groundY;
-            fireVelocityY = 0;
-        }
-
-        if (waterY < groundY) {
-            waterY = groundY;
-            waterVelocityY = 0;
-        }
+        // UPDATE PLAYERS
+        fireboy.update(delta, groundY);
+        watergirl.update(delta, groundY);
 
         // HAZARD CHECK
-
-        if (fireX > hazardX && fireX < hazardX + hazardWidth && fireY <= groundY) {
+        if (fireboy.x > hazardX && fireboy.x < hazardX + hazardWidth && fireboy.y <= groundY) {
             System.out.println("Fireboy died in water!");
         }
 
         // GOAL CHECK
-
-        if (fireX > doorX && waterX > doorX) {
+        if (fireboy.x > doorX && watergirl.x > doorX) {
             System.out.println("Level Complete!");
         }
 
         // DRAW
-
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         // Ground
@@ -106,13 +60,13 @@ public class FirstScreen implements Screen {
 
         // Fireboy (red)
         shapeRenderer.setColor(1, 0, 0, 1);
-        shapeRenderer.rect(fireX, fireY, 30, 30);
+        shapeRenderer.rect(fireboy.x, fireboy.y, 30, 30);
 
         // Watergirl (blue)
         shapeRenderer.setColor(0, 0, 1, 1);
-        shapeRenderer.rect(waterX, waterY, 30, 30);
+        shapeRenderer.rect(watergirl.x, watergirl.y, 30, 30);
 
-        // Hazard (cyan)
+        // Hazard (cyan water)
         shapeRenderer.setColor(0, 1, 1, 1);
         shapeRenderer.rect(hazardX, groundY, hazardWidth, 30);
 
