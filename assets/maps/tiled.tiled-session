@@ -1,0 +1,87 @@
+{
+    "activeFile": "tileset2.tsx",
+    "expandedProjectPaths": [
+        "."
+    ],
+    "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "background.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "caracters.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 3
+        },
+        "coins.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 5.5
+        },
+        "doors.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "lava_water.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "main.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 2,
+            "viewCenter": {
+                "x": 251,
+                "y": 89
+            }
+        },
+        "test.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 8
+        },
+        "tileset.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        },
+        "tileset2.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 4
+        }
+    },
+    "frame.defaultDuration": 200,
+    "last.imagePath": "D:/Griffith/eclipse-workspace/SD2_Project_Group13/assets/maps/images/pungeontexture/free",
+    "map.lastUsedFormat": "tmx",
+    "map.layerDataFormat": "3",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+        "main.tmx",
+        "tileset.tsx",
+        "background.tsx",
+        "tileset2.tsx",
+        "doors.tsx",
+        "lava_water.tsx",
+        "coins.tsx"
+    ],
+    "project": "tiled.tiled-project",
+    "property.type": "Prop",
+    "recentFiles": [
+        "test.tsx",
+        "caracters.tsx",
+        "main.tmx",
+        "tileset.tsx",
+        "background.tsx",
+        "coins.tsx",
+        "lava_water.tsx",
+        "doors.tsx",
+        "tileset2.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.margin": 2,
+    "tileset.spacing": 4,
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}
