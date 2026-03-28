@@ -29,7 +29,7 @@
                 {
                     "name": "color",
                     "type": "color",
-                    "value": ""
+                    "value": "#ffffffff"
                 },
                 {
                     "name": "dimension",

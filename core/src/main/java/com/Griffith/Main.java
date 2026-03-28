@@ -2,10 +2,16 @@ package com.Griffith;
 
 import com.badlogic.gdx.Game;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
+
     @Override
     public void create() {
+        // sets the first screen to be the FirstScreen class
         setScreen(new FirstScreen());
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
     }
 }

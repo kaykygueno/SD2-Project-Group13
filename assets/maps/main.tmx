@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="19">
+<map version="1.10" tiledversion="1.12.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="63">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="1025" source="lava_water.tsx"/>
  <tileset firstgid="1089" source="background.tsx"/>
  <tileset firstgid="1401" source="tileset2.tsx"/>
  <tileset firstgid="1681" source="doors.tsx"/>
- <tileset firstgid="1687" source="lava_water.tsx"/>
+ <tileset firstgid="1687" source="caracters.tsx"/>
+ <tileset firstgid="1695" source="caracthers2.tsx"/>
  <layer id="1" name="background" width="30" height="20" locked="1" opacity="0.76">
   <data encoding="base64" compression="zlib">
    eJyN0mWUFWUABuBRQcXC7kDF7sLWWbq7u7vbxC4EsTBBZUUx0WugIKLH7sAu7O4OjGfu/S47ew878uM5c867c753329uWbUoqks96tOAhpRVkTeiMU1oSjOa04KWtKI1bWhLO9rTgY50ojNd6Eo3utODnhl5L3rTh770oz8DGMggBjOEoQxjOCMYyShGM4axjGM8E5iYkU9iMsdxPCdwIidxMlM4hVM5jdM5gzM5i7M5h3M5j6mczzSmZ+QXMIMLuYiLuYRLmcllXM4VXMlVXM0sZnMN13IdcyjneuZyQ0Z+I/O4iZu5hVu5jduZzx3cSY67uJt7uJcF3Bd2zSnZ9WChN5bHpXnYG4feuLg3V8XepHe5954LvfbGyd77C71xeer8JZX/nzidF++5uDfpfdQ7/9ebq+iNUr0r9s4N56fz5J4Xh025knt+pNCbz5c6v3jPxXeT3o9D7/Nhby51fvo7ht54YbiHBzwXh/dDb/6e3/LUGxf3Tk1934zeKN27sr16o0WF3kp7Z1T0Rm+n9pavpPevQm+0KnuT/CVeLvTGr3i+Wrk3SvWu2LtoFXoXlOwtL9mlN9YbJ2fpjdO98yp649Cbzx/nCZ6s3Bsvr6K39D6XhL0LC7+VfF7sTf72EA+HvcXf1WMlvU/xNM/wbKr3BV5M3efSwq78+a+l8q9K8td5gzdT3/cd3uU9lvE+H/AhH4V7/oRP+YzP+YIvw/lf8w3fZuTf8T0/8CM/8TO/8Cu/8Tt/8Gf4vsk9/80//EtUPYpWY3XWoBrVWTMjX4u1qcE6rMt6rM8G1GRDNmJjNmFTNmNztmBLtmJrtmFbtmP7jHwHarEjO7EztdmFXdmN3dmDPdmLvdmHfdmP/TmAAzmIgzmEOhn5oRzG4RzBkRzF0RzDscSUUZd61KcBDWlEY5rQlGY0pwUtM/JWtKYNbWlHezrQkU50pgtd6UZ3etCTXvSmD33pR38GMDAjH8RghjCUYQxnBCMZxWjGMJZxjGcCE5nEZP4Dl3tasQ==
@@ -16,19 +17,29 @@
    eJztlMEKwDAIQ3vq/7sv3qnQDWOMbdllglBUfFGwrf32hV396V6s6ozr6dgxTyWf1a30VfZU3S3isnmt+16dVeEiLYyncud9GaixxD5RnHFH/zluU/wEd1hm3kjDCnewURz1V7mIka1fuSN0w+981D/LVXQy3Tv7KLuNbjiakf2VGZ2My/7VbA17M40n7QbJPGoy
   </data>
  </layer>
- <objectgroup id="3" name="Object Layer 1">
-  <object id="6" name="plataform" x="17.3333" y="127.667" width="46" height="9.66667"/>
-  <object id="8" name="lever" x="120" y="183.667"/>
-  <object id="10" name="plataform" x="417.5" y="97.5" width="46" height="6.5"/>
-  <object id="12" name="buton" x="343.5" y="137.5"/>
-  <object id="13" name="buton" x="359.5" y="87.5"/>
-  <object id="14" name="door" x="40.5" y="61"/>
-  <object id="15" name="spanw1" x="40.5" y="293.5"/>
-  <object id="16" name="spanw2" x="39" y="245"/>
- </objectgroup>
- <layer id="2" name="groung" width="30" height="20" locked="1">
+ <layer id="2" name="groung" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJz7z8rA8I/O+D8rwwIgncBAZ/BvgO2dzDYw9nYCwxyG2djwY2RQxQbB5NpLrrvPsiLwOSA+CMUgIM9CO3vxuUeEDRXTw15s4CjQLceA+DgrdnvPs5KO9wPxASAug/oLXxiDALX9C4tnGI3MRk4HMHv7gGwYpgcg5F91tPDyhWJq2YstLNDZhMTOkhBWA11OUtNM5LwLY6OHxUD7F9ldyGxkmlJwBmjOIyimp38fUcneGWwQjAzWsUEwNvCBFYFB9gLbHAlA2oFUfB5oPggji10E8i+iiWHDQDsPAABbu77x
+   eJz7x8qw4B8rAwOdcQIQL2CgMxhoeyezDYy9ncAwh2E2NvwYGVSxQTC59pLr7rOsCHwOiA9CMQjIs9DOXnzuEWFDxfSwlxDAZu95VtLxfiA+AMRlUH/hC2Nc9lICYPEMo5HZyOlgMIUzMlBHCy9fKKaWvdjCAp1NjBip9lLBCyQBWtiLnHdh7LNoYTHQ/kV2FzIbmaYUnAGa8wiK6enfh1Syl4kFgpGBBAsEYwPvgfZ9gGKovWS1VSxZIBhZzJoFgolp5wAAw/mvsg==
   </data>
  </layer>
+ <objectgroup id="8" name="hazards">
+  <object id="39" name="lava" x="304" y="304.667" width="16" height="16"/>
+  <object id="40" name="lava" x="318.667" y="304.667" width="16" height="16"/>
+  <object id="41" name="water" x="224.667" y="304.667" width="16" height="16"/>
+  <object id="42" name="water" x="239.5" y="304" width="16" height="16"/>
+  <object id="44" name="spikes" x="176" y="191.5" width="16" height="16"/>
+  <object id="45" name="spikes" x="192" y="191.5" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="9" name="interactions">
+  <object id="47" name="lever" x="112" y="188" width="16" height="16"/>
+  <object id="49" name="plataform" x="16" y="168.5" width="16" height="16"/>
+  <object id="52" name="plataform" x="31" y="168.5" width="16" height="16"/>
+  <object id="53" name="plataform" x="48" y="168.5" width="16" height="16"/>
+ </objectgroup>
+ <objectgroup id="10" name="collectibles"/>
+ <objectgroup id="12" name="spawn">
+  <object id="58" name="Player1" gid="1688" x="37.3333" y="300" width="16" height="32"/>
+  <object id="59" name="Player2" gid="1695" x="38" y="252.667" width="16" height="32"/>
+  <object id="60" name="door" gid="1683" x="18" y="65.3333" width="48" height="48"/>
+ </objectgroup>
 </map>
