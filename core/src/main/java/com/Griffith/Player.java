@@ -1,127 +1,117 @@
 package com.Griffith;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.Vector2;
 
 public class Player {
+    private Vector2 position;
+    private Vector2 velocity;
+    private Texture spriteSheet;
+    private TextureRegion currentFrame;
+    private boolean isFireboy, isGrounded = false, isDead = false;
+    private TiledMap map;
 
-    public float x, y;
-    public float velocityY;
-    public boolean isDead = false;
+    private final float SPEED = 140f;
+    private final float GRAVITY = 700f;    
+    private final float JUMP_FORCE = 300f; 
 
-    private static final float SPEED = 150f;
-    private static final float JUMP_POWER = 250f;
-    private static final float GRAVITY = -500f;
-    public static final float WIDTH = 16f;
-    public static final float HEIGHT = 16f;
+    private final float hitboxWidth = 24f;
+    private final float hitboxHeight = 10f;
 
-    private int leftKey, rightKey, jumpKey;
-    private boolean onGround = false;
-
-    private Texture texture;
-    public Rectangle bounds;
-
-    private float spawnX, spawnY;
-
-    public Player(float x, float y, String texturePath, int leftKey, int rightKey, int jumpKey) {
-        this.x = x;
-        this.y = y;
-        this.spawnX = x;
-        this.spawnY = y;
-        this.leftKey = leftKey;
-        this.rightKey = rightKey;
-        this.jumpKey = jumpKey;
-        this.texture = new Texture(texturePath);
-        this.bounds = new Rectangle(x, y, WIDTH, HEIGHT);
+    public Player(float startX, float startY, String texturePath, boolean isFireboy, TiledMap map) {
+        this.position = new Vector2(startX, startY);
+        this.velocity = new Vector2(0, 0);
+        this.isFireboy = isFireboy;
+        this.map = map;
+        this.spriteSheet = new Texture(Gdx.files.internal(texturePath));
+        this.currentFrame = new TextureRegion(spriteSheet, 0, 0, 192, 192);
     }
 
-    public void update(float delta, Array<Rectangle> ground) {
-        if (isDead)
-            return;
+    public void update(float deltaTime) {
+        if (isDead) return;
 
-        float previousY = y;
 
-        // Horizontal movement
-        if (Gdx.input.isKeyPressed(leftKey))
-            x -= SPEED * delta;
-        else if (Gdx.input.isKeyPressed(rightKey))
-            x += SPEED * delta;
-
-        // Jump
-        if (Gdx.input.isKeyJustPressed(jumpKey) && onGround) {
-            velocityY = JUMP_POWER;
-            onGround = false;
+        velocity.x = 0;
+        if (isFireboy) { 
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) velocity.x = -SPEED;
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) velocity.x = SPEED;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && isGrounded) velocity.y = JUMP_FORCE;
+        } else { 
+            if (Gdx.input.isKeyPressed(Input.Keys.A)) velocity.x = -SPEED;
+            if (Gdx.input.isKeyPressed(Input.Keys.D)) velocity.x = SPEED;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.W) && isGrounded) velocity.y = JUMP_FORCE;
         }
 
-        // Gravity
-        velocityY += GRAVITY * delta;
-        y += velocityY * delta;
+        float oldX = position.x;
+        position.x += velocity.x * deltaTime;
+        if (checkCollision()) position.x = oldX;
 
-        // Ground collision using previous and new positions to prevent tunneling.
-        onGround = false;
-        bounds.setPosition(x, y);
-        float previousBottom = previousY;
-        float currentBottom = y;
-        float playerLeft = x;
-        float playerRight = x + WIDTH;
+        velocity.y -= GRAVITY * deltaTime;
+        float oldY = position.y;
+        position.y += velocity.y * deltaTime;
+        isGrounded = false;
 
-        for (Rectangle tile : ground) {
-            float tileTop = tile.y + tile.height;
-            float tileLeft = tile.x;
-            float tileRight = tile.x + tile.width;
+        if (checkCollision()) {
+            position.y = oldY;
+            if (velocity.y < 0) isGrounded = true; 
+            velocity.y = 0;
+        }
 
-            boolean hasHorizontalOverlap = playerRight > tileLeft && playerLeft < tileRight;
-            boolean crossedTileTop = previousBottom >= tileTop && currentBottom <= tileTop;
+        if (checkHazard("lav") && !isFireboy) isDead = true;
+        if (checkHazard("su") && isFireboy) isDead = true;
+        if (checkHazard("zehir")) isDead = true;
+        if (position.y < -300) isDead = true; // Boşluğa düşme
+    }
 
-            if (velocityY <= 0 && hasHorizontalOverlap && crossedTileTop) {
-                y = tileTop;
-                velocityY = 0;
-                onGround = true;
-                break;
+    private boolean checkCollision() {
+        for (MapLayer layer : map.getLayers()) {
+            if (layer instanceof TiledMapTileLayer) {
+                TiledMapTileLayer tLayer = (TiledMapTileLayer) layer;
+                if (tLayer.getName().toLowerCase().contains("back")) continue;
+                
+                if (isHittingTile(tLayer)) return true;
             }
         }
+        return false;
+    }
 
-        // Fallback: world floor
-        if (y <= 0) {
-            y = 0;
-            velocityY = 0;
-            onGround = true;
+    private boolean checkHazard(String name) {
+        for (MapLayer layer : map.getLayers()) {
+            if (layer instanceof TiledMapTileLayer && layer.getName().toLowerCase().contains(name)) {
+                if (isHittingTile((TiledMapTileLayer) layer)) return true;
+            }
         }
+        return false;
+    }
 
-        bounds.setPosition(x, y);
+    private boolean isHittingTile(TiledMapTileLayer layer) {
+        int startX = (int) (position.x / layer.getTileWidth());
+        int endX = (int) ((position.x + hitboxWidth) / layer.getTileWidth());
+        int startY = (int) (position.y / layer.getTileHeight());
+        int endY = (int) ((position.y + hitboxHeight) / layer.getTileHeight());
+
+        for (int x = startX; x <= endX; x++) {
+            for (int y = startY; y <= endY; y++) {
+                if (layer.getCell(x, y) != null) return true;
+            }
+        }
+        return false;
     }
 
     public void draw(SpriteBatch batch) {
-        if (!isDead)
-            batch.draw(texture, x, y, WIDTH, HEIGHT);
+        batch.draw(currentFrame, position.x - 84, position.y - 70, 192, 192);
     }
 
-    public void die() {
-        isDead = true;
-        velocityY = 0;
-    }
-
-    public void respawn() {
-        x = spawnX;
-        y = spawnY;
-        velocityY = 0;
-        isDead = false;
-        onGround = false;
-        bounds.setPosition(x, y);
-    }
-
-    public void setOnGround(boolean val) {
-        this.onGround = val;
-    }
-
-    public Rectangle getBounds() {
-        return bounds;
-    }
-
-    public void dispose() {
-        texture.dispose();
-    }
+    public Rectangle getBounds() { return new Rectangle(position.x, position.y, hitboxWidth, hitboxHeight); }
+    public boolean isDead() { return isDead; }
+    public Vector2 getPosition() { return position; }
+    public void dispose() { spriteSheet.dispose(); }
 }
