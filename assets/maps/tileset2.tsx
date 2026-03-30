@@ -37,6 +37,9 @@
  <tile id="86">
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="0" width="16" height="9"/>
+   <object id="2" x="0.363636" y="0">
+    <polygon points="0,0 -0.363636,8.72727 15.4545,8.90909 15.2727,-0.181818"/>
+   </object>
   </objectgroup>
  </tile>
 </tileset>
