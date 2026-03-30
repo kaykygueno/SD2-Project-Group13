@@ -23,10 +23,10 @@
   </data>
  </layer>
  <objectgroup id="8" name="hazards">
-  <object id="39" name="lava" x="304" y="304.667" width="16" height="16"/>
-  <object id="40" name="lava" x="318.667" y="304.667" width="16" height="16"/>
-  <object id="41" name="water" x="224.667" y="304.667" width="16" height="16"/>
-  <object id="42" name="water" x="239.5" y="304" width="16" height="16"/>
+  <object id="39" name="lava" x="304" y="300.334" width="16" height="16"/>
+  <object id="40" name="lava" x="318.667" y="300.334" width="16" height="16"/>
+  <object id="41" name="water" x="224.667" y="300.334" width="16" height="16"/>
+  <object id="42" name="water" x="239.5" y="300.333" width="16" height="16"/>
   <object id="44" name="spikes" x="176" y="191.5" width="16" height="16"/>
   <object id="45" name="spikes" x="192" y="191.5" width="16" height="16"/>
  </objectgroup>
