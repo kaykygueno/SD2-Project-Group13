@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="63">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="14" nextobjectid="63">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="1025" source="lava_water.tsx"/>
  <tileset firstgid="1089" source="background.tsx"/>
@@ -7,6 +7,7 @@
  <tileset firstgid="1681" source="doors.tsx"/>
  <tileset firstgid="1687" source="caracters.tsx"/>
  <tileset firstgid="1695" source="caracthers2.tsx"/>
+ <tileset firstgid="1703" source="foreground_.tsx"/>
  <layer id="1" name="background" width="30" height="20" locked="1" opacity="0.76">
   <data encoding="base64" compression="zlib">
    eJyN0mWUFWUABuBRQcXC7kDF7sLWWbq7u7vbxC4EsTBBZUUx0WugIKLH7sAu7O4OjGfu/S47ew878uM5c867c753329uWbUoqks96tOAhpRVkTeiMU1oSjOa04KWtKI1bWhLO9rTgY50ojNd6Eo3utODnhl5L3rTh770oz8DGMggBjOEoQxjOCMYyShGM4axjGM8E5iYkU9iMsdxPCdwIidxMlM4hVM5jdM5gzM5i7M5h3M5j6mczzSmZ+QXMIMLuYiLuYRLmcllXM4VXMlVXM0sZnMN13IdcyjneuZyQ0Z+I/O4iZu5hVu5jduZzx3cSY67uJt7uJcF3Bd2zSnZ9WChN5bHpXnYG4feuLg3V8XepHe5954LvfbGyd77C71xeer8JZX/nzidF++5uDfpfdQ7/9ebq+iNUr0r9s4N56fz5J4Xh025knt+pNCbz5c6v3jPxXeT3o9D7/Nhby51fvo7ht54YbiHBzwXh/dDb/6e3/LUGxf3Tk1934zeKN27sr16o0WF3kp7Z1T0Rm+n9pavpPevQm+0KnuT/CVeLvTGr3i+Wrk3SvWu2LtoFXoXlOwtL9mlN9YbJ2fpjdO98yp649Cbzx/nCZ6s3Bsvr6K39D6XhL0LC7+VfF7sTf72EA+HvcXf1WMlvU/xNM/wbKr3BV5M3efSwq78+a+l8q9K8td5gzdT3/cd3uU9lvE+H/AhH4V7/oRP+YzP+YIvw/lf8w3fZuTf8T0/8CM/8TO/8Cu/8Tt/8Gf4vsk9/80//EtUPYpWY3XWoBrVWTMjX4u1qcE6rMt6rM8G1GRDNmJjNmFTNmNztmBLtmJrtmFbtmP7jHwHarEjO7EztdmFXdmN3dmDPdmLvdmHfdmP/TmAAzmIgzmEOhn5oRzG4RzBkRzF0RzDscSUUZd61KcBDWlEY5rQlGY0pwUtM/JWtKYNbWlHezrQkU50pgtd6UZ3etCTXvSmD33pR38GMDAjH8RghjCUYQxnBCMZxWjGMJZxjGcCE5nEZP4Dl3tasQ==
@@ -19,14 +20,19 @@
  </layer>
  <layer id="2" name="groung" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJz7x8qw4B8rAwOdcQIQL2CgMxhoeyezDYy9ncAwh2E2NvwYGVSxQTC59pLr7rOsCHwOiA9CMQjIs9DOXnzuEWFDxfSwlxDAZu95VtLxfiA+AMRlUH/hC2Nc9lICYPEMo5HZyOlgMIUzMlBHCy9fKKaWvdjCAp1NjBip9lLBCyQBWtiLnHdh7LNoYTHQ/kV2FzIbmaYUnAGa8wiK6enfh1Syl4kFgpGBBAsEYwPvgfZ9gGKovWS1VSxZIBhZzJoFgolp5wAAw/mvsg==
+   eJz7x8qw4B8rAwOdcQIQL2CgMxhoeyezDYy9ncAwh2E2NvwYGVSxQTC59pLr7rOsCHwOiA9CMQjIs9DOXnzuEWFDxfSwlxDAZu95VtLxfiA+AMRlUH/hC2Nc9lICYPEMo5HZyOlgMIUzMlBHCy9fKKaWvdjCAp1NjBip9lLBCyQBWtiLnHdh7LNoYTHQ/kV2FzIbmaYUnAGa8wiK6enfhwNk73ugfR+gGGovWW2V52wQjCz2kg2CiWnnAAAnGLIu
+  </data>
+ </layer>
+ <layer id="13" name="surface" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApGwSgYBciAiQWCkYEICwQTAwAUGAA9
   </data>
  </layer>
  <objectgroup id="8" name="hazards">
-  <object id="39" name="lava" x="304" y="300.334" width="16" height="16"/>
-  <object id="40" name="lava" x="318.667" y="300.334" width="16" height="16"/>
-  <object id="41" name="water" x="224.667" y="300.334" width="16" height="16"/>
-  <object id="42" name="water" x="239.5" y="300.333" width="16" height="16"/>
+  <object id="39" name="lava" x="305" y="300.667" width="16" height="16"/>
+  <object id="40" name="lava" x="319.667" y="301.001" width="16" height="16"/>
+  <object id="41" name="water" x="224.334" y="301.334" width="16" height="16"/>
+  <object id="42" name="water" x="239.833" y="301.333" width="16" height="16"/>
   <object id="44" name="spikes" x="176" y="191.5" width="16" height="16"/>
   <object id="45" name="spikes" x="192" y="191.5" width="16" height="16"/>
  </objectgroup>
