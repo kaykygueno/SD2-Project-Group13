@@ -20,12 +20,12 @@
  </layer>
  <layer id="2" name="groung" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJz7x8qw4B8rAwOdcQIQL2CgMxhoeyezDYy9ncAwh2E2NvwYGVSxQTC59pLr7rOsCHwOiA9CMQjIs9DOXnzuEWFDxfSwlxDAZu95VtLxfiA+AMRlUH/hC2Nc9lICYPEMo5HZyOlgMIUzMlBHCy9fKKaWvdjCAp1NjBip9lLBCyQBWtiLnHdh7LNoYTHQ/kV2FzIbmaYUnAGa8wiK6enfhwNk73ugfR+gGGovWW2V52wQjCz2kg2CiWnnAAAnGLIu
+   eJz7x8qw4B8rAwOdcQIQL2CgMxhoeyezDYy9ncAwh2E2NvwYGVSxQTC59pLr7rOsCHwOiA9CMa3txeceETZUTA97CQFs9p5nJR3vB+IDQFxGZFxT27+weIbRyGzkdDDQ4XwN6IbrRKRDatuLLSzQ2cSIkWovzTxGR3uR8y6MfRYtLAbav8juQmYj05SCM0BzHkExPf37cIDsfQ+07wMUQ+0lq63ynA2CkcVeskEwMe0cAJbIsto=
   </data>
  </layer>
  <layer id="13" name="surface" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwSgYBciAiQWCkYEICwQTAwAUGAA9
+   eJxjYBgFo2AUjIJRQC3gC8WjYBSMgqENmFggGBmIsEAwMQAAgjoA1w==
   </data>
  </layer>
  <objectgroup id="8" name="hazards">
