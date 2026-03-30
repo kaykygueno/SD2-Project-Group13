@@ -39,59 +39,71 @@ public class Player {
     }
 
     public void update(float delta, Array<Rectangle> ground) {
-        if (isDead)
-            return;
+        if (isDead) return;
 
-        float previousY = y;
+        float oldX = x;
+        float oldY = y;
 
-        // Horizontal movement
-        if (Gdx.input.isKeyPressed(leftKey))
-            x -= SPEED * delta;
-        else if (Gdx.input.isKeyPressed(rightKey))
-            x += SPEED * delta;
 
-        // Jump
+        float moveX = 0f;
+        if (Gdx.input.isKeyPressed(leftKey)) {
+            moveX -= SPEED * delta;
+        }
+        if (Gdx.input.isKeyPressed(rightKey)) {
+            moveX += SPEED * delta;
+        }
+
+        x += moveX;
+        bounds.setPosition(x, y);
+
+
+        for (Rectangle tile : ground) {
+            if (bounds.overlaps(tile)) {
+                if (moveX > 0) {
+                    x = tile.x - WIDTH;
+                } else if (moveX < 0) {
+                    x = tile.x + tile.width;
+                }
+                bounds.setPosition(x, y);
+            }
+        }
+
+
         if (Gdx.input.isKeyJustPressed(jumpKey) && onGround) {
             velocityY = JUMP_POWER;
             onGround = false;
         }
 
-        // Gravity
+
         velocityY += GRAVITY * delta;
         y += velocityY * delta;
-
-        // Ground collision using previous and new positions to prevent tunneling.
-        onGround = false;
         bounds.setPosition(x, y);
-        float previousBottom = previousY;
-        float currentBottom = y;
-        float playerLeft = x;
-        float playerRight = x + WIDTH;
+
+        onGround = false;
+
 
         for (Rectangle tile : ground) {
-            float tileTop = tile.y + tile.height;
-            float tileLeft = tile.x;
-            float tileRight = tile.x + tile.width;
+            if (bounds.overlaps(tile)) {
+                if (velocityY < 0) {
+                    y = tile.y + tile.height;
+                    velocityY = 0;
+                    onGround = true;
+                } else if (velocityY > 0) {
 
-            boolean hasHorizontalOverlap = playerRight > tileLeft && playerLeft < tileRight;
-            boolean crossedTileTop = previousBottom >= tileTop && currentBottom <= tileTop;
-
-            if (velocityY <= 0 && hasHorizontalOverlap && crossedTileTop) {
-                y = tileTop;
-                velocityY = 0;
-                onGround = true;
-                break;
+                    y = tile.y - HEIGHT;
+                    velocityY = 0;
+                }
+                bounds.setPosition(x, y);
             }
         }
 
-        // Fallback: world floor
+
         if (y <= 0) {
             y = 0;
             velocityY = 0;
             onGround = true;
+            bounds.setPosition(x, y);
         }
-
-        bounds.setPosition(x, y);
     }
 
     public void draw(SpriteBatch batch) {
