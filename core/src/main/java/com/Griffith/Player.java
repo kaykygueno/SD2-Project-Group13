@@ -41,10 +41,6 @@ public class Player {
     public void update(float delta, Array<Rectangle> ground) {
         if (isDead) return;
 
-        float oldX = x;
-        float oldY = y;
-
-
         float moveX = 0f;
         if (Gdx.input.isKeyPressed(leftKey)) {
             moveX -= SPEED * delta;
@@ -55,7 +51,6 @@ public class Player {
 
         x += moveX;
         bounds.setPosition(x, y);
-
 
         for (Rectangle tile : ground) {
             if (bounds.overlaps(tile)) {
@@ -68,19 +63,16 @@ public class Player {
             }
         }
 
-
         if (Gdx.input.isKeyJustPressed(jumpKey) && onGround) {
             velocityY = JUMP_POWER;
             onGround = false;
         }
-
 
         velocityY += GRAVITY * delta;
         y += velocityY * delta;
         bounds.setPosition(x, y);
 
         onGround = false;
-
 
         for (Rectangle tile : ground) {
             if (bounds.overlaps(tile)) {
@@ -89,14 +81,12 @@ public class Player {
                     velocityY = 0;
                     onGround = true;
                 } else if (velocityY > 0) {
-
                     y = tile.y - HEIGHT;
                     velocityY = 0;
                 }
                 bounds.setPosition(x, y);
             }
         }
-
 
         if (y <= 0) {
             y = 0;
@@ -106,9 +96,16 @@ public class Player {
         }
     }
 
+    public void moveBy(float dx, float dy) {
+        x += dx;
+        y += dy;
+        bounds.setPosition(x, y);
+    }
+
     public void draw(SpriteBatch batch) {
-        if (!isDead)
+        if (!isDead) {
             batch.draw(texture, x, y, WIDTH, HEIGHT);
+        }
     }
 
     public void die() {
