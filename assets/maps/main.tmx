@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="65">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="17" nextobjectid="66">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="1025" source="lava_water.tsx"/>
  <tileset firstgid="1074" source="background.tsx"/>
@@ -8,7 +8,7 @@
  <tileset firstgid="1672" source="caracters.tsx"/>
  <tileset firstgid="1680" source="caracthers2.tsx"/>
  <tileset firstgid="1688" source="foreground_.tsx"/>
- <layer id="1" name="background" width="30" height="20" locked="1" opacity="0.76">
+ <layer id="1" name="background" width="30" height="20" opacity="0.76">
   <data encoding="base64" compression="zlib">
    eJyN0mWUFWUABuBRwcLuVixsZekeuru7y24MDFQUsGVFseUaKIjosTuwUbG7OzCw22fu/S47ew878OM5c867c753329uWbUoqkNd6lGfBpRVkTekEY1pQlOa0ZwWxLSkFa1pQ1va0Z4OdKQTnelCV7rRPSPvQU960Zs+9KUf/RnAQAYxmCEMZRjDGcFIRjGaMYxlHOMz8glM5EAO4mAO4VAO43CO4EiO4miO4VgmcRzHcwInMpmTOJlTMvJTmcJpnM4ZTOVMzmIa05nB2ZzDuZzH+VzAhVzETMq5mFlckpFfymwu43Ku4Equ4mqu4VrmkOM6rucGbmQuN4VdM0t23VrojeVxaR72xqE3Lu7NVbE36V3qvYdCr71xsvfmQm9cnjp/YeX/J07nxXsu7k167/TOynpzFb1Rqnf53lnh/HSe3POCsClXcs93FHrz+SLnF++5+G7S+1rofTjszaXOT3/H0BvPC/dwi+eC8H7ozd/zc5564+Leyanvm9EbpXtXtFdvNL/QW2nvlIreaHFqb/kKer8t9EarsjfJH+PxQm/8hOeTlXujVO/yvfNXoXduyd7ykl16Y71xcpbeON07u6I3Dr35/G7u4d7KvfHSKnpL73Nh2Duv8FvJ58Xe5G+3cXvYW/xd3VXSex/38wAPpnof4dHUfS4q7Mqf/1Qqf7ckf5pneDb1fZ/nBV5kCS/xMq/warjn13mDN3mLt3knnP8e7/NBRv4hH/Exn/Apn/E5X/AlX/E134Tvm9zzd3zPD/zIMn7iZ37hV37LyH/nD/7kL/7mH/7lP6LqUbQaq7MG1ajOmqzF2qzDutRgPdZnAzbMyDdiYzZhUzZjc7ZgS7Zia7ZhW7Zje3ZgR3aiJjuzC7uyG7tTKyPfgz3Zi73Zh33Zj/05gNqUUYe61KM+DWhIIxrThKY0ozktMvKYlrSiNW1oSzva04GOdKIzXehKN7rTg570ojd96Es/+mfkAxjIIAYzhKEMYzgjGMkoRjOGsYxjPBOYyP+Ug0x0
   </data>
@@ -50,6 +50,16 @@
  <objectgroup id="12" name="spawn">
   <object id="58" name="Player1" gid="1673" x="37.3333" y="300" width="16" height="32"/>
   <object id="59" name="Player2" gid="1680" x="38" y="252.667" width="16" height="32"/>
-  <object id="60" name="door" gid="1668" x="18" y="65.3333" width="48" height="48"/>
+  <object id="65" name="door" gid="1668" x="17.861" y="63.9081" width="48" height="48"/>
  </objectgroup>
+ <layer id="15" name="door_closed" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgF9AItbAPtglEwCkbBKBgFo2AU0AMAAFMeAIs=
+  </data>
+ </layer>
+ <layer id="16" name="door_open" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgF9AKtbAPtglEwCkbBKBgFo2AU0AMAAFsSAIw=
+  </data>
+ </layer>
 </map>
