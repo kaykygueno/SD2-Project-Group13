@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -45,6 +46,8 @@ public class FirstScreen implements Screen {
 
     // Door
     private Rectangle door;
+    private MapLayer doorClosedLayer;
+    private MapLayer doorOpenLayer;
 
     // Lift system
     private Array<Rectangle> buttonRects = new Array<>();
@@ -93,6 +96,7 @@ public class FirstScreen implements Screen {
         loadHazards();
         loadInteractions();
         loadLiftVisualLayer();
+        loadDoorLayers();
     }
 
     private void loadSpawnObjects() {
@@ -179,32 +183,32 @@ public class FirstScreen implements Screen {
     }
 
     private void loadInteractions() {
-    MapLayer interactionLayer = map.getLayers().get("interactions");
-    if (interactionLayer == null) {
-        System.out.println("⚠️ interactions layer not found!");
-        return;
-    }
+        MapLayer interactionLayer = map.getLayers().get("interactions");
+        if (interactionLayer == null) {
+            System.out.println("⚠️ interactions layer not found!");
+            return;
+        }
 
-    buttonRects.clear();
-    liftParts.clear();
-    liftStartYs.clear();
+        buttonRects.clear();
+        liftParts.clear();
+        liftStartYs.clear();
 
-    for (MapObject obj : interactionLayer.getObjects()) {
-        if (obj instanceof RectangleMapObject) {
-            Rectangle source = ((RectangleMapObject) obj).getRectangle();
-            Rectangle rect = new Rectangle(source.x, source.y, source.width, source.height);
+        for (MapObject obj : interactionLayer.getObjects()) {
+            if (obj instanceof RectangleMapObject) {
+                Rectangle source = ((RectangleMapObject) obj).getRectangle();
+                Rectangle rect = new Rectangle(source.x, source.y, source.width, source.height);
 
-            if ("lever".equals(obj.getName())) {
-                buttonRects.add(rect);
-            } else if ("plataform".equals(obj.getName())) {
-                liftParts.add(rect);
-                liftStartYs.add(rect.y);
+                if ("lever".equals(obj.getName())) {
+                    buttonRects.add(rect);
+                } else if ("plataform".equals(obj.getName())) {
+                    liftParts.add(rect);
+                    liftStartYs.add(rect.y);
+                }
             }
         }
-    }
 
-    System.out.println("Levers loaded: " + buttonRects.size);
-    System.out.println("Lift parts loaded: " + liftParts.size);
+        System.out.println("Levers loaded: " + buttonRects.size);
+        System.out.println("Lift parts loaded: " + liftParts.size);
     }
 
     private void loadLiftVisualLayer() {
@@ -218,6 +222,25 @@ public class FirstScreen implements Screen {
         }
     }
 
+    private void loadDoorLayers() {
+        doorClosedLayer = map.getLayers().get("door_closed");
+        doorOpenLayer = map.getLayers().get("door_open");
+
+        if (doorClosedLayer == null) {
+            System.out.println("⚠️ door_closed layer not found!");
+        }
+
+        if (doorOpenLayer == null) {
+            System.out.println("⚠️ door_open layer not found!");
+        } else {
+            doorOpenLayer.setVisible(false);
+        }
+
+        if (doorClosedLayer != null) {
+            doorClosedLayer.setVisible(true);
+        }
+    }
+
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
@@ -228,7 +251,6 @@ public class FirstScreen implements Screen {
         }
 
         ScreenUtils.clear(Color.BLACK);
-
         camera.update();
 
         if (!gameOver && !levelComplete) {
@@ -255,6 +277,9 @@ public class FirstScreen implements Screen {
             checkHazards();
             checkDoor();
         }
+
+        // Tiled animated tile'ların çalışması için gerekli
+        AnimatedTiledMapTile.updateAnimationBaseTime();
 
         renderer.setView(camera);
         renderer.render();
@@ -295,7 +320,7 @@ public class FirstScreen implements Screen {
 
             debugRenderer.setColor(Color.PINK);
             for (Rectangle button : buttonRects) {
-            debugRenderer.rect(button.x, button.y, button.width, button.height);
+                debugRenderer.rect(button.x, button.y, button.width, button.height);
             }
 
             debugRenderer.setColor(Color.RED);
@@ -335,75 +360,75 @@ public class FirstScreen implements Screen {
     }
 
     private void updateLift(float delta) {
-    lastLiftDeltaY = 0f;
+        lastLiftDeltaY = 0f;
 
-    if (buttonRects.size == 0 || liftParts.size == 0) {
-        return;
-    }
-
-    boolean anyPlayerOnButton = false;
-
-    for (Rectangle button : buttonRects) {
-        boolean player1OnButton = player1 != null && player1.getBounds().overlaps(button);
-        boolean player2OnButton = player2 != null && player2.getBounds().overlaps(button);
-
-        if (player1OnButton || player2OnButton) {
-            anyPlayerOnButton = true;
-            break;
+        if (buttonRects.size == 0 || liftParts.size == 0) {
+            return;
         }
-    }
 
-    liftActive = anyPlayerOnButton;
+        boolean anyPlayerOnButton = false;
 
-    float moveAmount = LIFT_SPEED * delta;
+        for (Rectangle button : buttonRects) {
+            boolean player1OnButton = player1 != null && player1.getBounds().overlaps(button);
+            boolean player2OnButton = player2 != null && player2.getBounds().overlaps(button);
 
-    if (liftActive) {
-        float allowedMove = moveAmount;
-
-        for (int i = 0; i < liftParts.size; i++) {
-            float currentY = liftParts.get(i).y;
-            float maxY = liftStartYs.get(i) + LIFT_TRAVEL_DISTANCE;
-            float remaining = maxY - currentY;
-            if (remaining < allowedMove) {
-                allowedMove = remaining;
+            if (player1OnButton || player2OnButton) {
+                anyPlayerOnButton = true;
+                break;
             }
         }
 
-        if (allowedMove > 0f) {
-            for (Rectangle part : liftParts) {
-                part.y += allowedMove;
-            }
-            liftVisualOffsetY += allowedMove;
-            applyLiftVisualOffset();
-            lastLiftDeltaY = allowedMove;
-        }
-    } else {
-        float allowedMove = moveAmount;
+        liftActive = anyPlayerOnButton;
 
-        for (int i = 0; i < liftParts.size; i++) {
-            float currentY = liftParts.get(i).y;
-            float minY = liftStartYs.get(i);
-            float remaining = currentY - minY;
-            if (remaining < allowedMove) {
-                allowedMove = remaining;
-            }
-        }
+        float moveAmount = LIFT_SPEED * delta;
 
-        if (allowedMove > 0f) {
-            for (Rectangle part : liftParts) {
-                part.y -= allowedMove;
+        if (liftActive) {
+            float allowedMove = moveAmount;
+
+            for (int i = 0; i < liftParts.size; i++) {
+                float currentY = liftParts.get(i).y;
+                float maxY = liftStartYs.get(i) + LIFT_TRAVEL_DISTANCE;
+                float remaining = maxY - currentY;
+                if (remaining < allowedMove) {
+                    allowedMove = remaining;
+                }
             }
-            liftVisualOffsetY -= allowedMove;
-            applyLiftVisualOffset();
-            lastLiftDeltaY = -allowedMove;
+
+            if (allowedMove > 0f) {
+                for (Rectangle part : liftParts) {
+                    part.y += allowedMove;
+                }
+                liftVisualOffsetY += allowedMove;
+                applyLiftVisualOffset();
+                lastLiftDeltaY = allowedMove;
+            }
+        } else {
+            float allowedMove = moveAmount;
+
+            for (int i = 0; i < liftParts.size; i++) {
+                float currentY = liftParts.get(i).y;
+                float minY = liftStartYs.get(i);
+                float remaining = currentY - minY;
+                if (remaining < allowedMove) {
+                    allowedMove = remaining;
+                }
+            }
+
+            if (allowedMove > 0f) {
+                for (Rectangle part : liftParts) {
+                    part.y -= allowedMove;
+                }
+                liftVisualOffsetY -= allowedMove;
+                applyLiftVisualOffset();
+                lastLiftDeltaY = -allowedMove;
+            }
         }
-    }
     }
 
     private void applyLiftVisualOffset() {
-    if (liftVisualLayer != null) {
-        liftVisualLayer.setOffsetY(-liftVisualOffsetY);
-    }
+        if (liftVisualLayer != null) {
+            liftVisualLayer.setOffsetY(-liftVisualOffsetY);
+        }
     }
 
     private void applyLiftCarry(Player player) {
@@ -466,9 +491,19 @@ public class FirstScreen implements Screen {
             return;
         }
 
-        if (player1.getBounds().overlaps(door) && player2.getBounds().overlaps(door)) {
+        boolean player1AtDoor = player1.getBounds().overlaps(door);
+        boolean player2AtDoor = player2.getBounds().overlaps(door);
+
+        if (player1AtDoor && player2AtDoor) {
             levelComplete = true;
-            message = "Level Complete! Press R to play again.";
+            message = "You Win! Press R to play again.";
+
+            if (doorClosedLayer != null) {
+                doorClosedLayer.setVisible(false);
+            }
+            if (doorOpenLayer != null) {
+                doorOpenLayer.setVisible(true);
+            }
         }
     }
 
@@ -493,6 +528,13 @@ public class FirstScreen implements Screen {
         }
 
         resetLift();
+
+        if (doorClosedLayer != null) {
+            doorClosedLayer.setVisible(true);
+        }
+        if (doorOpenLayer != null) {
+            doorOpenLayer.setVisible(false);
+        }
 
         gameOver = false;
         levelComplete = false;
@@ -528,4 +570,4 @@ public class FirstScreen implements Screen {
             player2.dispose();
         }
     }
-}   
+}
