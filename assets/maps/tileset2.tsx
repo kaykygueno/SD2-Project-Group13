@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.10" tiledversion="1.12.0" name="tileset2" tilewidth="16" tileheight="16" tilecount="280" columns="14">
+<tileset version="1.10" tiledversion="1.12.1" name="tileset2" tilewidth="16" tileheight="16" tilecount="742" columns="14">
  <image source="images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/midground_/winter_.png" width="224" height="320"/>
+ <tile id="0">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="14.3999" y="1.19999"/>
+  </objectgroup>
+ </tile>
+ <tile id="2">
+  <objectgroup draworder="index" id="2">
+   <object id="1" x="0" y="7" width="16" height="9"/>
+  </objectgroup>
+ </tile>
  <tile id="70">
   <objectgroup draworder="index" id="2">
    <object id="1" x="0" y="7" width="16" height="9"/>

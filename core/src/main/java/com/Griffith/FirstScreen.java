@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -40,6 +41,7 @@ public class FirstScreen implements Screen {
 
     // Ground collision
     private Array<Rectangle> groundTiles = new Array<>();
+    private Array<Rectangle> blockTiles = new Array<>();
 
     // Hazards
     private Array<Rectangle> lavaZones = new Array<>();
@@ -95,8 +97,15 @@ public class FirstScreen implements Screen {
         debugRenderer = new ShapeRenderer();
         glyphLayout = new GlyphLayout();
 
+        System.out.println("=== MAP LAYERS ===");
+        for (MapLayer layer : map.getLayers()) {
+            System.out.println("Layer: " + layer.getName());
+        }
+        System.out.println("==================");
+
         loadSpawnObjects();
         loadGround();
+        loadBlockColliders();
         loadHazards();
         loadInteractions();
         loadLiftVisualLayer();
@@ -130,15 +139,7 @@ public class FirstScreen implements Screen {
 
                 if ("door".equals(obj.getName())) {
                     door = new Rectangle(x, y, width, height);
-
-                    // Kapının önündeki bitiş alanı
-                    // Oyuncular bu alanın içine girince oyun bitecek
-                    finishZone = new Rectangle(
-                            x,
-                            y,
-                            width,
-                            height
-                    );
+                    finishZone = new Rectangle(x, y, width, height);
                 }
             }
         } else {
@@ -164,10 +165,47 @@ public class FirstScreen implements Screen {
                     }
                 }
             }
+            System.out.println("Ground tiles loaded: " + groundTiles.size);
         } else {
             System.out.println("⚠️ Ground layer 'groung' not found!");
         }
     }
+
+    private void loadBlockColliders() {
+    MapLayer blockLayer = map.getLayers().get("block");
+
+    if (blockLayer == null) {
+        System.out.println("⚠️ block layer not found!");
+        return;
+    }
+
+    blockTiles.clear();
+
+    System.out.println("Block object count: " + blockLayer.getObjects().getCount());
+
+    for (MapObject obj : blockLayer.getObjects()) {
+        if (obj instanceof RectangleMapObject) {
+            Rectangle source = ((RectangleMapObject) obj).getRectangle();
+
+            Rectangle rect = new Rectangle(
+                    source.x,
+                    source.y,
+                    source.width,
+                    source.height
+            );
+
+            blockTiles.add(rect);
+            groundTiles.add(rect);
+
+            System.out.println("Loaded block rect -> x:" + rect.x +
+                    " y:" + rect.y +
+                    " w:" + rect.width +
+                    " h:" + rect.height);
+        }
+    }
+
+    System.out.println("Final block collider count: " + blockTiles.size);
+}
 
     private void loadHazards() {
         MapLayer hazardLayer = map.getLayers().get("hazards");
@@ -259,8 +297,10 @@ public class FirstScreen implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             resetGame();
         }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             showCollisionDebug = !showCollisionDebug;
+            System.out.println("showCollisionDebug = " + showCollisionDebug);
         }
 
         ScreenUtils.clear(Color.BLACK);
@@ -306,15 +346,8 @@ public class FirstScreen implements Screen {
             player2.draw(batch);
         }
 
-        if (door != null) {
-            font.setColor(Color.WHITE);
-            float textX = door.x + (door.width - glyphLayout.width) / 2f;
-            float textY = door.y + (door.height / 2f) + (glyphLayout.height / 2f);
-            font.draw(batch, glyphLayout, textX, textY);
-        }
-
         font.setColor(Color.WHITE);
-        font.draw(batch, "Player1: A/D/W  |  Player2: Arrows  |  R: Restart  |  F3: Hitboxes", 10, 15);
+        font.draw(batch, "Player1: A/D/W | Player2: Arrows | R: Restart | F3: Debug", 10, 15);
 
         if (!message.isEmpty()) {
             font.setColor(Color.YELLOW);
@@ -324,19 +357,31 @@ public class FirstScreen implements Screen {
         batch.end();
 
         if (showCollisionDebug) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
             debugRenderer.setProjectionMatrix(camera.combined);
             debugRenderer.begin(ShapeRenderer.ShapeType.Line);
 
+            // normal ground
             debugRenderer.setColor(Color.GRAY);
             for (Rectangle tile : groundTiles) {
-                debugRenderer.rect(tile.x, tile.y, tile.width, tile.height);
+                if (!blockTiles.contains(tile, true)) {
+                    debugRenderer.rect(tile.x, tile.y, tile.width, tile.height);
+                }
             }
 
+            // block
             debugRenderer.setColor(Color.GREEN);
+            for (Rectangle block : blockTiles) {
+                debugRenderer.rect(block.x, block.y, block.width, block.height);
+            }
+
+            // lift
+            debugRenderer.setColor(Color.ORANGE);
             for (Rectangle lift : liftParts) {
                 debugRenderer.rect(lift.x, lift.y, lift.width, lift.height);
             }
 
+            // buttons
             debugRenderer.setColor(Color.PINK);
             for (Rectangle button : buttonRects) {
                 debugRenderer.rect(button.x, button.y, button.width, button.height);
@@ -357,18 +402,8 @@ public class FirstScreen implements Screen {
                 debugRenderer.rect(spikes.x, spikes.y, spikes.width, spikes.height);
             }
 
-            if (door != null) {
-                debugRenderer.setColor(Color.LIME);
-                debugRenderer.rect(door.x, door.y, door.width, door.height);
-            }
-
-            if (finishZone != null) {
-                debugRenderer.setColor(Color.MAGENTA);
-                debugRenderer.rect(finishZone.x, finishZone.y, finishZone.width, finishZone.height);
-            }
-
             if (player1 != null) {
-                debugRenderer.setColor(Color.ORANGE);
+                debugRenderer.setColor(Color.WHITE);
                 Rectangle p1 = player1.getBounds();
                 debugRenderer.rect(p1.x, p1.y, p1.width, p1.height);
             }
@@ -380,6 +415,7 @@ public class FirstScreen implements Screen {
             }
 
             debugRenderer.end();
+            Gdx.gl.glDisable(GL20.GL_BLEND);
         }
     }
 
