@@ -47,7 +47,7 @@ public class FirstScreen implements Screen {
     private Rectangle door;
 
     // Lift system
-    private Rectangle buttonRect;
+    private Array<Rectangle> buttonRects = new Array<>();
     private Array<Rectangle> liftParts = new Array<>();
     private Array<Float> liftStartYs = new Array<>();
     private MapLayer liftVisualLayer;
@@ -179,28 +179,32 @@ public class FirstScreen implements Screen {
     }
 
     private void loadInteractions() {
-        MapLayer interactionLayer = map.getLayers().get("interactions");
-        if (interactionLayer == null) {
-            System.out.println("⚠️ interactions layer not found!");
-            return;
-        }
+    MapLayer interactionLayer = map.getLayers().get("interactions");
+    if (interactionLayer == null) {
+        System.out.println("⚠️ interactions layer not found!");
+        return;
+    }
 
-        for (MapObject obj : interactionLayer.getObjects()) {
-            if (obj instanceof RectangleMapObject) {
-                Rectangle source = ((RectangleMapObject) obj).getRectangle();
-                Rectangle rect = new Rectangle(source.x, source.y, source.width, source.height);
+    buttonRects.clear();
+    liftParts.clear();
+    liftStartYs.clear();
 
-                if ("lever".equals(obj.getName())) {
-                    buttonRect = rect;
-                } else if ("plataform".equals(obj.getName())) {
-                    liftParts.add(rect);
-                    liftStartYs.add(rect.y);
-                }
+    for (MapObject obj : interactionLayer.getObjects()) {
+        if (obj instanceof RectangleMapObject) {
+            Rectangle source = ((RectangleMapObject) obj).getRectangle();
+            Rectangle rect = new Rectangle(source.x, source.y, source.width, source.height);
+
+            if ("lever".equals(obj.getName())) {
+                buttonRects.add(rect);
+            } else if ("plataform".equals(obj.getName())) {
+                liftParts.add(rect);
+                liftStartYs.add(rect.y);
             }
         }
+    }
 
-        System.out.println("Button loaded: " + (buttonRect != null));
-        System.out.println("Lift parts loaded: " + liftParts.size);
+    System.out.println("Levers loaded: " + buttonRects.size);
+    System.out.println("Lift parts loaded: " + liftParts.size);
     }
 
     private void loadLiftVisualLayer() {
@@ -289,9 +293,9 @@ public class FirstScreen implements Screen {
                 debugRenderer.rect(lift.x, lift.y, lift.width, lift.height);
             }
 
-            if (buttonRect != null) {
-                debugRenderer.setColor(Color.PINK);
-                debugRenderer.rect(buttonRect.x, buttonRect.y, buttonRect.width, buttonRect.height);
+            debugRenderer.setColor(Color.PINK);
+            for (Rectangle button : buttonRects) {
+            debugRenderer.rect(button.x, button.y, button.width, button.height);
             }
 
             debugRenderer.setColor(Color.RED);
@@ -331,60 +335,69 @@ public class FirstScreen implements Screen {
     }
 
     private void updateLift(float delta) {
-        lastLiftDeltaY = 0f;
+    lastLiftDeltaY = 0f;
 
-        if (buttonRect == null || liftParts.size == 0) {
-            return;
+    if (buttonRects.size == 0 || liftParts.size == 0) {
+        return;
+    }
+
+    boolean anyPlayerOnButton = false;
+
+    for (Rectangle button : buttonRects) {
+        boolean player1OnButton = player1 != null && player1.getBounds().overlaps(button);
+        boolean player2OnButton = player2 != null && player2.getBounds().overlaps(button);
+
+        if (player1OnButton || player2OnButton) {
+            anyPlayerOnButton = true;
+            break;
+        }
+    }
+
+    liftActive = anyPlayerOnButton;
+
+    float moveAmount = LIFT_SPEED * delta;
+
+    if (liftActive) {
+        float allowedMove = moveAmount;
+
+        for (int i = 0; i < liftParts.size; i++) {
+            float currentY = liftParts.get(i).y;
+            float maxY = liftStartYs.get(i) + LIFT_TRAVEL_DISTANCE;
+            float remaining = maxY - currentY;
+            if (remaining < allowedMove) {
+                allowedMove = remaining;
+            }
         }
 
-        boolean player1OnButton = player1 != null && player1.getBounds().overlaps(buttonRect);
-        boolean player2OnButton = player2 != null && player2.getBounds().overlaps(buttonRect);
-
-        liftActive = player1OnButton || player2OnButton;
-
-        float moveAmount = LIFT_SPEED * delta;
-
-        if (liftActive) {
-            float allowedMove = moveAmount;
-
-            for (int i = 0; i < liftParts.size; i++) {
-                float currentY = liftParts.get(i).y;
-                float maxY = liftStartYs.get(i) + LIFT_TRAVEL_DISTANCE;
-                float remaining = maxY - currentY;
-                if (remaining < allowedMove) {
-                    allowedMove = remaining;
-                }
+        if (allowedMove > 0f) {
+            for (Rectangle part : liftParts) {
+                part.y += allowedMove;
             }
+            liftVisualOffsetY += allowedMove;
+            applyLiftVisualOffset();
+            lastLiftDeltaY = allowedMove;
+        }
+    } else {
+        float allowedMove = moveAmount;
 
-            if (allowedMove > 0f) {
-                for (Rectangle part : liftParts) {
-                    part.y += allowedMove;
-                }
-                liftVisualOffsetY += allowedMove;
-                applyLiftVisualOffset();
-                lastLiftDeltaY = allowedMove;
-            }
-        } else {
-            float allowedMove = moveAmount;
-
-            for (int i = 0; i < liftParts.size; i++) {
-                float currentY = liftParts.get(i).y;
-                float minY = liftStartYs.get(i);
-                float remaining = currentY - minY;
-                if (remaining < allowedMove) {
-                    allowedMove = remaining;
-                }
-            }
-
-            if (allowedMove > 0f) {
-                for (Rectangle part : liftParts) {
-                    part.y -= allowedMove;
-                }
-                liftVisualOffsetY -= allowedMove;
-                applyLiftVisualOffset();
-                lastLiftDeltaY = -allowedMove;
+        for (int i = 0; i < liftParts.size; i++) {
+            float currentY = liftParts.get(i).y;
+            float minY = liftStartYs.get(i);
+            float remaining = currentY - minY;
+            if (remaining < allowedMove) {
+                allowedMove = remaining;
             }
         }
+
+        if (allowedMove > 0f) {
+            for (Rectangle part : liftParts) {
+                part.y -= allowedMove;
+            }
+            liftVisualOffsetY -= allowedMove;
+            applyLiftVisualOffset();
+            lastLiftDeltaY = -allowedMove;
+        }
+    }
     }
 
     private void applyLiftVisualOffset() {

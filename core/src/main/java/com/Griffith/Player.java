@@ -13,7 +13,7 @@ public class Player {
     public boolean isDead = false;
 
     private static final float SPEED = 150f;
-    private static final float JUMP_POWER = 250f;
+    private static final float JUMP_POWER = 220f;
     private static final float GRAVITY = -500f;
     public static final float WIDTH = 16f;
     public static final float HEIGHT = 16f;
