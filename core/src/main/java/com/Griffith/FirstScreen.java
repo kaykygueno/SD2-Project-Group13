@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
@@ -31,6 +32,7 @@ public class FirstScreen implements Screen {
     private SpriteBatch batch;
     private BitmapFont font;
     private ShapeRenderer debugRenderer;
+    private GlyphLayout glyphLayout;
 
     // Players
     private Player player1;
@@ -44,8 +46,9 @@ public class FirstScreen implements Screen {
     private Array<Rectangle> waterZones = new Array<>();
     private Array<Rectangle> spikeZones = new Array<>();
 
-    // Door
+    // Door / finish
     private Rectangle door;
+    private Rectangle finishZone;
     private MapLayer doorClosedLayer;
     private MapLayer doorOpenLayer;
 
@@ -90,6 +93,7 @@ public class FirstScreen implements Screen {
         batch = new SpriteBatch();
         font = new BitmapFont();
         debugRenderer = new ShapeRenderer();
+        glyphLayout = new GlyphLayout();
 
         loadSpawnObjects();
         loadGround();
@@ -126,6 +130,15 @@ public class FirstScreen implements Screen {
 
                 if ("door".equals(obj.getName())) {
                     door = new Rectangle(x, y, width, height);
+
+                    // Kapının önündeki bitiş alanı
+                    // Oyuncular bu alanın içine girince oyun bitecek
+                    finishZone = new Rectangle(
+                            x,
+                            y,
+                            width,
+                            height
+                    );
                 }
             }
         } else {
@@ -278,7 +291,6 @@ public class FirstScreen implements Screen {
             checkDoor();
         }
 
-        // Tiled animated tile'ların çalışması için gerekli
         AnimatedTiledMapTile.updateAnimationBaseTime();
 
         renderer.setView(camera);
@@ -292,6 +304,13 @@ public class FirstScreen implements Screen {
         }
         if (player2 != null) {
             player2.draw(batch);
+        }
+
+        if (door != null) {
+            font.setColor(Color.WHITE);
+            float textX = door.x + (door.width - glyphLayout.width) / 2f;
+            float textY = door.y + (door.height / 2f) + (glyphLayout.height / 2f);
+            font.draw(batch, glyphLayout, textX, textY);
         }
 
         font.setColor(Color.WHITE);
@@ -341,6 +360,11 @@ public class FirstScreen implements Screen {
             if (door != null) {
                 debugRenderer.setColor(Color.LIME);
                 debugRenderer.rect(door.x, door.y, door.width, door.height);
+            }
+
+            if (finishZone != null) {
+                debugRenderer.setColor(Color.MAGENTA);
+                debugRenderer.rect(finishZone.x, finishZone.y, finishZone.width, finishZone.height);
             }
 
             if (player1 != null) {
@@ -487,23 +511,27 @@ public class FirstScreen implements Screen {
     }
 
     private void checkDoor() {
-        if (door == null || player1 == null || player2 == null) {
+        if (finishZone == null || player1 == null || player2 == null) {
             return;
         }
 
-        boolean player1AtDoor = player1.getBounds().overlaps(door);
-        boolean player2AtDoor = player2.getBounds().overlaps(door);
+        boolean player1AtDoor = player1.getBounds().overlaps(finishZone);
+        boolean player2AtDoor = player2.getBounds().overlaps(finishZone);
 
         if (player1AtDoor && player2AtDoor) {
-            levelComplete = true;
-            message = "You Win! Press R to play again.";
-
             if (doorClosedLayer != null) {
                 doorClosedLayer.setVisible(false);
             }
             if (doorOpenLayer != null) {
                 doorOpenLayer.setVisible(true);
             }
+
+            player1.die();
+            player2.die();
+
+            levelComplete = true;
+            gameOver = true;
+            message = "YOU WIN! Press R to play again.";
         }
     }
 
