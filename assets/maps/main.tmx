@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="63">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="15" nextobjectid="65">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="1025" source="lava_water.tsx"/>
  <tileset firstgid="1074" source="background.tsx"/>
@@ -20,7 +20,7 @@
  </layer>
  <layer id="2" name="groung" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJx7z8qw4D0rAwOdcQIQL2CgMxhoe1vYBsbeKmCYw/B3AhgZZLNBMLn2kuvufawIvB+IN0Exre3F5x5WNlRMD3sJAWz2HmAlHW8A4o1AnE5kXFPbv7B4htHIbOR0MJjCGQY4GGlvL7awQGcTI0aqvTTzGB3tRc67MPY+tLAYaP8iuwuZjUxTCvYCzbkMxfT076UBsvcB0L6HUAy1l6y2yg02CEYWu8UGwcS0cwCi4K4R
+   eJx7z8qw4D0rAwOdcQIQL2CgMxhoe1vYBsbeKmCYw/B3AhgZZLNBMLn2kuvufawIvB+IN0Exre3F5x5WNlRMrL0cjNR2DX57D7CSjjcA8UYC4RuF5GdqhzMsnmE0Mhs5HQx0/sUmR4/4xRYW6GxixEi1l2Yeo6O9yHkXxt6HFhYD7V9kdyGzkWlqgMusEExP/15iHRh7HwDtewjFUHvJaqvcYINgZLFbbBBMTDsHAGwhrUs=
   </data>
  </layer>
  <layer id="14" name="lift_visual" width="30" height="20">
@@ -34,8 +34,9 @@
   </data>
  </layer>
  <objectgroup id="9" name="interactions">
-  <object id="47" name="lever" x="95.6298" y="174.143" width="16.7217" height="21.4495"/>
   <object id="49" name="plataform" x="16" y="175.457" width="47.5378" height="10.0966"/>
+  <object id="63" name="lever" x="95.4821" y="109.517" width="16.7217" height="21.4495"/>
+  <object id="64" name="lever" x="95.6847" y="172.135" width="16.7217" height="21.4495"/>
  </objectgroup>
  <objectgroup id="8" name="hazards">
   <object id="39" name="lava" x="305" y="300.667" width="16" height="16"/>
