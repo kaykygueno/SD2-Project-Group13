@@ -35,17 +35,49 @@ public class CollisionLoader {
                 for (int col = 0; col < groundLayer.getWidth(); col++) {
                     TiledMapTileLayer.Cell cell = groundLayer.getCell(col, row);
                     if (cell != null && cell.getTile() != null) {
-                        float colliderW = tileW * GameConstants.GROUND_WIDTH_SCALE;
-                        float colliderH = tileH * GameConstants.GROUND_HEIGHT_SCALE;
-                        float gameX = col * tileW + GameConstants.GROUND_OFFSET_X + (tileW - colliderW) * 0.5f;
-                        float gameY = row * tileH + GameConstants.GROUND_OFFSET_Y + (tileH - colliderH) * 0.5f;
-                        groundTiles.add(new Rectangle(gameX, gameY, colliderW, colliderH));
+                        addGroundColliderForCell(groundTiles, cell, col, row, tileW, tileH);
                     }
                 }
             }
             System.out.println("Ground tiles loaded: " + groundTiles.size);
         } else {
             System.out.println("⚠️ Ground layer 'groung' not found!");
+        }
+    }
+
+    private void addGroundColliderForCell(Array<Rectangle> groundTiles, TiledMapTileLayer.Cell cell,
+            int col, int row, float tileW, float tileH) {
+        boolean addedCustomCollider = false;
+
+        for (MapObject obj : cell.getTile().getObjects()) {
+            if (obj instanceof RectangleMapObject) {
+                Rectangle source = ((RectangleMapObject) obj).getRectangle();
+                if (source.width <= 0f || source.height <= 0f) {
+                    continue;
+                }
+
+                // Tile collision object coordinates from this map are already aligned for world
+                // Y.
+                float localX = source.x;
+                float localY = source.y;
+
+                float colliderW = source.width * GameConstants.GROUND_WIDTH_SCALE;
+                float colliderH = source.height * GameConstants.GROUND_HEIGHT_SCALE;
+                float gameX = col * tileW + localX + GameConstants.GROUND_OFFSET_X + (source.width - colliderW) * 0.5f;
+                float gameY = row * tileH + localY + GameConstants.GROUND_OFFSET_Y
+                        + (source.height - colliderH) * 0.5f;
+
+                groundTiles.add(new Rectangle(gameX, gameY, colliderW, colliderH));
+                addedCustomCollider = true;
+            }
+        }
+
+        if (!addedCustomCollider) {
+            float colliderW = tileW * GameConstants.GROUND_WIDTH_SCALE;
+            float colliderH = tileH * GameConstants.GROUND_HEIGHT_SCALE;
+            float gameX = col * tileW + GameConstants.GROUND_OFFSET_X + (tileW - colliderW) * 0.5f;
+            float gameY = row * tileH + GameConstants.GROUND_OFFSET_Y + (tileH - colliderH) * 0.5f;
+            groundTiles.add(new Rectangle(gameX, gameY, colliderW, colliderH));
         }
     }
 
