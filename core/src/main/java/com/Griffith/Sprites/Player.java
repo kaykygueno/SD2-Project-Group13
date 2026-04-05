@@ -1,4 +1,4 @@
-package com.Griffith;
+package com.Griffith.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+// This class represents the player character in the game, handling movement, jumping, and collision with the environment.
 public class Player {
 
     public float x, y;
@@ -39,7 +40,8 @@ public class Player {
     }
 
     public void update(float delta, Array<Rectangle> ground) {
-        if (isDead) return;
+        if (isDead)
+            return;
 
         float moveX = 0f;
         if (Gdx.input.isKeyPressed(leftKey)) {

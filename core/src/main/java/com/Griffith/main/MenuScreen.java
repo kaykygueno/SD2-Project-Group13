@@ -1,4 +1,4 @@
-package com.Griffith;
+package com.Griffith.main;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+// The initial menu screen that is shown when the game starts.
 public class MenuScreen implements Screen {
     private Main game;
     private SpriteBatch batch;
