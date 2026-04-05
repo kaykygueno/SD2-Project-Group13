@@ -1,5 +1,7 @@
 package com.Griffith.main;
 
+import com.Griffith.Sprites.Button;
+import com.Griffith.Sprites.Hazard;
 import com.Griffith.Sprites.Player;
 import com.Griffith.gameConstants.GameConstants;
 
@@ -14,10 +16,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
@@ -46,25 +45,12 @@ public class FirstScreen implements Screen {
     private Array<Rectangle> groundTiles = new Array<>();
     private Array<Rectangle> blockTiles = new Array<>();
 
-    // Hazards
-    private Array<Rectangle> lavaZones = new Array<>();
-    private Array<Rectangle> waterZones = new Array<>();
-    private Array<Rectangle> spikeZones = new Array<>();
-
-    // Door / finish
-    private Rectangle door;
-    private Rectangle finishZone;
-    private MapLayer doorClosedLayer;
-    private MapLayer doorOpenLayer;
-
-    // Lift system
-    private Array<Rectangle> buttonRects = new Array<>();
-    private Array<Rectangle> liftParts = new Array<>();
-    private Array<Float> liftStartYs = new Array<>();
-    private MapLayer liftVisualLayer;
-    private boolean liftActive = false;
-    private float lastLiftDeltaY = 0f;
-    private float liftVisualOffsetY = 0f;
+    // Hazards and interactions
+    private final Hazard hazardSystem = new Hazard();
+    private final Button buttonSystem = new Button();
+    private final SpawnLoader spawnLoader = new SpawnLoader();
+    private final CollisionLoader collisionLoader = new CollisionLoader();
+    private final DoorSystem doorSystem = new DoorSystem();
 
     // Game state
     private boolean gameOver = false;
@@ -94,194 +80,47 @@ public class FirstScreen implements Screen {
         }
         System.out.println("==================");
 
-        loadSpawnObjects();
-        loadGround();
-        loadBlockColliders();
+        loadSpawns();
+        loadCollisions();
         loadHazards();
         loadInteractions();
         loadLiftVisualLayer();
-        loadDoorLayers();
+        doorSystem.loadDoorLayers(map);
     }
 
-    private void loadSpawnObjects() {
-        MapLayer spawnLayer = map.getLayers().get("spawn");
-        if (spawnLayer != null) {
-            for (MapObject obj : spawnLayer.getObjects()) {
-                float x = obj.getProperties().get("x", Float.class);
-                float y = obj.getProperties().get("y", Float.class);
-                float width = obj.getProperties().get("width", Float.class);
-                float height = obj.getProperties().get("height", Float.class);
-
-                if ("Player1".equals(obj.getName())) {
-                    player1 = new Player(
-                            x,
-                            y,
-                            "maps/images/Others/pumpkin_dudeCopy.png",
-                            Input.Keys.A, Input.Keys.D, Input.Keys.W);
-                }
-
-                if ("Player2".equals(obj.getName())) {
-                    player2 = new Player(
-                            x,
-                            y,
-                            "maps/images/Others/docCopy.png",
-                            Input.Keys.LEFT, Input.Keys.RIGHT, Input.Keys.UP);
-                }
-
-                if ("door".equals(obj.getName())) {
-                    door = new Rectangle(x, y, width, height);
-                    finishZone = new Rectangle(x, y, width, height);
-                }
-            }
-        } else {
-            System.out.println("⚠️ Spawn layer 'spawn' not found!");
-        }
+    // This method loads the player spawn points and the finish zone from the
+    // TiledMap
+    private void loadSpawns() {
+        SpawnData spawnData = spawnLoader.load(map);
+        player1 = spawnData.player1();
+        player2 = spawnData.player2();
+        doorSystem.setFinishZone(spawnData.finishZone());
     }
 
-    private void loadGround() {
-        TiledMapTileLayer groundLayer = (TiledMapTileLayer) map.getLayers().get("groung");
-        if (groundLayer != null) {
-            float tileW = groundLayer.getTileWidth();
-            float tileH = groundLayer.getTileHeight();
-
-            for (int row = 0; row < groundLayer.getHeight(); row++) {
-                for (int col = 0; col < groundLayer.getWidth(); col++) {
-                    TiledMapTileLayer.Cell cell = groundLayer.getCell(col, row);
-                    if (cell != null && cell.getTile() != null) {
-                        float colliderW = tileW * GameConstants.GROUND_WIDTH_SCALE;
-                        float colliderH = tileH * GameConstants.GROUND_HEIGHT_SCALE;
-                        float gameX = col * tileW + GameConstants.GROUND_OFFSET_X + (tileW - colliderW) * 0.5f;
-                        float gameY = row * tileH + GameConstants.GROUND_OFFSET_Y + (tileH - colliderH) * 0.5f;
-                        groundTiles.add(new Rectangle(gameX, gameY, colliderW, colliderH));
-                    }
-                }
-            }
-            System.out.println("Ground tiles loaded: " + groundTiles.size);
-        } else {
-            System.out.println("⚠️ Ground layer 'groung' not found!");
-        }
+    // This method loads the collision data from the TiledMap
+    private void loadCollisions() {
+        CollisionData collisionData = collisionLoader.load(map);
+        groundTiles = collisionData.groundTiles();
+        blockTiles = collisionData.blockTiles();
     }
 
-    private void loadBlockColliders() {
-        MapLayer blockLayer = map.getLayers().get("block");
-
-        if (blockLayer == null) {
-            System.out.println("⚠️ block layer not found!");
-            return;
-        }
-
-        blockTiles.clear();
-
-        System.out.println("Block object count: " + blockLayer.getObjects().getCount());
-
-        for (MapObject obj : blockLayer.getObjects()) {
-            if (obj instanceof RectangleMapObject) {
-                Rectangle source = ((RectangleMapObject) obj).getRectangle();
-
-                Rectangle rect = new Rectangle(
-                        source.x,
-                        source.y,
-                        source.width,
-                        source.height);
-
-                blockTiles.add(rect);
-                groundTiles.add(rect);
-
-                System.out.println("Loaded block rect -> x:" + rect.x +
-                        " y:" + rect.y +
-                        " w:" + rect.width +
-                        " h:" + rect.height);
-            }
-        }
-
-        System.out.println("Final block collider count: " + blockTiles.size);
-    }
-
+    // This method loads the hazard zones from the TiledMap
     private void loadHazards() {
-        MapLayer hazardLayer = map.getLayers().get("hazards");
-        if (hazardLayer != null) {
-            for (MapObject obj : hazardLayer.getObjects()) {
-                if (obj instanceof RectangleMapObject) {
-                    Rectangle source = ((RectangleMapObject) obj).getRectangle();
-                    Rectangle rect = new Rectangle(source.x, source.y, source.width, source.height);
-
-                    switch (obj.getName()) {
-                        case "lava":
-                            lavaZones.add(rect);
-                            break;
-                        case "water":
-                            waterZones.add(rect);
-                            break;
-                        case "spikes":
-                            spikeZones.add(rect);
-                            break;
-                    }
-                }
-            }
-        } else {
-            System.out.println("⚠️ Hazards layer not found!");
-        }
+        hazardSystem.loadHazards(map);
     }
+
+    // This method loads the interactive elements from the TiledMap
 
     private void loadInteractions() {
-        MapLayer interactionLayer = map.getLayers().get("interactions");
-        if (interactionLayer == null) {
-            System.out.println("⚠️ interactions layer not found!");
-            return;
-        }
-
-        buttonRects.clear();
-        liftParts.clear();
-        liftStartYs.clear();
-
-        for (MapObject obj : interactionLayer.getObjects()) {
-            if (obj instanceof RectangleMapObject) {
-                Rectangle source = ((RectangleMapObject) obj).getRectangle();
-                Rectangle rect = new Rectangle(source.x, source.y, source.width, source.height);
-
-                if ("lever".equals(obj.getName())) {
-                    buttonRects.add(rect);
-                } else if ("plataform".equals(obj.getName())) {
-                    liftParts.add(rect);
-                    liftStartYs.add(rect.y);
-                }
-            }
-        }
-
-        System.out.println("Levers loaded: " + buttonRects.size);
-        System.out.println("Lift parts loaded: " + liftParts.size);
+        buttonSystem.loadInteractions(map);
     }
 
+    // This method loads the lift visual layer from the TiledMap
     private void loadLiftVisualLayer() {
-        liftVisualLayer = map.getLayers().get("lift_visual");
-
-        if (liftVisualLayer == null) {
-            System.out.println("⚠️ lift_visual layer not found!");
-        } else {
-            liftVisualLayer.setOffsetY(0f);
-            System.out.println("Lift visual layer loaded.");
-        }
+        buttonSystem.loadLiftVisualLayer(map);
     }
 
-    private void loadDoorLayers() {
-        doorClosedLayer = map.getLayers().get("door_closed");
-        doorOpenLayer = map.getLayers().get("door_open");
-
-        if (doorClosedLayer == null) {
-            System.out.println("⚠️ door_closed layer not found!");
-        }
-
-        if (doorOpenLayer == null) {
-            System.out.println("⚠️ door_open layer not found!");
-        } else {
-            doorOpenLayer.setVisible(false);
-        }
-
-        if (doorClosedLayer != null) {
-            doorClosedLayer.setVisible(true);
-        }
-    }
-
+    // This method is called every frame to update the game logic
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
@@ -299,7 +138,7 @@ public class FirstScreen implements Screen {
         if (!gameOver && !levelComplete) {
             Array<Rectangle> activeGround = new Array<>();
             activeGround.addAll(groundTiles);
-            activeGround.addAll(liftParts);
+            buttonSystem.addLiftParts(activeGround);
 
             if (player1 != null) {
                 player1.update(delta, activeGround);
@@ -308,14 +147,7 @@ public class FirstScreen implements Screen {
                 player2.update(delta, activeGround);
             }
 
-            updateLift(delta);
-
-            if (player1 != null) {
-                applyLiftCarry(player1);
-            }
-            if (player2 != null) {
-                applyLiftCarry(player2);
-            }
+            buttonSystem.update(delta, player1, player2);
 
             checkHazards();
             checkDoor();
@@ -367,28 +199,28 @@ public class FirstScreen implements Screen {
 
             // lift
             debugRenderer.setColor(Color.ORANGE);
-            for (Rectangle lift : liftParts) {
+            for (Rectangle lift : buttonSystem.getLiftParts()) {
                 debugRenderer.rect(lift.x, lift.y, lift.width, lift.height);
             }
 
             // buttons
             debugRenderer.setColor(Color.PINK);
-            for (Rectangle button : buttonRects) {
+            for (Rectangle button : buttonSystem.getButtonRects()) {
                 debugRenderer.rect(button.x, button.y, button.width, button.height);
             }
 
             debugRenderer.setColor(Color.RED);
-            for (Rectangle lava : lavaZones) {
+            for (Rectangle lava : hazardSystem.getLavaZones()) {
                 debugRenderer.rect(lava.x, lava.y, lava.width, lava.height);
             }
 
             debugRenderer.setColor(Color.CYAN);
-            for (Rectangle water : waterZones) {
+            for (Rectangle water : hazardSystem.getWaterZones()) {
                 debugRenderer.rect(water.x, water.y, water.width, water.height);
             }
 
             debugRenderer.setColor(Color.YELLOW);
-            for (Rectangle spikes : spikeZones) {
+            for (Rectangle spikes : hazardSystem.getSpikeZones()) {
                 debugRenderer.rect(spikes.x, spikes.y, spikes.width, spikes.height);
             }
 
@@ -409,167 +241,25 @@ public class FirstScreen implements Screen {
         }
     }
 
-    private void updateLift(float delta) {
-        lastLiftDeltaY = 0f;
-
-        if (buttonRects.size == 0 || liftParts.size == 0) {
-            return;
-        }
-
-        boolean anyPlayerOnButton = false;
-
-        for (Rectangle button : buttonRects) {
-            boolean player1OnButton = player1 != null && player1.getBounds().overlaps(button);
-            boolean player2OnButton = player2 != null && player2.getBounds().overlaps(button);
-
-            if (player1OnButton || player2OnButton) {
-                anyPlayerOnButton = true;
-                break;
-            }
-        }
-
-        liftActive = anyPlayerOnButton;
-
-        float moveAmount = GameConstants.LIFT_SPEED * delta;
-
-        if (liftActive) {
-            float allowedMove = moveAmount;
-
-            for (int i = 0; i < liftParts.size; i++) {
-                float currentY = liftParts.get(i).y;
-                float maxY = liftStartYs.get(i) + GameConstants.LIFT_TRAVEL_DISTANCE;
-                float remaining = maxY - currentY;
-                if (remaining < allowedMove) {
-                    allowedMove = remaining;
-                }
-            }
-
-            if (allowedMove > 0f) {
-                for (Rectangle part : liftParts) {
-                    part.y += allowedMove;
-                }
-                liftVisualOffsetY += allowedMove;
-                applyLiftVisualOffset();
-                lastLiftDeltaY = allowedMove;
-            }
-        } else {
-            float allowedMove = moveAmount;
-
-            for (int i = 0; i < liftParts.size; i++) {
-                float currentY = liftParts.get(i).y;
-                float minY = liftStartYs.get(i);
-                float remaining = currentY - minY;
-                if (remaining < allowedMove) {
-                    allowedMove = remaining;
-                }
-            }
-
-            if (allowedMove > 0f) {
-                for (Rectangle part : liftParts) {
-                    part.y -= allowedMove;
-                }
-                liftVisualOffsetY -= allowedMove;
-                applyLiftVisualOffset();
-                lastLiftDeltaY = -allowedMove;
-            }
-        }
-    }
-
-    private void applyLiftVisualOffset() {
-        if (liftVisualLayer != null) {
-            liftVisualLayer.setOffsetY(-liftVisualOffsetY);
-        }
-    }
-
-    private void applyLiftCarry(Player player) {
-        if (player == null || lastLiftDeltaY == 0f || liftParts.size == 0) {
-            return;
-        }
-
-        Rectangle p = player.getBounds();
-
-        for (Rectangle part : liftParts) {
-            boolean standingOnTop = p.x + p.width > part.x &&
-                    p.x < part.x + part.width &&
-                    Math.abs(p.y - (part.y + part.height)) < 4f &&
-                    player.velocityY <= 0;
-
-            if (standingOnTop) {
-                player.moveBy(0f, lastLiftDeltaY);
-                break;
-            }
-        }
-    }
-
     private void checkHazards() {
-        for (Rectangle water : waterZones) {
-            if (player1 != null && !player1.isDead && player1.getBounds().overlaps(water)) {
-                player1.die();
-                gameOver = true;
-                message = "Player1 fell into water! Press R to restart.";
-            }
-        }
-
-        for (Rectangle spike : spikeZones) {
-            if (player1 != null && !player1.isDead && player1.getBounds().overlaps(spike)) {
-                player1.die();
-                gameOver = true;
-                message = "Player1 hit spikes! Press R to restart.";
-            }
-        }
-
-        for (Rectangle lava : lavaZones) {
-            if (player2 != null && !player2.isDead && player2.getBounds().overlaps(lava)) {
-                player2.die();
-                gameOver = true;
-                message = "Player2 fell into lava! Press R to restart.";
-            }
-        }
-
-        for (Rectangle spike : spikeZones) {
-            if (player2 != null && !player2.isDead && player2.getBounds().overlaps(spike)) {
-                player2.die();
-                gameOver = true;
-                message = "Player2 hit spikes! Press R to restart.";
-            }
+        String hazardMessage = hazardSystem.checkHazards(player1, player2);
+        if (hazardMessage != null) {
+            gameOver = true;
+            message = hazardMessage;
         }
     }
 
     private void checkDoor() {
-        if (finishZone == null || player1 == null || player2 == null) {
-            return;
-        }
-
-        boolean player1AtDoor = player1.getBounds().overlaps(finishZone);
-        boolean player2AtDoor = player2.getBounds().overlaps(finishZone);
-
-        if (player1AtDoor && player2AtDoor) {
-            if (doorClosedLayer != null) {
-                doorClosedLayer.setVisible(false);
-            }
-            if (doorOpenLayer != null) {
-                doorOpenLayer.setVisible(true);
-            }
-
-            player1.die();
-            player2.die();
-
+        String winMessage = doorSystem.checkWin(player1, player2);
+        if (winMessage != null) {
             levelComplete = true;
             gameOver = true;
-            message = "YOU WIN! Press R to play again.";
+            message = winMessage;
         }
     }
 
     private void resetLift() {
-        for (int i = 0; i < liftParts.size; i++) {
-            liftParts.get(i).y = liftStartYs.get(i);
-        }
-
-        liftVisualOffsetY = 0f;
-        applyLiftVisualOffset();
-
-        liftActive = false;
-        lastLiftDeltaY = 0f;
+        buttonSystem.reset();
     }
 
     private void resetGame() {
@@ -582,12 +272,7 @@ public class FirstScreen implements Screen {
 
         resetLift();
 
-        if (doorClosedLayer != null) {
-            doorClosedLayer.setVisible(true);
-        }
-        if (doorOpenLayer != null) {
-            doorOpenLayer.setVisible(false);
-        }
+        doorSystem.reset();
 
         gameOver = false;
         levelComplete = false;

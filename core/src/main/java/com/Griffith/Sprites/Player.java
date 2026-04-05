@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
+// This class represents the player character in the game, handling movement, jumping, and collision with the environment.
 public class Player {
 
     public float x, y;
