@@ -1,4 +1,7 @@
-package com.Griffith;
+package com.Griffith.main;
+
+import com.Griffith.Sprites.Player;
+import com.Griffith.gameConstants.GameConstants;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -63,9 +66,6 @@ public class FirstScreen implements Screen {
     private float lastLiftDeltaY = 0f;
     private float liftVisualOffsetY = 0f;
 
-    private static final float LIFT_SPEED = 40f;
-    private static final float LIFT_TRAVEL_DISTANCE = 70f;
-
     // Game state
     private boolean gameOver = false;
     private boolean levelComplete = false;
@@ -73,15 +73,6 @@ public class FirstScreen implements Screen {
     private String message = "";
 
     // Map dimensions
-    private static final float MAP_WIDTH = 30 * 16f;
-    private static final float MAP_HEIGHT = 20 * 16f;
-
-    // Ground collider tuning
-    private static final float GROUND_OFFSET_X = 0f;
-    private static final float GROUND_OFFSET_Y = 0f;
-    private static final float GROUND_WIDTH_SCALE = 1f;
-    private static final float GROUND_HEIGHT_SCALE = 1f;
-
     @Override
     public void show() {
         TmxMapLoader.Parameters params = new TmxMapLoader.Parameters();
@@ -90,7 +81,7 @@ public class FirstScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(map);
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, MAP_WIDTH, MAP_HEIGHT);
+        camera.setToOrtho(false, GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT);
 
         batch = new SpriteBatch();
         font = new BitmapFont();
@@ -157,10 +148,10 @@ public class FirstScreen implements Screen {
                 for (int col = 0; col < groundLayer.getWidth(); col++) {
                     TiledMapTileLayer.Cell cell = groundLayer.getCell(col, row);
                     if (cell != null && cell.getTile() != null) {
-                        float colliderW = tileW * GROUND_WIDTH_SCALE;
-                        float colliderH = tileH * GROUND_HEIGHT_SCALE;
-                        float gameX = col * tileW + GROUND_OFFSET_X + (tileW - colliderW) * 0.5f;
-                        float gameY = row * tileH + GROUND_OFFSET_Y + (tileH - colliderH) * 0.5f;
+                        float colliderW = tileW * GameConstants.GROUND_WIDTH_SCALE;
+                        float colliderH = tileH * GameConstants.GROUND_HEIGHT_SCALE;
+                        float gameX = col * tileW + GameConstants.GROUND_OFFSET_X + (tileW - colliderW) * 0.5f;
+                        float gameY = row * tileH + GameConstants.GROUND_OFFSET_Y + (tileH - colliderH) * 0.5f;
                         groundTiles.add(new Rectangle(gameX, gameY, colliderW, colliderH));
                     }
                 }
@@ -172,40 +163,39 @@ public class FirstScreen implements Screen {
     }
 
     private void loadBlockColliders() {
-    MapLayer blockLayer = map.getLayers().get("block");
+        MapLayer blockLayer = map.getLayers().get("block");
 
-    if (blockLayer == null) {
-        System.out.println("⚠️ block layer not found!");
-        return;
-    }
-
-    blockTiles.clear();
-
-    System.out.println("Block object count: " + blockLayer.getObjects().getCount());
-
-    for (MapObject obj : blockLayer.getObjects()) {
-        if (obj instanceof RectangleMapObject) {
-            Rectangle source = ((RectangleMapObject) obj).getRectangle();
-
-            Rectangle rect = new Rectangle(
-                    source.x,
-                    source.y,
-                    source.width,
-                    source.height
-            );
-
-            blockTiles.add(rect);
-            groundTiles.add(rect);
-
-            System.out.println("Loaded block rect -> x:" + rect.x +
-                    " y:" + rect.y +
-                    " w:" + rect.width +
-                    " h:" + rect.height);
+        if (blockLayer == null) {
+            System.out.println("⚠️ block layer not found!");
+            return;
         }
-    }
 
-    System.out.println("Final block collider count: " + blockTiles.size);
-}
+        blockTiles.clear();
+
+        System.out.println("Block object count: " + blockLayer.getObjects().getCount());
+
+        for (MapObject obj : blockLayer.getObjects()) {
+            if (obj instanceof RectangleMapObject) {
+                Rectangle source = ((RectangleMapObject) obj).getRectangle();
+
+                Rectangle rect = new Rectangle(
+                        source.x,
+                        source.y,
+                        source.width,
+                        source.height);
+
+                blockTiles.add(rect);
+                groundTiles.add(rect);
+
+                System.out.println("Loaded block rect -> x:" + rect.x +
+                        " y:" + rect.y +
+                        " w:" + rect.width +
+                        " h:" + rect.height);
+            }
+        }
+
+        System.out.println("Final block collider count: " + blockTiles.size);
+    }
 
     private void loadHazards() {
         MapLayer hazardLayer = map.getLayers().get("hazards");
@@ -351,7 +341,7 @@ public class FirstScreen implements Screen {
 
         if (!message.isEmpty()) {
             font.setColor(Color.YELLOW);
-            font.draw(batch, message, MAP_WIDTH / 2 - 120, MAP_HEIGHT / 2);
+            font.draw(batch, message, GameConstants.MAP_WIDTH / 2 - 120, GameConstants.MAP_HEIGHT / 2);
         }
 
         batch.end();
@@ -440,14 +430,14 @@ public class FirstScreen implements Screen {
 
         liftActive = anyPlayerOnButton;
 
-        float moveAmount = LIFT_SPEED * delta;
+        float moveAmount = GameConstants.LIFT_SPEED * delta;
 
         if (liftActive) {
             float allowedMove = moveAmount;
 
             for (int i = 0; i < liftParts.size; i++) {
                 float currentY = liftParts.get(i).y;
-                float maxY = liftStartYs.get(i) + LIFT_TRAVEL_DISTANCE;
+                float maxY = liftStartYs.get(i) + GameConstants.LIFT_TRAVEL_DISTANCE;
                 float remaining = maxY - currentY;
                 if (remaining < allowedMove) {
                     allowedMove = remaining;
@@ -499,8 +489,7 @@ public class FirstScreen implements Screen {
         Rectangle p = player.getBounds();
 
         for (Rectangle part : liftParts) {
-            boolean standingOnTop =
-                    p.x + p.width > part.x &&
+            boolean standingOnTop = p.x + p.width > part.x &&
                     p.x < part.x + part.width &&
                     Math.abs(p.y - (part.y + part.height)) < 4f &&
                     player.velocityY <= 0;
@@ -607,17 +596,20 @@ public class FirstScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        camera.setToOrtho(false, MAP_WIDTH, MAP_HEIGHT);
+        camera.setToOrtho(false, GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT);
     }
 
     @Override
-    public void pause() { }
+    public void pause() {
+    }
 
     @Override
-    public void resume() { }
+    public void resume() {
+    }
 
     @Override
-    public void hide() { }
+    public void hide() {
+    }
 
     @Override
     public void dispose() {

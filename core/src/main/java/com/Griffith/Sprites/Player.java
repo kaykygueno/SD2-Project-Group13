@@ -1,4 +1,4 @@
-package com.Griffith;
+package com.Griffith.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -39,7 +39,8 @@ public class Player {
     }
 
     public void update(float delta, Array<Rectangle> ground) {
-        if (isDead) return;
+        if (isDead)
+            return;
 
         float moveX = 0f;
         if (Gdx.input.isKeyPressed(leftKey)) {
