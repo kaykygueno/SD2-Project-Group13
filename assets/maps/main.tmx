@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="70">
+<map version="1.10" tiledversion="1.12.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="70">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="1025" source="lava_water.tsx"/>
  <tileset firstgid="1074" source="background.tsx"/>
@@ -85,7 +85,7 @@
  </layer>
  <layer id="2" name="groung" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJx7z8qw4D0rAwOdcQIQL2CgMxhoe1vYBsbeKmCYw/B3AhgZZLNBMLn2kuvufawIvJ+VsHpq2YvPPaxsqJhYezkYqe0a/PYeYCUdEwOikPxM7XCGxTOMRmYjp4OBzr/Y5OgRv9jCAp1NjBip9tLMY3S0Fznvwtj70MJioP2L7C5kNjJNDXCZFYLp6d9LrANj7wOgfQ+hGGovWW2VG2wQjCx2iw2CiWnnAAA2rqpy
+   eJx7z8qw4D0rAwOdcQIQL2CgMxhoe1vYBsbeA8Awh+GNBDAyyGaDYHLtJdfd+1ghGOTe/ayE1VPLXlwAOfz2Q2li7eVgpLZr8NuL7FZiMTEgCikdUDuccblrPxp/oPMvNjl6xC96WOBiH4DmG3SxwZKPBsJeWHjsRwqbfSTkX1oCmL3Y4mwfmpupAS6zQjA9/XuJdWDsfQC07yEUQ+0lq61ygw2CkcVusUEwMe0cAGLSsTc=
   </data>
  </layer>
  <objectgroup id="9" name="interactions">
@@ -102,8 +102,8 @@
   <object id="40" name="lava" x="319.667" y="301.001" width="16" height="16"/>
   <object id="41" name="water" x="224.334" y="301.334" width="16" height="16"/>
   <object id="42" name="water" x="239.833" y="301.333" width="16" height="16"/>
-  <object id="44" name="spikes" x="176" y="191.5" width="16" height="16"/>
-  <object id="45" name="spikes" x="192" y="191.5" width="16" height="16"/>
+  <object id="44" name="spikes" x="176" y="191.5" width="16" height="3.33333"/>
+  <object id="45" name="spikes" x="192" y="191.5" width="16" height="3.33333"/>
  </objectgroup>
  <objectgroup id="10" name="collectibles"/>
  <objectgroup id="12" name="spawn">
