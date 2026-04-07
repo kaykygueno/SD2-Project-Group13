@@ -69,7 +69,8 @@ public class FirstScreen implements Screen {
     private boolean showCollisionDebug = false;
     private String message = "";
 
-    // This method creates the screen resources and loads all map-driven gameplay data.
+    // This method creates the screen resources and loads all map-driven gameplay
+    // data.
     @Override
     public void show() {
         TmxMapLoader.Parameters params = new TmxMapLoader.Parameters();
@@ -101,7 +102,8 @@ public class FirstScreen implements Screen {
         loadCoins();
     }
 
-    // This method reads the player spawn points and the finish zone from the spawn object layer.
+    // This method reads the player spawn points and the finish zone from the spawn
+    // object layer.
     private void loadSpawnObjects() {
         MapLayer spawnLayer = map.getLayers().get("spawn");
         if (spawnLayer != null) {
@@ -139,7 +141,7 @@ public class FirstScreen implements Screen {
 
     // This method builds ground colliders from the map's ground tile layer.
     private void loadGround() {
-        TiledMapTileLayer groundLayer = (TiledMapTileLayer) map.getLayers().get("groung");
+        TiledMapTileLayer groundLayer = (TiledMapTileLayer) map.getLayers().get("ground");
         if (groundLayer != null) {
             float tileW = groundLayer.getTileWidth();
             float tileH = groundLayer.getTileHeight();
@@ -148,56 +150,84 @@ public class FirstScreen implements Screen {
                 for (int col = 0; col < groundLayer.getWidth(); col++) {
                     TiledMapTileLayer.Cell cell = groundLayer.getCell(col, row);
                     if (cell != null && cell.getTile() != null) {
-                        float colliderW = tileW * GameConstants.GROUND_WIDTH_SCALE;
-                        float colliderH = tileH * GameConstants.GROUND_HEIGHT_SCALE;
-                        float gameX = col * tileW + GameConstants.GROUND_OFFSET_X + (tileW - colliderW) * 0.5f;
-                        float gameY = row * tileH + GameConstants.GROUND_OFFSET_Y + (tileH - colliderH) * 0.5f;
-                        groundTiles.add(new Rectangle(gameX, gameY, colliderW, colliderH));
+                        addGroundColliderForCell(cell, col, row, tileW, tileH);
                     }
                 }
             }
             System.out.println("Ground tiles loaded: " + groundTiles.size);
         } else {
-            System.out.println("⚠️ Ground layer 'groung' not found!");
+            System.out.println("⚠️ Ground layer 'ground' not found!");
         }
     }
 
-    // This method loads extra block colliders from the block object layer and adds them to the ground set.
+    private void addGroundColliderForCell(TiledMapTileLayer.Cell cell, int col, int row, float tileW, float tileH) {
+        boolean addedCustomCollider = false;
+
+        for (MapObject obj : cell.getTile().getObjects()) {
+            if (obj instanceof RectangleMapObject) {
+                Rectangle source = ((RectangleMapObject) obj).getRectangle();
+                if (source.width <= 0f || source.height <= 0f) {
+                    continue;
+                }
+
+                float localX = source.x;
+                float localY = source.y;
+
+                float colliderW = source.width * GameConstants.GROUND_WIDTH_SCALE;
+                float colliderH = source.height * GameConstants.GROUND_HEIGHT_SCALE;
+                float gameX = col * tileW + localX + GameConstants.GROUND_OFFSET_X + (source.width - colliderW) * 0.5f;
+                float gameY = row * tileH + localY + GameConstants.GROUND_OFFSET_Y + (source.height - colliderH) * 0.5f;
+
+                groundTiles.add(new Rectangle(gameX, gameY, colliderW, colliderH));
+                addedCustomCollider = true;
+            }
+        }
+
+        if (!addedCustomCollider) {
+            float colliderW = tileW * GameConstants.GROUND_WIDTH_SCALE;
+            float colliderH = tileH * GameConstants.GROUND_HEIGHT_SCALE;
+            float gameX = col * tileW + GameConstants.GROUND_OFFSET_X + (tileW - colliderW) * 0.5f;
+            float gameY = row * tileH + GameConstants.GROUND_OFFSET_Y + (tileH - colliderH) * 0.5f;
+            groundTiles.add(new Rectangle(gameX, gameY, colliderW, colliderH));
+        }
+    }
+
+    // This method loads extra block colliders from the block object layer and adds
+    // them to the ground set.
     private void loadBlockColliders() {
-    MapLayer blockLayer = map.getLayers().get("block");
+        MapLayer blockLayer = map.getLayers().get("block");
 
-    if (blockLayer == null) {
-        System.out.println("⚠️ block layer not found!");
-        return;
-    }
-
-    blockTiles.clear();
-
-    System.out.println("Block object count: " + blockLayer.getObjects().getCount());
-
-    for (MapObject obj : blockLayer.getObjects()) {
-        if (obj instanceof RectangleMapObject) {
-            Rectangle source = ((RectangleMapObject) obj).getRectangle();
-
-            Rectangle rect = new Rectangle(
-                    source.x,
-                    source.y,
-                    source.width,
-                    source.height
-            );
-
-            blockTiles.add(rect);
-            groundTiles.add(rect);
-
-            System.out.println("Loaded block rect -> x:" + rect.x +
-                    " y:" + rect.y +
-                    " w:" + rect.width +
-                    " h:" + rect.height);
+        if (blockLayer == null) {
+            System.out.println("⚠️ block layer not found!");
+            return;
         }
-    }
 
-    System.out.println("Final block collider count: " + blockTiles.size);
-}
+        blockTiles.clear();
+
+        System.out.println("Block object count: " + blockLayer.getObjects().getCount());
+
+        for (MapObject obj : blockLayer.getObjects()) {
+            if (obj instanceof RectangleMapObject) {
+                Rectangle source = ((RectangleMapObject) obj).getRectangle();
+
+                Rectangle rect = new Rectangle(
+                        source.x,
+                        source.y,
+                        source.width,
+                        source.height);
+
+                blockTiles.add(rect);
+                groundTiles.add(rect);
+
+                System.out.println("Loaded block rect -> x:" + rect.x +
+                        " y:" + rect.y +
+                        " w:" + rect.width +
+                        " h:" + rect.height);
+            }
+        }
+
+        System.out.println("Final block collider count: " + blockTiles.size);
+    }
 
     // This method delegates hazard loading to the hazard system.
     private void loadHazards() {
@@ -214,7 +244,8 @@ public class FirstScreen implements Screen {
         buttonSystem.loadLiftVisualLayer(map);
     }
 
-    // This method locates the closed and open door layers and sets their initial visibility.
+    // This method locates the closed and open door layers and sets their initial
+    // visibility.
     private void loadDoorLayers() {
         doorClosedLayer = map.getLayers().get("door_closed");
         doorOpenLayer = map.getLayers().get("door_open");
@@ -239,7 +270,8 @@ public class FirstScreen implements Screen {
         coinSystem.loadCoins(map);
     }
 
-    // This method runs the main frame update, rendering, HUD drawing, and optional debug overlay.
+    // This method runs the main frame update, rendering, HUD drawing, and optional
+    // debug overlay.
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
@@ -367,7 +399,8 @@ public class FirstScreen implements Screen {
         }
     }
 
-    // This method updates the per-player coin totals using the owner-specific coin rules.
+    // This method updates the per-player coin totals using the owner-specific coin
+    // rules.
     private void updateCoins() {
         if (player1 != null) {
             pumpkinCoinCount += coinSystem.checkCollection(player1, Coin.CoinOwner.PUMPKIN);
@@ -378,7 +411,8 @@ public class FirstScreen implements Screen {
         }
     }
 
-    // This method checks whether either player touched a hazard and records the resulting loss message.
+    // This method checks whether either player touched a hazard and records the
+    // resulting loss message.
     private void checkHazards() {
         String hazardMessage = hazardSystem.checkHazards(player1, player2);
         if (hazardMessage != null) {
@@ -387,7 +421,8 @@ public class FirstScreen implements Screen {
         }
     }
 
-    // This method checks whether both players reached the finish zone and opens the door on success.
+    // This method checks whether both players reached the finish zone and opens the
+    // door on success.
     private void checkDoor() {
         if (finishZone == null || player1 == null || player2 == null) {
             return;
@@ -418,7 +453,8 @@ public class FirstScreen implements Screen {
         buttonSystem.reset();
     }
 
-    // This method restores players, door state, lift state, and coin progress for a fresh run.
+    // This method restores players, door state, lift state, and coin progress for a
+    // fresh run.
     private void resetGame() {
         if (player1 != null) {
             player1.respawn();
@@ -452,17 +488,21 @@ public class FirstScreen implements Screen {
 
     // This method is called when the application is paused.
     @Override
-    public void pause() { }
+    public void pause() {
+    }
 
     // This method is called when the application resumes from a paused state.
     @Override
-    public void resume() { }
+    public void resume() {
+    }
 
     // This method is called when the screen is no longer the active screen.
     @Override
-    public void hide() { }
+    public void hide() {
+    }
 
-    // This method disposes all rendering resources and player/coin textures owned by the screen.
+    // This method disposes all rendering resources and player/coin textures owned
+    // by the screen.
     @Override
     public void dispose() {
         map.dispose();
