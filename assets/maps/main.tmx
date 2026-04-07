@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="19" nextobjectid="70">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="20" nextobjectid="80">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="1025" source="lava_water.tsx"/>
  <tileset firstgid="1074" source="background.tsx"/>
@@ -88,6 +88,48 @@
    eJx7z8qw4D0rAwOdcQIQL2CgMxhoe1vYBsbeKmCYw/B3AhgZZLNBMLn2kuvufawIvJ+VsHpq2YvPPaxsqJhYezkYqe0a/PYeYCUdEwOikPxM7XCGxTOMRmYjp4OBzr/Y5OgRv9jCAp1NjBip9tLMY3S0Fznvwtj70MJioP2L7C5kNjJNDXCZFYLp6d9LrANj7wOgfQ+hGGovWW2VG2wQjCx2iw2CiWnnAAA2rqpy
   </data>
  </layer>
+ <objectgroup id="19" name="coins">
+  <object id="70" name="coins" x="228.521" y="260.858" width="6.63685" height="6.02496">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
+  <object id="71" name="coins" x="324.858" y="260.946" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="74" name="coins" x="228" y="149.354" width="6.63685" height="6.02496">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
+  <object id="75" name="coins" x="293" y="149.354" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="76" name="coins" x="244" y="109" width="6.38932" height="4.93968">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
+  <object id="77" name="coins" x="180" y="109" width="6.38932" height="4.93968">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="78" name="coins" x="212.793" y="27" width="6.54912" height="5.09647">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
+  <object id="79" name="coins" x="287" y="29" width="6.54912" height="5.09647">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+ </objectgroup>
  <objectgroup id="9" name="interactions">
   <object id="49" name="plataform" x="16" y="175.457" width="47.5378" height="10.0966"/>
   <object id="63" name="lever" x="95.4821" y="109.517" width="16.7217" height="21.4495"/>

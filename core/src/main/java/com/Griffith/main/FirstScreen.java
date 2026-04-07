@@ -1,5 +1,10 @@
-package com.Griffith;
+package com.Griffith.main;
 
+import com.Griffith.Sprites.Button;
+import com.Griffith.Sprites.Coin;
+import com.Griffith.Sprites.Hazard;
+import com.Griffith.Sprites.Player;
+import com.Griffith.gameConstants.GameConstants;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -44,9 +49,7 @@ public class FirstScreen implements Screen {
     private Array<Rectangle> blockTiles = new Array<>();
 
     // Hazards
-    private Array<Rectangle> lavaZones = new Array<>();
-    private Array<Rectangle> waterZones = new Array<>();
-    private Array<Rectangle> spikeZones = new Array<>();
+    private final Hazard hazardSystem = new Hazard();
 
     // Door / finish
     private Rectangle door;
@@ -55,16 +58,10 @@ public class FirstScreen implements Screen {
     private MapLayer doorOpenLayer;
 
     // Lift system
-    private Array<Rectangle> buttonRects = new Array<>();
-    private Array<Rectangle> liftParts = new Array<>();
-    private Array<Float> liftStartYs = new Array<>();
-    private MapLayer liftVisualLayer;
-    private boolean liftActive = false;
-    private float lastLiftDeltaY = 0f;
-    private float liftVisualOffsetY = 0f;
-
-    private static final float LIFT_SPEED = 40f;
-    private static final float LIFT_TRAVEL_DISTANCE = 70f;
+    private final Button buttonSystem = new Button();
+    private final Coin coinSystem = new Coin();
+    private int pumpkinCoinCount = 0;
+    private int docCoinCount = 0;
 
     // Game state
     private boolean gameOver = false;
@@ -72,16 +69,7 @@ public class FirstScreen implements Screen {
     private boolean showCollisionDebug = false;
     private String message = "";
 
-    // Map dimensions
-    private static final float MAP_WIDTH = 30 * 16f;
-    private static final float MAP_HEIGHT = 20 * 16f;
-
-    // Ground collider tuning
-    private static final float GROUND_OFFSET_X = 0f;
-    private static final float GROUND_OFFSET_Y = 0f;
-    private static final float GROUND_WIDTH_SCALE = 1f;
-    private static final float GROUND_HEIGHT_SCALE = 1f;
-
+    // This method creates the screen resources and loads all map-driven gameplay data.
     @Override
     public void show() {
         TmxMapLoader.Parameters params = new TmxMapLoader.Parameters();
@@ -90,7 +78,7 @@ public class FirstScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(map);
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, MAP_WIDTH, MAP_HEIGHT);
+        camera.setToOrtho(false, GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT);
 
         batch = new SpriteBatch();
         font = new BitmapFont();
@@ -110,8 +98,10 @@ public class FirstScreen implements Screen {
         loadInteractions();
         loadLiftVisualLayer();
         loadDoorLayers();
+        loadCoins();
     }
 
+    // This method reads the player spawn points and the finish zone from the spawn object layer.
     private void loadSpawnObjects() {
         MapLayer spawnLayer = map.getLayers().get("spawn");
         if (spawnLayer != null) {
@@ -147,6 +137,7 @@ public class FirstScreen implements Screen {
         }
     }
 
+    // This method builds ground colliders from the map's ground tile layer.
     private void loadGround() {
         TiledMapTileLayer groundLayer = (TiledMapTileLayer) map.getLayers().get("groung");
         if (groundLayer != null) {
@@ -157,10 +148,10 @@ public class FirstScreen implements Screen {
                 for (int col = 0; col < groundLayer.getWidth(); col++) {
                     TiledMapTileLayer.Cell cell = groundLayer.getCell(col, row);
                     if (cell != null && cell.getTile() != null) {
-                        float colliderW = tileW * GROUND_WIDTH_SCALE;
-                        float colliderH = tileH * GROUND_HEIGHT_SCALE;
-                        float gameX = col * tileW + GROUND_OFFSET_X + (tileW - colliderW) * 0.5f;
-                        float gameY = row * tileH + GROUND_OFFSET_Y + (tileH - colliderH) * 0.5f;
+                        float colliderW = tileW * GameConstants.GROUND_WIDTH_SCALE;
+                        float colliderH = tileH * GameConstants.GROUND_HEIGHT_SCALE;
+                        float gameX = col * tileW + GameConstants.GROUND_OFFSET_X + (tileW - colliderW) * 0.5f;
+                        float gameY = row * tileH + GameConstants.GROUND_OFFSET_Y + (tileH - colliderH) * 0.5f;
                         groundTiles.add(new Rectangle(gameX, gameY, colliderW, colliderH));
                     }
                 }
@@ -171,6 +162,7 @@ public class FirstScreen implements Screen {
         }
     }
 
+    // This method loads extra block colliders from the block object layer and adds them to the ground set.
     private void loadBlockColliders() {
     MapLayer blockLayer = map.getLayers().get("block");
 
@@ -207,72 +199,22 @@ public class FirstScreen implements Screen {
     System.out.println("Final block collider count: " + blockTiles.size);
 }
 
+    // This method delegates hazard loading to the hazard system.
     private void loadHazards() {
-        MapLayer hazardLayer = map.getLayers().get("hazards");
-        if (hazardLayer != null) {
-            for (MapObject obj : hazardLayer.getObjects()) {
-                if (obj instanceof RectangleMapObject) {
-                    Rectangle source = ((RectangleMapObject) obj).getRectangle();
-                    Rectangle rect = new Rectangle(source.x, source.y, source.width, source.height);
-
-                    switch (obj.getName()) {
-                        case "lava":
-                            lavaZones.add(rect);
-                            break;
-                        case "water":
-                            waterZones.add(rect);
-                            break;
-                        case "spikes":
-                            spikeZones.add(rect);
-                            break;
-                    }
-                }
-            }
-        } else {
-            System.out.println("⚠️ Hazards layer not found!");
-        }
+        hazardSystem.loadHazards(map);
     }
 
+    // This method delegates button and lift collider loading to the button system.
     private void loadInteractions() {
-        MapLayer interactionLayer = map.getLayers().get("interactions");
-        if (interactionLayer == null) {
-            System.out.println("⚠️ interactions layer not found!");
-            return;
-        }
-
-        buttonRects.clear();
-        liftParts.clear();
-        liftStartYs.clear();
-
-        for (MapObject obj : interactionLayer.getObjects()) {
-            if (obj instanceof RectangleMapObject) {
-                Rectangle source = ((RectangleMapObject) obj).getRectangle();
-                Rectangle rect = new Rectangle(source.x, source.y, source.width, source.height);
-
-                if ("lever".equals(obj.getName())) {
-                    buttonRects.add(rect);
-                } else if ("plataform".equals(obj.getName())) {
-                    liftParts.add(rect);
-                    liftStartYs.add(rect.y);
-                }
-            }
-        }
-
-        System.out.println("Levers loaded: " + buttonRects.size);
-        System.out.println("Lift parts loaded: " + liftParts.size);
+        buttonSystem.loadInteractions(map);
     }
 
+    // This method delegates lift visual layer loading to the button system.
     private void loadLiftVisualLayer() {
-        liftVisualLayer = map.getLayers().get("lift_visual");
-
-        if (liftVisualLayer == null) {
-            System.out.println("⚠️ lift_visual layer not found!");
-        } else {
-            liftVisualLayer.setOffsetY(0f);
-            System.out.println("Lift visual layer loaded.");
-        }
+        buttonSystem.loadLiftVisualLayer(map);
     }
 
+    // This method locates the closed and open door layers and sets their initial visibility.
     private void loadDoorLayers() {
         doorClosedLayer = map.getLayers().get("door_closed");
         doorOpenLayer = map.getLayers().get("door_open");
@@ -292,6 +234,12 @@ public class FirstScreen implements Screen {
         }
     }
 
+    // This method delegates coin hitbox loading to the coin system.
+    private void loadCoins() {
+        coinSystem.loadCoins(map);
+    }
+
+    // This method runs the main frame update, rendering, HUD drawing, and optional debug overlay.
     @Override
     public void render(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
@@ -309,7 +257,7 @@ public class FirstScreen implements Screen {
         if (!gameOver && !levelComplete) {
             Array<Rectangle> activeGround = new Array<>();
             activeGround.addAll(groundTiles);
-            activeGround.addAll(liftParts);
+            buttonSystem.addLiftParts(activeGround);
 
             if (player1 != null) {
                 player1.update(delta, activeGround);
@@ -318,15 +266,9 @@ public class FirstScreen implements Screen {
                 player2.update(delta, activeGround);
             }
 
-            updateLift(delta);
+            buttonSystem.update(delta, player1, player2);
 
-            if (player1 != null) {
-                applyLiftCarry(player1);
-            }
-            if (player2 != null) {
-                applyLiftCarry(player2);
-            }
-
+            updateCoins();
             checkHazards();
             checkDoor();
         }
@@ -346,12 +288,15 @@ public class FirstScreen implements Screen {
             player2.draw(batch);
         }
 
+        coinSystem.draw(batch);
+
         font.setColor(Color.WHITE);
         font.draw(batch, "Player1: A/D/W | Player2: Arrows | R: Restart | F3: Debug", 10, 15);
+        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10, 35);
 
         if (!message.isEmpty()) {
             font.setColor(Color.YELLOW);
-            font.draw(batch, message, MAP_WIDTH / 2 - 120, MAP_HEIGHT / 2);
+            font.draw(batch, message, GameConstants.MAP_WIDTH / 2 - 120, GameConstants.MAP_HEIGHT / 2);
         }
 
         batch.end();
@@ -377,28 +322,31 @@ public class FirstScreen implements Screen {
 
             // lift
             debugRenderer.setColor(Color.ORANGE);
-            for (Rectangle lift : liftParts) {
+            for (Rectangle lift : buttonSystem.getLiftParts()) {
                 debugRenderer.rect(lift.x, lift.y, lift.width, lift.height);
             }
 
             // buttons
             debugRenderer.setColor(Color.PINK);
-            for (Rectangle button : buttonRects) {
+            for (Rectangle button : buttonSystem.getButtonRects()) {
                 debugRenderer.rect(button.x, button.y, button.width, button.height);
             }
 
+            // lava
             debugRenderer.setColor(Color.RED);
-            for (Rectangle lava : lavaZones) {
+            for (Rectangle lava : hazardSystem.getLavaZones()) {
                 debugRenderer.rect(lava.x, lava.y, lava.width, lava.height);
             }
 
+            // water
             debugRenderer.setColor(Color.CYAN);
-            for (Rectangle water : waterZones) {
+            for (Rectangle water : hazardSystem.getWaterZones()) {
                 debugRenderer.rect(water.x, water.y, water.width, water.height);
             }
 
+            // spikes
             debugRenderer.setColor(Color.YELLOW);
-            for (Rectangle spikes : spikeZones) {
+            for (Rectangle spikes : hazardSystem.getSpikeZones()) {
                 debugRenderer.rect(spikes.x, spikes.y, spikes.width, spikes.height);
             }
 
@@ -419,133 +367,27 @@ public class FirstScreen implements Screen {
         }
     }
 
-    private void updateLift(float delta) {
-        lastLiftDeltaY = 0f;
-
-        if (buttonRects.size == 0 || liftParts.size == 0) {
-            return;
+    // This method updates the per-player coin totals using the owner-specific coin rules.
+    private void updateCoins() {
+        if (player1 != null) {
+            pumpkinCoinCount += coinSystem.checkCollection(player1, Coin.CoinOwner.PUMPKIN);
         }
 
-        boolean anyPlayerOnButton = false;
-
-        for (Rectangle button : buttonRects) {
-            boolean player1OnButton = player1 != null && player1.getBounds().overlaps(button);
-            boolean player2OnButton = player2 != null && player2.getBounds().overlaps(button);
-
-            if (player1OnButton || player2OnButton) {
-                anyPlayerOnButton = true;
-                break;
-            }
-        }
-
-        liftActive = anyPlayerOnButton;
-
-        float moveAmount = LIFT_SPEED * delta;
-
-        if (liftActive) {
-            float allowedMove = moveAmount;
-
-            for (int i = 0; i < liftParts.size; i++) {
-                float currentY = liftParts.get(i).y;
-                float maxY = liftStartYs.get(i) + LIFT_TRAVEL_DISTANCE;
-                float remaining = maxY - currentY;
-                if (remaining < allowedMove) {
-                    allowedMove = remaining;
-                }
-            }
-
-            if (allowedMove > 0f) {
-                for (Rectangle part : liftParts) {
-                    part.y += allowedMove;
-                }
-                liftVisualOffsetY += allowedMove;
-                applyLiftVisualOffset();
-                lastLiftDeltaY = allowedMove;
-            }
-        } else {
-            float allowedMove = moveAmount;
-
-            for (int i = 0; i < liftParts.size; i++) {
-                float currentY = liftParts.get(i).y;
-                float minY = liftStartYs.get(i);
-                float remaining = currentY - minY;
-                if (remaining < allowedMove) {
-                    allowedMove = remaining;
-                }
-            }
-
-            if (allowedMove > 0f) {
-                for (Rectangle part : liftParts) {
-                    part.y -= allowedMove;
-                }
-                liftVisualOffsetY -= allowedMove;
-                applyLiftVisualOffset();
-                lastLiftDeltaY = -allowedMove;
-            }
+        if (player2 != null) {
+            docCoinCount += coinSystem.checkCollection(player2, Coin.CoinOwner.DOC);
         }
     }
 
-    private void applyLiftVisualOffset() {
-        if (liftVisualLayer != null) {
-            liftVisualLayer.setOffsetY(-liftVisualOffsetY);
-        }
-    }
-
-    private void applyLiftCarry(Player player) {
-        if (player == null || lastLiftDeltaY == 0f || liftParts.size == 0) {
-            return;
-        }
-
-        Rectangle p = player.getBounds();
-
-        for (Rectangle part : liftParts) {
-            boolean standingOnTop =
-                    p.x + p.width > part.x &&
-                    p.x < part.x + part.width &&
-                    Math.abs(p.y - (part.y + part.height)) < 4f &&
-                    player.velocityY <= 0;
-
-            if (standingOnTop) {
-                player.moveBy(0f, lastLiftDeltaY);
-                break;
-            }
-        }
-    }
-
+    // This method checks whether either player touched a hazard and records the resulting loss message.
     private void checkHazards() {
-        for (Rectangle water : waterZones) {
-            if (player1 != null && !player1.isDead && player1.getBounds().overlaps(water)) {
-                player1.die();
-                gameOver = true;
-                message = "Player1 fell into water! Press R to restart.";
-            }
-        }
-
-        for (Rectangle spike : spikeZones) {
-            if (player1 != null && !player1.isDead && player1.getBounds().overlaps(spike)) {
-                player1.die();
-                gameOver = true;
-                message = "Player1 hit spikes! Press R to restart.";
-            }
-        }
-
-        for (Rectangle lava : lavaZones) {
-            if (player2 != null && !player2.isDead && player2.getBounds().overlaps(lava)) {
-                player2.die();
-                gameOver = true;
-                message = "Player2 fell into lava! Press R to restart.";
-            }
-        }
-
-        for (Rectangle spike : spikeZones) {
-            if (player2 != null && !player2.isDead && player2.getBounds().overlaps(spike)) {
-                player2.die();
-                gameOver = true;
-                message = "Player2 hit spikes! Press R to restart.";
-            }
+        String hazardMessage = hazardSystem.checkHazards(player1, player2);
+        if (hazardMessage != null) {
+            gameOver = true;
+            message = hazardMessage;
         }
     }
 
+    // This method checks whether both players reached the finish zone and opens the door on success.
     private void checkDoor() {
         if (finishZone == null || player1 == null || player2 == null) {
             return;
@@ -571,18 +413,12 @@ public class FirstScreen implements Screen {
         }
     }
 
+    // This method resets the lift system back to its initial state.
     private void resetLift() {
-        for (int i = 0; i < liftParts.size; i++) {
-            liftParts.get(i).y = liftStartYs.get(i);
-        }
-
-        liftVisualOffsetY = 0f;
-        applyLiftVisualOffset();
-
-        liftActive = false;
-        lastLiftDeltaY = 0f;
+        buttonSystem.reset();
     }
 
+    // This method restores players, door state, lift state, and coin progress for a fresh run.
     private void resetGame() {
         if (player1 != null) {
             player1.respawn();
@@ -603,22 +439,30 @@ public class FirstScreen implements Screen {
         gameOver = false;
         levelComplete = false;
         message = "";
+        coinSystem.reset();
+        pumpkinCoinCount = 0;
+        docCoinCount = 0;
     }
 
+    // This method updates the camera viewport when the window size changes.
     @Override
     public void resize(int width, int height) {
-        camera.setToOrtho(false, MAP_WIDTH, MAP_HEIGHT);
+        camera.setToOrtho(false, GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT);
     }
 
+    // This method is called when the application is paused.
     @Override
     public void pause() { }
 
+    // This method is called when the application resumes from a paused state.
     @Override
     public void resume() { }
 
+    // This method is called when the screen is no longer the active screen.
     @Override
     public void hide() { }
 
+    // This method disposes all rendering resources and player/coin textures owned by the screen.
     @Override
     public void dispose() {
         map.dispose();
@@ -633,5 +477,6 @@ public class FirstScreen implements Screen {
         if (player2 != null) {
             player2.dispose();
         }
+        coinSystem.dispose();
     }
 }
