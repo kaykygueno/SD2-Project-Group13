@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
-// This class represents the player character in the game, handling movement, jumping, and collision with the environment.
 public class Player {
 
     public float x, y;
@@ -27,6 +26,7 @@ public class Player {
 
     private float spawnX, spawnY;
 
+    // This constructor stores the spawn setup, input bindings, and sprite used by the player.
     public Player(float x, float y, String texturePath, int leftKey, int rightKey, int jumpKey) {
         this.x = x;
         this.y = y;
@@ -39,9 +39,9 @@ public class Player {
         this.bounds = new Rectangle(x, y, WIDTH, HEIGHT);
     }
 
+    // This method handles player input, gravity, and collisions with the current ground colliders.
     public void update(float delta, Array<Rectangle> ground) {
-        if (isDead)
-            return;
+        if (isDead) return;
 
         float moveX = 0f;
         if (Gdx.input.isKeyPressed(leftKey)) {
@@ -98,23 +98,27 @@ public class Player {
         }
     }
 
+    // This method shifts the player by the given offset, which is used when a lift carries the player.
     public void moveBy(float dx, float dy) {
         x += dx;
         y += dy;
         bounds.setPosition(x, y);
     }
 
+    // This method draws the player sprite when the player is alive.
     public void draw(SpriteBatch batch) {
         if (!isDead) {
             batch.draw(texture, x, y, WIDTH, HEIGHT);
         }
     }
 
+    // This method marks the player as dead and stops vertical movement.
     public void die() {
         isDead = true;
         velocityY = 0;
     }
 
+    // This method returns the player to its original spawn position and clears death state.
     public void respawn() {
         x = spawnX;
         y = spawnY;
@@ -124,14 +128,17 @@ public class Player {
         bounds.setPosition(x, y);
     }
 
+    // This method manually sets whether the player is considered grounded.
     public void setOnGround(boolean val) {
         this.onGround = val;
     }
 
+    // This method returns the player's collision bounds.
     public Rectangle getBounds() {
         return bounds;
     }
 
+    // This method releases the player texture when the screen is disposed.
     public void dispose() {
         texture.dispose();
     }
