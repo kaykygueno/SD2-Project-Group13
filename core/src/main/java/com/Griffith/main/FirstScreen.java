@@ -57,6 +57,11 @@ public class FirstScreen implements Screen {
     private boolean levelComplete = false;
     private boolean showCollisionDebug = false;
     private String message = "";
+    private Main game;
+
+    public FirstScreen(Main game) {
+        this.game = game;
+    }
 
     // Map dimensions
     @Override
@@ -67,6 +72,7 @@ public class FirstScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(map);
 
         camera = new OrthographicCamera();
+      
         camera.setToOrtho(false, GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT);
 
         batch = new SpriteBatch();
@@ -123,6 +129,14 @@ public class FirstScreen implements Screen {
     // This method is called every frame to update the game logic
     @Override
     public void render(float delta) {
+
+        batch.setProjectionMatrix(camera.combined);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        game.setScreen(new MenuScreen(game));
+        return;
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             resetGame();
         }
@@ -278,8 +292,8 @@ public class FirstScreen implements Screen {
         levelComplete = false;
         message = "";
     }
-
-    @Override
+            
+    @Override //Angelo: This method is called when the screen is resized, and it updates the camera's viewport to match the new screen size.
     public void resize(int width, int height) {
         camera.setToOrtho(false, GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT);
     }
