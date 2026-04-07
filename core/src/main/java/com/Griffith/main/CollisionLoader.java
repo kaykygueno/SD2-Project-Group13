@@ -23,10 +23,10 @@ public class CollisionLoader {
         return new CollisionData(groundTiles, blockTiles);
     }
 
-    // This method loads the ground tiles from the "groung" layer of the TiledMap
+    // This method loads the ground tiles from the "ground" layer of the TiledMap
     // and creates colliders for them
     private void loadGround(TiledMap map, Array<Rectangle> groundTiles) {
-        TiledMapTileLayer groundLayer = (TiledMapTileLayer) map.getLayers().get("groung");
+        TiledMapTileLayer groundLayer = (TiledMapTileLayer) map.getLayers().get("ground");
         if (groundLayer != null) {
             float tileW = groundLayer.getTileWidth();
             float tileH = groundLayer.getTileHeight();
@@ -41,7 +41,7 @@ public class CollisionLoader {
             }
             System.out.println("Ground tiles loaded: " + groundTiles.size);
         } else {
-            System.out.println("⚠️ Ground layer 'groung' not found!");
+            System.out.println("⚠️ Ground layer 'ground' not found!");
         }
     }
 
@@ -87,7 +87,7 @@ public class CollisionLoader {
         MapLayer blockLayer = map.getLayers().get("block");
 
         if (blockLayer == null) {
-            System.out.println("⚠️ block layer not found!");
+            System.out.println("⚠️ Block layer 'block' not found!");
             return;
         }
 
