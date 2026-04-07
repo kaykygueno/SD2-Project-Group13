@@ -7,7 +7,8 @@ import com.Griffith.main.Main;
 public class Lwjgl3Launcher {
     // This method starts the desktop application, restarting the JVM first when required by the platform.
     public static void main(String[] args) {
-        if (StartupHelper.startNewJvmIfRequired()) return; 
+        if (StartupHelper.startNewJvmIfRequired())
+            return;
         createApplication();
     }
 
@@ -22,7 +23,7 @@ public class Lwjgl3Launcher {
         configuration.setTitle("FireBoy_WaterGirl");
 
         configuration.useVsync(true);
-        
+
         configuration.setForegroundFPS(Lwjgl3ApplicationConfiguration.getDisplayMode().refreshRate + 1);
 
         configuration.setWindowedMode(640, 480);

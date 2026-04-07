@@ -1,5 +1,6 @@
 package com.Griffith.Sprites;
 
+import com.Griffith.gameConstants.GameConstants;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
