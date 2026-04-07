@@ -7,13 +7,13 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
-// This class is responsible for handling the hazard zones in the game, such as lava, water, and spikes
 public class Hazard {
 
     private final Array<Rectangle> lavaZones = new Array<>();
     private final Array<Rectangle> waterZones = new Array<>();
     private final Array<Rectangle> spikeZones = new Array<>();
 
+    // This method loads the lava, water, and spike hazard rectangles from the map.
     public void loadHazards(TiledMap map) {
         lavaZones.clear();
         waterZones.clear();
@@ -44,6 +44,7 @@ public class Hazard {
         }
     }
 
+    // This method checks both players against their hazards and returns the appropriate game-over message.
     public String checkHazards(Player player1, Player player2) {
         for (Rectangle water : waterZones) {
             if (player1 != null && !player1.isDead && player1.getBounds().overlaps(water)) {
@@ -76,14 +77,17 @@ public class Hazard {
         return null;
     }
 
+    // This method exposes the lava hazard rectangles for debug rendering.
     public Array<Rectangle> getLavaZones() {
         return lavaZones;
     }
 
+    // This method exposes the water hazard rectangles for debug rendering.
     public Array<Rectangle> getWaterZones() {
         return waterZones;
     }
 
+    // This method exposes the spike hazard rectangles for debug rendering.
     public Array<Rectangle> getSpikeZones() {
         return spikeZones;
     }

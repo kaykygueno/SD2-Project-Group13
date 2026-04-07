@@ -8,8 +8,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
-// This class is responsible for handling button interactions and lift mechanics in the game.
-
 public class Button {
 
     private final Array<Rectangle> buttonRects = new Array<>();
@@ -21,6 +19,10 @@ public class Button {
     private float lastLiftDeltaY = 0f;
     private float liftVisualOffsetY = 0f;
 
+    private static final float LIFT_SPEED = 40f;
+    private static final float LIFT_TRAVEL_DISTANCE = 70f;
+
+    // This method loads the button and lift rectangles from the interactions layer of the map.
     public void loadInteractions(TiledMap map) {
         MapLayer interactionLayer = map.getLayers().get("interactions");
         if (interactionLayer == null) {
@@ -50,6 +52,7 @@ public class Button {
         System.out.println("Lift parts loaded: " + liftParts.size);
     }
 
+    // This method locates the lift visual layer so the moving platform graphics can be offset with the collider.
     public void loadLiftVisualLayer(TiledMap map) {
         liftVisualLayer = map.getLayers().get("lift_visual");
 
@@ -61,10 +64,12 @@ public class Button {
         }
     }
 
+    // This method appends the current lift colliders to the provided ground list for player collision checks.
     public void addLiftParts(Array<Rectangle> target) {
         target.addAll(liftParts);
     }
 
+    // This method updates lift movement and carries any player standing on top of the lift.
     public void update(float delta, Player player1, Player player2) {
         updateLift(delta, player1, player2);
 
@@ -76,14 +81,17 @@ public class Button {
         }
     }
 
+    // This method exposes the button rectangles for debug drawing and external checks.
     public Array<Rectangle> getButtonRects() {
         return buttonRects;
     }
 
+    // This method exposes the lift colliders for debug drawing and ground composition.
     public Array<Rectangle> getLiftParts() {
         return liftParts;
     }
 
+    // This method restores the lift to its original position and clears its movement state.
     public void reset() {
         for (int i = 0; i < liftParts.size; i++) {
             liftParts.get(i).y = liftStartYs.get(i);
@@ -96,6 +104,7 @@ public class Button {
         lastLiftDeltaY = 0f;
     }
 
+    // This method moves the lift up or down depending on whether any player is pressing a button.
     private void updateLift(float delta, Player player1, Player player2) {
         lastLiftDeltaY = 0f;
 
@@ -117,14 +126,14 @@ public class Button {
 
         liftActive = anyPlayerOnButton;
 
-        float moveAmount = GameConstants.LIFT_SPEED * delta;
+        float moveAmount = LIFT_SPEED * delta;
 
         if (liftActive) {
             float allowedMove = moveAmount;
 
             for (int i = 0; i < liftParts.size; i++) {
                 float currentY = liftParts.get(i).y;
-                float maxY = liftStartYs.get(i) + GameConstants.LIFT_TRAVEL_DISTANCE;
+                float maxY = liftStartYs.get(i) + LIFT_TRAVEL_DISTANCE;
                 float remaining = maxY - currentY;
                 if (remaining < allowedMove) {
                     allowedMove = remaining;
@@ -162,12 +171,14 @@ public class Button {
         }
     }
 
+    // This method applies the accumulated visual offset to the lift tile layer.
     private void applyLiftVisualOffset() {
         if (liftVisualLayer != null) {
             liftVisualLayer.setOffsetY(-liftVisualOffsetY);
         }
     }
 
+    // This method moves a player together with the lift when the player is standing on top of it.
     private void applyLiftCarry(Player player) {
         if (player == null || lastLiftDeltaY == 0f || liftParts.size == 0) {
             return;
@@ -176,7 +187,8 @@ public class Button {
         Rectangle p = player.getBounds();
 
         for (Rectangle part : liftParts) {
-            boolean standingOnTop = p.x + p.width > part.x &&
+            boolean standingOnTop =
+                    p.x + p.width > part.x &&
                     p.x < part.x + part.width &&
                     Math.abs(p.y - (part.y + part.height)) < 4f &&
                     player.velocityY <= 0;
