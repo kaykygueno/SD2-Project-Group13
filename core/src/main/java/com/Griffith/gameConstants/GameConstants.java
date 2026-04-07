@@ -5,7 +5,7 @@ public final class GameConstants {
     }
 
     public static final float MAP_WIDTH = 30 * 16f;
-    public static final float MAP_HEIGHT = 20 * 16f;
+    public static final float MAP_HEIGHT = 20 * 17f;
 
     public static final float LIFT_SPEED = 40f;
     public static final float LIFT_TRAVEL_DISTANCE = 70f;

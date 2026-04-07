@@ -183,7 +183,7 @@ public class FirstScreen implements Screen {
         }
 
         font.setColor(Color.WHITE);
-        font.draw(batch, "Player1: A/D/W | Player2: Arrows | R: Restart | F3: Debug", 10, 15);
+        font.draw(batch, "Player1: A/D/W | Player2: Arrows | R: Restart | F3: Debug", 10, 335);
 
         if (!message.isEmpty()) {
             font.setColor(Color.YELLOW);
