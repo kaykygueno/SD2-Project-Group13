@@ -337,8 +337,8 @@ public class FirstScreen implements Screen {
         coinSystem.draw(batch);
 
         font.setColor(Color.WHITE);
-        font.draw(batch, "Player1: A/D/W | Player2: Arrows | R: Restart | F3: Debug", 10, 15);
-        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10, 35);
+        font.draw(batch, "P1: A/D/W | P2: Arrows | R: Reset | F3: Debug", 10, 338);
+        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10, 355);
 
         if (!message.isEmpty()) {
             font.setColor(Color.YELLOW);
