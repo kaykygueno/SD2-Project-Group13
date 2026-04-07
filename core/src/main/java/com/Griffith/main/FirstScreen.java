@@ -68,6 +68,11 @@ public class FirstScreen implements Screen {
     private boolean levelComplete = false;
     private boolean showCollisionDebug = false;
     private String message = "";
+    private Main game;
+
+    public FirstScreen(Main game) {
+        this.game = game;
+    }
 
     // This method creates the screen resources and loads all map-driven gameplay
     // data.
@@ -79,6 +84,7 @@ public class FirstScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(map);
 
         camera = new OrthographicCamera();
+      
         camera.setToOrtho(false, GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT);
 
         batch = new SpriteBatch();
@@ -274,6 +280,14 @@ public class FirstScreen implements Screen {
     // debug overlay.
     @Override
     public void render(float delta) {
+
+        batch.setProjectionMatrix(camera.combined);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        game.setScreen(new MenuScreen(game));
+        return;
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             resetGame();
         }
@@ -323,8 +337,8 @@ public class FirstScreen implements Screen {
         coinSystem.draw(batch);
 
         font.setColor(Color.WHITE);
-        font.draw(batch, "Player1: A/D/W | Player2: Arrows | R: Restart | F3: Debug", 10, 15);
-        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10, 35);
+        font.draw(batch, "P1: A/D/W | P2: Arrows | R: Reset | F3: Debug", 10, 338);
+        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10, 355);
 
         if (!message.isEmpty()) {
             font.setColor(Color.YELLOW);
