@@ -2,11 +2,32 @@ package com.Griffith.Sprites;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
 public class Player {
+
+    private enum AnimationState {
+        IDLE,
+        RUN,
+        JUMP,
+        FALL,
+        DEATH,
+        RESPAWN
+    }
+
+    private static final String PUMPKIN_TEXTURE_PATH = "maps/images/Others/pumpkin_dudeCopy.png";
+    private static final String DOC_TEXTURE_PATH = "maps/images/Others/docCopy.png";
+    private static final String ANIMATION_FRAME_ROOT =
+            "maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/frames/";
+    private static final float ANIMATION_FRAME_DURATION = 0.12f;
+    private static final float RUN_THRESHOLD = 0.01f;
+    private static final float AIR_STATE_THRESHOLD = 15f;
+    private static final float DEATH_ANIMATION_DURATION = 0.7f;
+    private static final float RESPAWN_ANIMATION_DURATION = 0.7f;
 
     public float x, y;
     public float velocityY;
@@ -21,12 +42,25 @@ public class Player {
     private int leftKey, rightKey, jumpKey;
     private boolean onGround = false;
 
-    private Texture texture;
     public Rectangle bounds;
+    private final Array<Texture> ownedTextures = new Array<>();
+    private Animation<TextureRegion> idleAnimation;
+    private Animation<TextureRegion> runAnimation;
+    private TextureRegion staticFrame;
+    private TextureRegion jumpFrame;
+    private TextureRegion fallFrame;
+    private TextureRegion deathFrame;
+    private TextureRegion respawnFrame;
+    private AnimationState animationState = AnimationState.IDLE;
+    private float animationTime = 0f;
+    private float deathAnimationTime = 0f;
+    private float respawnAnimationTime = 0f;
+    private float lastMoveX = 0f;
+    private boolean facingRight = true;
 
     private float spawnX, spawnY;
 
-    // This constructor stores the spawn setup, input bindings, and sprite used by the player.
+    // Sets up the player at its spawn point, hooks up the controls, and loads the visuals.
     public Player(float x, float y, String texturePath, int leftKey, int rightKey, int jumpKey) {
         this.x = x;
         this.y = y;
@@ -35,11 +69,13 @@ public class Player {
         this.leftKey = leftKey;
         this.rightKey = rightKey;
         this.jumpKey = jumpKey;
-        this.texture = new Texture(texturePath);
+        loadAnimations(texturePath);
         this.bounds = new Rectangle(x, y, WIDTH, HEIGHT);
+        setAnimationState(AnimationState.RESPAWN);
+        respawnAnimationTime = RESPAWN_ANIMATION_DURATION;
     }
 
-    // This method handles player input, gravity, and collisions with the current ground colliders.
+    // Runs one frame of movement, jumping, gravity, collision checks, and animation state updates.
     public void update(float delta, Array<Rectangle> ground) {
         if (isDead) return;
 
@@ -49,6 +85,13 @@ public class Player {
         }
         if (Gdx.input.isKeyPressed(rightKey)) {
             moveX += SPEED * delta;
+        }
+
+        lastMoveX = moveX;
+        if (moveX < 0f) {
+            facingRight = false;
+        } else if (moveX > 0f) {
+            facingRight = true;
         }
 
         x += moveX;
@@ -96,29 +139,74 @@ public class Player {
             onGround = true;
             bounds.setPosition(x, y);
         }
+
+        setAnimationState(selectAnimationState());
     }
 
-    // This method shifts the player by the given offset, which is used when a lift carries the player.
+    // Moves the player by a fixed offset, mainly so lifts can carry them around.
     public void moveBy(float dx, float dy) {
         x += dx;
         y += dy;
         bounds.setPosition(x, y);
     }
 
-    // This method draws the player sprite when the player is alive.
+    // Draws the current player frame, or the vapor effect if the player has just died.
     public void draw(SpriteBatch batch) {
-        if (!isDead) {
-            batch.draw(texture, x, y, WIDTH, HEIGHT);
+        advanceAnimation(Gdx.graphics.getDeltaTime());
+
+        if (animationState == AnimationState.DEATH) {
+            drawEvaporation(batch);
+            return;
         }
+
+        TextureRegion currentFrame = getCurrentFrame();
+        if (currentFrame == null) {
+            return;
+        }
+
+        float originalR = batch.getColor().r;
+        float originalG = batch.getColor().g;
+        float originalB = batch.getColor().b;
+        float originalA = batch.getColor().a;
+        float rotation = 0f;
+        float drawX = x;
+        float drawY = y;
+        float scaleX = facingRight ? 1f : -1f;
+        float scaleY = 1f;
+
+        if (animationState == AnimationState.RESPAWN) {
+            float pulse = 0.65f + 0.35f
+                    * Math.abs((float) Math.sin((RESPAWN_ANIMATION_DURATION - respawnAnimationTime) * 18f));
+            batch.setColor(1f, 1f, 1f, pulse);
+        }
+
+        batch.draw(
+                currentFrame,
+                drawX,
+                drawY,
+                WIDTH * 0.5f,
+                HEIGHT * 0.5f,
+                WIDTH,
+                HEIGHT,
+                scaleX,
+                scaleY,
+                rotation);
+
+        batch.setColor(originalR, originalG, originalB, originalA);
     }
 
-    // This method marks the player as dead and stops vertical movement.
+    // Puts the player into the death state and kicks off the evaporation effect.
     public void die() {
+        if (isDead) {
+            return;
+        }
         isDead = true;
         velocityY = 0;
+        deathAnimationTime = 0f;
+        setAnimationState(AnimationState.DEATH);
     }
 
-    // This method returns the player to its original spawn position and clears death state.
+    // Sends the player back to spawn and starts the short respawn flash.
     public void respawn() {
         x = spawnX;
         y = spawnY;
@@ -126,20 +214,205 @@ public class Player {
         isDead = false;
         onGround = false;
         bounds.setPosition(x, y);
+        deathAnimationTime = 0f;
+        respawnAnimationTime = RESPAWN_ANIMATION_DURATION;
+        setAnimationState(AnimationState.RESPAWN);
     }
 
-    // This method manually sets whether the player is considered grounded.
+    // Lets other systems override whether the player should count as grounded.
     public void setOnGround(boolean val) {
         this.onGround = val;
     }
 
-    // This method returns the player's collision bounds.
+    // Gives back the collision rectangle used by the rest of the game.
     public Rectangle getBounds() {
         return bounds;
     }
 
-    // This method releases the player texture when the screen is disposed.
+    // Cleans up every texture this player loaded.
     public void dispose() {
-        texture.dispose();
+        for (Texture texture : ownedTextures) {
+            texture.dispose();
+        }
+    }
+
+    // Loads the base sprite plus any matching idle and run frames for this character.
+    private void loadAnimations(String texturePath) {
+        Texture texture = new Texture(texturePath);
+        ownedTextures.add(texture);
+        staticFrame = new TextureRegion(texture);
+
+        String characterKey = resolveCharacterKey(texturePath);
+        if (characterKey == null) {
+            initializeFallbackAnimations();
+            return;
+        }
+
+        Array<TextureRegion> idleFrames = loadFrameSequence(characterKey, "idle");
+        Array<TextureRegion> runFrames = loadFrameSequence(characterKey, "run");
+
+        if (idleFrames.size == 0) {
+            idleFrames.add(staticFrame);
+        }
+        if (runFrames.size == 0) {
+            runFrames.add(idleFrames.first());
+        }
+
+        idleAnimation = new Animation<>(ANIMATION_FRAME_DURATION, idleFrames, Animation.PlayMode.LOOP);
+        runAnimation = new Animation<>(ANIMATION_FRAME_DURATION, runFrames, Animation.PlayMode.LOOP);
+
+        jumpFrame = runFrames.get(Math.min(1, runFrames.size - 1));
+        fallFrame = runFrames.peek();
+        deathFrame = idleFrames.peek();
+        respawnFrame = idleFrames.first();
+    }
+
+    // Matches the old texture paths to the animation frame names already in assets.
+    private String resolveCharacterKey(String texturePath) {
+        if (PUMPKIN_TEXTURE_PATH.equals(texturePath)) {
+            return "pumpkin_dude";
+        }
+        if (DOC_TEXTURE_PATH.equals(texturePath)) {
+            return "doc";
+        }
+        return null;
+    }
+
+    // Pulls a small numbered frame sequence from disk if those files exist.
+    private Array<TextureRegion> loadFrameSequence(String characterKey, String action) {
+        Array<TextureRegion> frames = new Array<>();
+        for (int frameIndex = 0; frameIndex < 4; frameIndex++) {
+            String framePath = ANIMATION_FRAME_ROOT + characterKey + "_" + action + "_anim_f" + frameIndex + ".png";
+            if (!Gdx.files.internal(framePath).exists()) {
+                continue;
+            }
+
+            Texture texture = new Texture(framePath);
+            ownedTextures.add(texture);
+            frames.add(new TextureRegion(texture));
+        }
+        return frames;
+    }
+
+    // Falls back to a single still frame when no animation set is available.
+    private void initializeFallbackAnimations() {
+        Array<TextureRegion> singleFrame = new Array<>();
+        singleFrame.add(staticFrame);
+        idleAnimation = new Animation<>(ANIMATION_FRAME_DURATION, singleFrame, Animation.PlayMode.LOOP);
+        runAnimation = new Animation<>(ANIMATION_FRAME_DURATION, singleFrame, Animation.PlayMode.LOOP);
+        jumpFrame = staticFrame;
+        fallFrame = staticFrame;
+        deathFrame = staticFrame;
+        respawnFrame = staticFrame;
+    }
+
+    // Chooses the animation state that best matches how the player is moving right now.
+    private AnimationState selectAnimationState() {
+        if (isDead) {
+            return AnimationState.DEATH;
+        }
+        if (respawnAnimationTime > 0f) {
+            return AnimationState.RESPAWN;
+        }
+        if (!onGround) {
+            if (velocityY > AIR_STATE_THRESHOLD) {
+                return AnimationState.JUMP;
+            }
+            if (velocityY < -AIR_STATE_THRESHOLD) {
+                return AnimationState.FALL;
+            }
+            return AnimationState.JUMP;
+        }
+        if (Math.abs(lastMoveX) > RUN_THRESHOLD) {
+            return AnimationState.RUN;
+        }
+        return AnimationState.IDLE;
+    }
+
+    // Swaps to a new animation state and restarts that state's timer.
+    private void setAnimationState(AnimationState nextState) {
+        if (animationState == nextState) {
+            return;
+        }
+        animationState = nextState;
+        animationTime = 0f;
+    }
+
+    // Advances the running timers for the current animation and any temporary effects.
+    private void advanceAnimation(float delta) {
+        animationTime += delta;
+
+        if (animationState == AnimationState.DEATH) {
+            deathAnimationTime = Math.min(DEATH_ANIMATION_DURATION, deathAnimationTime + delta);
+        }
+
+        if (respawnAnimationTime > 0f) {
+            respawnAnimationTime = Math.max(0f, respawnAnimationTime - delta);
+            if (respawnAnimationTime == 0f && !isDead) {
+                setAnimationState(selectAnimationState());
+            }
+        }
+    }
+
+    // Returns the frame that should be shown for the current animation state.
+    private TextureRegion getCurrentFrame() {
+        switch (animationState) {
+            case RUN:
+                return runAnimation.getKeyFrame(animationTime, true);
+            case JUMP:
+                return jumpFrame;
+            case FALL:
+                return fallFrame;
+            case DEATH:
+                return deathFrame;
+            case RESPAWN:
+                return respawnFrame != null ? respawnFrame : idleAnimation.getKeyFrame(animationTime, true);
+            case IDLE:
+            default:
+                return idleAnimation.getKeyFrame(animationTime, true);
+        }
+    }
+
+    // Draws a quick vapor sweep over the death spot after the character disappears.
+    private void drawEvaporation(SpriteBatch batch) {
+        if (deathFrame == null) {
+            return;
+        }
+
+        float originalR = batch.getColor().r;
+        float originalG = batch.getColor().g;
+        float originalB = batch.getColor().b;
+        float originalA = batch.getColor().a;
+
+        float progress = Math.min(1f, deathAnimationTime / DEATH_ANIMATION_DURATION);
+        float baseX = x;
+        float baseY = y + HEIGHT * 0.15f;
+
+        for (int i = 0; i < 3; i++) {
+            float offsetFactor = i / 2f;
+            float sweep = -4f + progress * (12f + i * 4f);
+            float rise = progress * (5f + i * 2f);
+            float wobble = (float) Math.sin(progress * (10f + i * 3f) + i) * (1.2f + i * 0.3f);
+            float alpha = Math.max(0f, (0.55f - offsetFactor * 0.12f) * (1f - progress));
+            float puffWidth = WIDTH * (0.45f + progress * (0.55f + offsetFactor * 0.2f));
+            float puffHeight = HEIGHT * (0.25f + progress * (0.35f + offsetFactor * 0.15f));
+            float puffX = baseX + sweep + wobble;
+            float puffY = baseY + rise + offsetFactor * 4f;
+
+            batch.setColor(0.88f, 0.97f, 1f, alpha);
+            batch.draw(
+                    deathFrame,
+                    puffX,
+                    puffY,
+                    puffWidth * 0.5f,
+                    puffHeight * 0.5f,
+                    puffWidth,
+                    puffHeight,
+                    facingRight ? 1f : -1f,
+                    1f,
+                    0f);
+        }
+
+        batch.setColor(originalR, originalG, originalB, originalA);
     }
 }
