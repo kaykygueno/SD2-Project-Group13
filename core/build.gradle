@@ -1,4 +1,9 @@
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+java.targetCompatibility = 17
+if (JavaVersion.current().isJava9Compatible()) {
+  compileJava.options.release.set(17)
+  compileTestJava.options.release.set(17)
+}
 eclipse.project.name = appName + '-core'
 
 dependencies {

@@ -1,6 +1,5 @@
 package com.Griffith.Sprites;
 
-import com.Griffith.gameConstants.GameConstants;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -22,7 +21,8 @@ public class Button {
     private static final float LIFT_SPEED = 40f;
     private static final float LIFT_TRAVEL_DISTANCE = 70f;
 
-    // This method loads the button and lift rectangles from the interactions layer of the map.
+    // This method loads the button and lift rectangles from the interactions layer
+    // of the map.
     public void loadInteractions(TiledMap map) {
         MapLayer interactionLayer = map.getLayers().get("interactions");
         if (interactionLayer == null) {
@@ -52,7 +52,8 @@ public class Button {
         System.out.println("Lift parts loaded: " + liftParts.size);
     }
 
-    // This method locates the lift visual layer so the moving platform graphics can be offset with the collider.
+    // This method locates the lift visual layer so the moving platform graphics can
+    // be offset with the collider.
     public void loadLiftVisualLayer(TiledMap map) {
         liftVisualLayer = map.getLayers().get("lift_visual");
 
@@ -64,12 +65,14 @@ public class Button {
         }
     }
 
-    // This method appends the current lift colliders to the provided ground list for player collision checks.
+    // This method appends the current lift colliders to the provided ground list
+    // for player collision checks.
     public void addLiftParts(Array<Rectangle> target) {
         target.addAll(liftParts);
     }
 
-    // This method updates lift movement and carries any player standing on top of the lift.
+    // This method updates lift movement and carries any player standing on top of
+    // the lift.
     public void update(float delta, Player player1, Player player2) {
         updateLift(delta, player1, player2);
 
@@ -81,17 +84,20 @@ public class Button {
         }
     }
 
-    // This method exposes the button rectangles for debug drawing and external checks.
+    // This method exposes the button rectangles for debug drawing and external
+    // checks.
     public Array<Rectangle> getButtonRects() {
         return buttonRects;
     }
 
-    // This method exposes the lift colliders for debug drawing and ground composition.
+    // This method exposes the lift colliders for debug drawing and ground
+    // composition.
     public Array<Rectangle> getLiftParts() {
         return liftParts;
     }
 
-    // This method restores the lift to its original position and clears its movement state.
+    // This method restores the lift to its original position and clears its
+    // movement state.
     public void reset() {
         for (int i = 0; i < liftParts.size; i++) {
             liftParts.get(i).y = liftStartYs.get(i);
@@ -104,7 +110,8 @@ public class Button {
         lastLiftDeltaY = 0f;
     }
 
-    // This method moves the lift up or down depending on whether any player is pressing a button.
+    // This method moves the lift up or down depending on whether any player is
+    // pressing a button.
     private void updateLift(float delta, Player player1, Player player2) {
         lastLiftDeltaY = 0f;
 
@@ -160,6 +167,10 @@ public class Button {
                 }
             }
 
+            // Do not crush players underneath the lift; stop at the player's top.
+            allowedMove = limitDownwardMoveByPlayer(allowedMove, player1);
+            allowedMove = limitDownwardMoveByPlayer(allowedMove, player2);
+
             if (allowedMove > 0f) {
                 for (Rectangle part : liftParts) {
                     part.y -= allowedMove;
@@ -171,6 +182,37 @@ public class Button {
         }
     }
 
+    // This method limits lift descent so it never moves below a player's head when
+    // the player is underneath it.
+    private float limitDownwardMoveByPlayer(float allowedMove, Player player) {
+        if (player == null || allowedMove <= 0f) {
+            return allowedMove;
+        }
+
+        Rectangle p = player.getBounds();
+        float playerTop = p.y + p.height;
+
+        for (Rectangle part : liftParts) {
+            boolean horizontalOverlap = p.x + p.width > part.x && p.x < part.x + part.width;
+            boolean playerUnderLift = playerTop <= part.y + 1f;
+
+            if (!horizontalOverlap || !playerUnderLift) {
+                continue;
+            }
+
+            float maxSafeDownMove = part.y - playerTop;
+            if (maxSafeDownMove < 0f) {
+                maxSafeDownMove = 0f;
+            }
+
+            if (maxSafeDownMove < allowedMove) {
+                allowedMove = maxSafeDownMove;
+            }
+        }
+
+        return allowedMove;
+    }
+
     // This method applies the accumulated visual offset to the lift tile layer.
     private void applyLiftVisualOffset() {
         if (liftVisualLayer != null) {
@@ -178,7 +220,8 @@ public class Button {
         }
     }
 
-    // This method moves a player together with the lift when the player is standing on top of it.
+    // This method moves a player together with the lift when the player is standing
+    // on top of it.
     private void applyLiftCarry(Player player) {
         if (player == null || lastLiftDeltaY == 0f || liftParts.size == 0) {
             return;
@@ -187,8 +230,7 @@ public class Button {
         Rectangle p = player.getBounds();
 
         for (Rectangle part : liftParts) {
-            boolean standingOnTop =
-                    p.x + p.width > part.x &&
+            boolean standingOnTop = p.x + p.width > part.x &&
                     p.x < part.x + part.width &&
                     Math.abs(p.y - (part.y + part.height)) < 4f &&
                     player.velocityY <= 0;

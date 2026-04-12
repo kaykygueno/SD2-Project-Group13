@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
@@ -38,7 +37,6 @@ public class FirstScreen implements Screen {
     private SpriteBatch batch;
     private BitmapFont font;
     private ShapeRenderer debugRenderer;
-    private GlyphLayout glyphLayout;
 
     // Players
     private Player player1;
@@ -52,7 +50,6 @@ public class FirstScreen implements Screen {
     private final Hazard hazardSystem = new Hazard();
 
     // Door / finish
-    private Rectangle door;
     private Rectangle finishZone;
     private MapLayer doorClosedLayer;
     private MapLayer doorOpenLayer;
@@ -84,13 +81,12 @@ public class FirstScreen implements Screen {
         renderer = new OrthogonalTiledMapRenderer(map);
 
         camera = new OrthographicCamera();
-      
+
         camera.setToOrtho(false, GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT);
 
         batch = new SpriteBatch();
         font = new BitmapFont();
         debugRenderer = new ShapeRenderer();
-        glyphLayout = new GlyphLayout();
 
         System.out.println("=== MAP LAYERS ===");
         for (MapLayer layer : map.getLayers()) {
@@ -136,7 +132,6 @@ public class FirstScreen implements Screen {
                 }
 
                 if ("door".equals(obj.getName())) {
-                    door = new Rectangle(x, y, width, height);
                     finishZone = new Rectangle(x, y, width, height);
                 }
             }
@@ -284,8 +279,8 @@ public class FirstScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-        game.setScreen(new MenuScreen(game));
-        return;
+            game.setScreen(new MenuScreen(game));
+            return;
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {

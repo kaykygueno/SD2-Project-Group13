@@ -1,5 +1,6 @@
 package com.Griffith.Sprites;
 
+import com.Griffith.gameConstants.GameConstants;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -21,8 +22,7 @@ public class Player {
 
     private static final String PUMPKIN_TEXTURE_PATH = "maps/images/Others/pumpkin_dudeCopy.png";
     private static final String DOC_TEXTURE_PATH = "maps/images/Others/docCopy.png";
-    private static final String ANIMATION_FRAME_ROOT =
-            "maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/frames/";
+    private static final String ANIMATION_FRAME_ROOT = "maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/frames/";
     private static final float ANIMATION_FRAME_DURATION = 0.12f;
     private static final float RUN_THRESHOLD = 0.01f;
     private static final float AIR_STATE_THRESHOLD = 15f;
@@ -60,7 +60,8 @@ public class Player {
 
     private float spawnX, spawnY;
 
-    // Sets up the player at its spawn point, hooks up the controls, and loads the visuals.
+    // Sets up the player at its spawn point, hooks up the controls, and loads the
+    // visuals.
     public Player(float x, float y, String texturePath, int leftKey, int rightKey, int jumpKey) {
         this.x = x;
         this.y = y;
@@ -75,9 +76,14 @@ public class Player {
         respawnAnimationTime = RESPAWN_ANIMATION_DURATION;
     }
 
-    // Runs one frame of movement, jumping, gravity, collision checks, and animation state updates.
+    // Runs one frame of movement, jumping, gravity, collision checks, and animation
+    // state updates.
     public void update(float delta, Array<Rectangle> ground) {
-        if (isDead) return;
+        if (isDead)
+            return;
+
+        float previousX = x;
+        float previousY = y;
 
         float moveX = 0f;
         if (Gdx.input.isKeyPressed(leftKey)) {
@@ -97,15 +103,19 @@ public class Player {
         x += moveX;
         bounds.setPosition(x, y);
 
+        boolean hitWall = false;
         for (Rectangle tile : ground) {
             if (bounds.overlaps(tile)) {
-                if (moveX > 0) {
-                    x = tile.x - WIDTH;
-                } else if (moveX < 0) {
-                    x = tile.x + tile.width;
-                }
-                bounds.setPosition(x, y);
+                hitWall = true;
+                break;
             }
+        }
+
+        if (hitWall) {
+            // Revert to the last known safe horizontal position instead of
+            // repeatedly snapping across multiple colliders.
+            x = previousX;
+            bounds.setPosition(x, y);
         }
 
         if (Gdx.input.isKeyJustPressed(jumpKey) && onGround) {
@@ -119,26 +129,51 @@ public class Player {
 
         onGround = false;
 
+        boolean resolvedVertical = false;
         for (Rectangle tile : ground) {
             if (bounds.overlaps(tile)) {
                 if (velocityY < 0) {
                     y = tile.y + tile.height;
                     velocityY = 0;
                     onGround = true;
+                    resolvedVertical = true;
                 } else if (velocityY > 0) {
                     y = tile.y - HEIGHT;
                     velocityY = 0;
+                    resolvedVertical = true;
+                } else {
+                    // If already embedded with no vertical velocity, return to the
+                    // previous safe Y to prevent sudden teleport-like corrections.
+                    y = previousY;
+                    resolvedVertical = true;
                 }
                 bounds.setPosition(x, y);
             }
         }
 
-        if (y <= 0) {
+        if (!resolvedVertical && y <= 0) {
             y = 0;
             velocityY = 0;
             onGround = true;
             bounds.setPosition(x, y);
         }
+
+        // Keep player inside the designed map area.
+        if (x < 0f) {
+            x = 0f;
+        } else if (x > GameConstants.MAP_WIDTH - WIDTH) {
+            x = GameConstants.MAP_WIDTH - WIDTH;
+        }
+
+        if (y < 0f) {
+            y = 0f;
+            velocityY = 0f;
+            onGround = true;
+        } else if (y > GameConstants.MAP_HEIGHT - HEIGHT) {
+            y = GameConstants.MAP_HEIGHT - HEIGHT;
+            velocityY = 0f;
+        }
+        bounds.setPosition(x, y);
 
         setAnimationState(selectAnimationState());
     }
@@ -147,10 +182,24 @@ public class Player {
     public void moveBy(float dx, float dy) {
         x += dx;
         y += dy;
+
+        if (x < 0f) {
+            x = 0f;
+        } else if (x > GameConstants.MAP_WIDTH - WIDTH) {
+            x = GameConstants.MAP_WIDTH - WIDTH;
+        }
+
+        if (y < 0f) {
+            y = 0f;
+        } else if (y > GameConstants.MAP_HEIGHT - HEIGHT) {
+            y = GameConstants.MAP_HEIGHT - HEIGHT;
+        }
+
         bounds.setPosition(x, y);
     }
 
-    // Draws the current player frame, or the vapor effect if the player has just died.
+    // Draws the current player frame, or the vapor effect if the player has just
+    // died.
     public void draw(SpriteBatch batch) {
         advanceAnimation(Gdx.graphics.getDeltaTime());
 
@@ -236,7 +285,8 @@ public class Player {
         }
     }
 
-    // Loads the base sprite plus any matching idle and run frames for this character.
+    // Loads the base sprite plus any matching idle and run frames for this
+    // character.
     private void loadAnimations(String texturePath) {
         Texture texture = new Texture(texturePath);
         ownedTextures.add(texture);
@@ -306,7 +356,8 @@ public class Player {
         respawnFrame = staticFrame;
     }
 
-    // Chooses the animation state that best matches how the player is moving right now.
+    // Chooses the animation state that best matches how the player is moving right
+    // now.
     private AnimationState selectAnimationState() {
         if (isDead) {
             return AnimationState.DEATH;
@@ -338,7 +389,8 @@ public class Player {
         animationTime = 0f;
     }
 
-    // Advances the running timers for the current animation and any temporary effects.
+    // Advances the running timers for the current animation and any temporary
+    // effects.
     private void advanceAnimation(float delta) {
         animationTime += delta;
 

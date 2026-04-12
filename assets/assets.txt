@@ -946,3 +946,4 @@ maps/tiled.tiled-session
 maps/tileset.tsx
 maps/tileset2.tsx
 maps/tileset3.tsx
+sounds/README.md
