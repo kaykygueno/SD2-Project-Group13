@@ -1,14 +1,13 @@
 .gitkeep
 blackout_ copy.tsx
-coin.png
-coin_blue.png
-coin_orange.png
 maps/background.tsx
 maps/blackout_ copy.tsx
 maps/caracters.tsx
 maps/caracthers2.tsx
 maps/coin.tsx
 maps/coins.tsx
+maps/coins_Blue.tsx
+maps/coins_Orange.tsx
 maps/dangerous.tsx
 maps/doors.tsx
 maps/foreground_.tsx
@@ -914,7 +913,6 @@ maps/images/Top Down Lava Tileset 16x16 Free/FREE TILESET FILES/PROPS ( With Ani
 maps/images/Top Down Lava Tileset 16x16 Free/FREE TILESET FILES/freelavatileset-Sheet.png
 maps/images/Top Down Lava Tileset 16x16 Free/FREE TILESET FILES/freelavatileset.aseprite
 maps/images/Top Down Lava Tileset 16x16 Free/Terms.txt
-maps/images/coin.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/- READ ME -.txt
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/background_/desertDungeon_.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/background_/dungeon_.png
@@ -931,6 +929,10 @@ maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/midground_/winter_.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/beehives_.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/coin_.png
+maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/coin_Blue.png
+maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/coin_Blue.xcf
+maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/coin_Orange.png
+maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/coin_Orange.xcf
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/eventBlock_.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/items_.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/staticObjects_.png
