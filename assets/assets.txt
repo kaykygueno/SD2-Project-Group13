@@ -1,5 +1,6 @@
 .gitkeep
 blackout_ copy.tsx
+maps/Tree-background.tsx
 maps/background.tsx
 maps/blackout_ copy.tsx
 maps/caracters.tsx
@@ -387,6 +388,24 @@ maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/frames/zombie_
 maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/frames/zombie_anim_f2.png
 maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/frames/zombie_anim_f3.png
 maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/tile_list_v1.7
+maps/images/Free Pixel Art Forest/Contact.txt
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0000_9.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0001_8.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0002_7.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0003_6.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0004_Lights.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0005_5.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0006_4.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0007_Lights.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0008_3.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0009_2.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0010_1.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0011_0.png
+maps/images/Free Pixel Art Forest/PSD/Background.psd
+maps/images/Free Pixel Art Forest/Preview/Background.png
+maps/images/Free Pixel Art Forest/changelog.txt
+maps/images/Free Pixel Art Forest/license.txt
+maps/images/Free Pixel Art Forest/readme.txt
 maps/images/Others/1.png
 maps/images/Others/doc.png
 maps/images/Others/docCopy.png
@@ -938,7 +957,19 @@ maps/images/pungeontexture/free/animations.png
 maps/images/pungeontexture/free/bat.png
 maps/images/pungeontexture/free/tileset.png
 maps/images/pungeontexture/free/todd.png
+maps/images/stringstar fields.zip
+maps/images/stringstar fields/!readme!.txt
+maps/images/stringstar fields/_stringstar_fields.aseprite
+maps/images/stringstar fields/background_0.png
+maps/images/stringstar fields/background_1.png
+maps/images/stringstar fields/background_2.png
+maps/images/stringstar fields/backgroung-Level2.png
+maps/images/stringstar fields/backgroung-Leveltwo.png
+maps/images/stringstar fields/example.png
+maps/images/stringstar fields/tileset.png
 maps/lava_water.tsx
+maps/levelOne.tmx
+maps/levelTwo.tmx
 maps/main.tmx
 maps/test.tsx
 maps/tiled.tiled-project

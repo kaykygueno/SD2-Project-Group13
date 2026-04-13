@@ -66,9 +66,19 @@ public class FirstScreen implements Screen {
     private boolean showCollisionDebug = false;
     private String message = "";
     private Main game;
+    private final String mapPath;
+    private final String levelCompleteMessage;
+    private final boolean returnToMenuOnWin;
 
     public FirstScreen(Main game) {
+        this(game, "maps/levelOne.tmx", "LEVEL 1 COMPLETE! Press ENTER for Level 2.", false);
+    }
+
+    protected FirstScreen(Main game, String mapPath, String levelCompleteMessage, boolean returnToMenuOnWin) {
         this.game = game;
+        this.mapPath = mapPath;
+        this.levelCompleteMessage = levelCompleteMessage;
+        this.returnToMenuOnWin = returnToMenuOnWin;
     }
 
     // This method creates the screen resources and loads all map-driven gameplay
@@ -77,7 +87,7 @@ public class FirstScreen implements Screen {
     public void show() {
         TmxMapLoader.Parameters params = new TmxMapLoader.Parameters();
         params.projectFilePath = "maps/tiled.tiled-project";
-        map = new TmxMapLoader().load("maps/main.tmx", params);
+        map = new TmxMapLoader().load(mapPath, params);
         renderer = new OrthogonalTiledMapRenderer(map);
 
         camera = new OrthographicCamera();
@@ -287,6 +297,15 @@ public class FirstScreen implements Screen {
             resetGame();
         }
 
+        if (levelComplete && Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            if (returnToMenuOnWin) {
+                game.setScreen(new MenuScreen(game, true));
+            } else {
+                game.setScreen(new LevelTwoScreen(game));
+            }
+            return;
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) {
             showCollisionDebug = !showCollisionDebug;
             System.out.println("showCollisionDebug = " + showCollisionDebug);
@@ -453,7 +472,7 @@ public class FirstScreen implements Screen {
 
             levelComplete = true;
             gameOver = true;
-            message = "YOU WIN! Press R to play again.";
+            message = levelCompleteMessage;
         }
     }
 

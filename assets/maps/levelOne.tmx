@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="21" nextobjectid="87">
+ <tileset firstgid="1" source="tileset.tsx"/>
+ <tileset firstgid="1025" source="lava_water.tsx"/>
+ <tileset firstgid="1074" source="background.tsx"/>
+ <tileset firstgid="1386" name="tileset2" tilewidth="16" tileheight="16" tilecount="280" columns="14">
+  <image source="images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/midground_/winter_.png" width="224" height="320"/>
+  <tile id="0">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="14.3999" y="1.19999"/>
+   </objectgroup>
+  </tile>
+  <tile id="2">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="7" width="16" height="9"/>
+   </objectgroup>
+  </tile>
+  <tile id="70">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="7" width="16" height="9"/>
+   </objectgroup>
+  </tile>
+  <tile id="71">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="7" width="16" height="9"/>
+    <object id="2" x="0" y="7" width="16" height="9"/>
+   </objectgroup>
+  </tile>
+  <tile id="72">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="7" width="16" height="9"/>
+   </objectgroup>
+  </tile>
+  <tile id="83">
+   <objectgroup draworder="index" id="3">
+    <object id="4" x="8.94737" y="7.03947">
+     <polygon points="0,0 -1.97368,1.90789 -2.10526,6.84211 0,8.81579 4.93421,8.94737 6.90789,6.77632 6.90789,2.10526 4.80263,-0.328947"/>
+    </object>
+   </objectgroup>
+  </tile>
+  <tile id="84">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="9"/>
+   </objectgroup>
+  </tile>
+  <tile id="85">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="9"/>
+   </objectgroup>
+  </tile>
+  <tile id="86">
+   <objectgroup draworder="index" id="2">
+    <object id="1" x="0" y="0" width="16" height="9"/>
+    <object id="2" x="0.363636" y="0">
+     <polygon points="0,0 -0.363636,8.72727 15.4545,8.90909 15.2727,-0.181818"/>
+    </object>
+   </objectgroup>
+  </tile>
+ </tileset>
+ <tileset firstgid="1666" source="doors.tsx"/>
+ <tileset firstgid="1672" source="caracters.tsx"/>
+ <tileset firstgid="1680" source="caracthers2.tsx"/>
+ <tileset firstgid="1688" source="foreground_.tsx"/>
+ <tileset firstgid="1760" source="blackout_ copy.tsx"/>
+ <tileset firstgid="1785" source="../blackout_ copy.tsx"/>
+ <tileset firstgid="1810" source="coins_Orange.tsx"/>
+ <tileset firstgid="1822" source="coins_Blue.tsx"/>
+ <tileset firstgid="1834" source="tileset2.tsx"/>
+ <layer id="4" name="backgroundtest" width="30" height="20" locked="1" opacity="0.9">
+  <data encoding="base64" compression="zlib">
+   eJztlMEKwDAIQ3vqh7sf36nQDWOMbdllglBUfFGwrf32hV396V6s6ozr6dgxTyWf1a30VfZU3S3isnmt+16dVeEiLYyncud9GaixxD5RnHFH/zluU/wEd1hm3kjDCnewURz1V7mIka1fuSN0w+981D/LVXQy3Tv7KLuNbjiakf2VGZ2My/7VbA17M40n7QZ4yV+1
+  </data>
+ </layer>
+ <layer id="1" name="background" width="30" height="20" locked="1" opacity="0.76">
+  <data encoding="base64" compression="zlib">
+   eJyN0mWUFWUABuBRwcLuVixsZekeuru7y24MDFQUsGVFseUaKIjosTuwUbG7OzCw22fu/S47ew878OM5c867c753329uWbUoqkNd6lGfBpRVkTekEY1pQlOa0ZwWxLSkFa1pQ1va0Z4OdKQTnelCV7rRPSPvQU960Zs+9KUf/RnAQAYxmCEMZRjDGcFIRjGaMYxlHOMz8glM5EAO4mAO4VAO43CO4EiO4miO4VgmcRzHcwInMpmTOJlTMvJTmcJpnM4ZTOVMzmIa05nB2ZzDuZzH+VzAhVzETMq5mFlckpFfymwu43Ku4Equ4mqu4VrmkOM6rucGbmQuN4VdM0t23VrojeVxaR72xqE3Lu7NVbE36V3qvYdCr71xsvfmQm9cnjp/YeX/J07nxXsu7k167/TOynpzFb1Rqnf53lnh/HSe3POCsClXcs93FHrz+SLnF++5+G7S+1rofTjszaXOT3/H0BvPC/dwi+eC8H7ozd/zc5564+Leyanvm9EbpXtXtFdvNL/QW2nvlIreaHFqb/kKer8t9EarsjfJH+PxQm/8hOeTlXujVO/yvfNXoXduyd7ykl16Y71xcpbeON07u6I3Dr35/G7u4d7KvfHSKnpL73Nh2Duv8FvJ58Xe5G+3cXvYW/xd3VXSex/38wAPpnof4dHUfS4q7Mqf/1Qqf7ckf5pneDb1fZ/nBV5kCS/xMq/warjn13mDN3mLt3knnP8e7/NBRv4hH/Exn/Apn/E5X/AlX/E134Tvm9zzd3zPD/zIMn7iZ37hV37LyH/nD/7kL/7mH/7lP6LqUbQaq7MG1ajOmqzF2qzDutRgPdZnAzbMyDdiYzZhUzZjc7ZgS7Zia7ZhW7Zje3ZgR3aiJjuzC7uyG7tTKyPfgz3Zi73Zh33Zj/05gNqUUYe61KM+DWhIIxrThKY0ozktMvKYlrSiNW1oSzva04GOdKIzXehKN7rTg570ojd96Es/+mfkAxjIIAYzhKEMYzgjGMkoRjOGsYxjPBOYyP+Ug0x0
+  </data>
+ </layer>
+ <layer id="14" name="lift_visual" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRQAgcYWVgOArEx1gH2iWjYBSMgqEAAPNwAl8=
+  </data>
+ </layer>
+ <layer id="13" name="surface" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRQC3gC8WjYBSMgqENmFggGBmIsEAwMQAAgjoA1w==
+  </data>
+ </layer>
+ <layer id="2" name="ground" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzbwM5w4D0rAwM98QZ2hoT1QMxAZwC0c8FA2tvCNjD2HgCGOQxvJICRgSYHA4MWB/n2kuvufawQDHLvfiAuYGdgKGSnvb24AHL47YfSxNrLwUht1+C3F9mtxGJiwlcbKR1QO5xxuWs/Gn+g8y82OXrEL3pY4GIfgOYbdDGYOlLtpZnH6GgvLDz2I4VNPVpaH2j/YouzfWhupgaYBPT3ZaBZC+lY/15ihdhJb3sfAO17CMXANkfCBkhYHyAV3wDW2SCMLHYLyL+FJgbDaO0cBgBB+rKt
+  </data>
+ </layer>
+ <layer id="20" name="coins_visual" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFxAB59oF2weAHwkMsjAZjnA61MBxKYDDG90CC0bQ2dAG2uBtN34MPAADsHAEB
+  </data>
+ </layer>
+ <objectgroup id="19" name="coins">
+  <object id="70" name="coins_Orange" x="228.521" y="260.858" width="6.63685" height="6.02496">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
+  <object id="71" name="coins_Blue" x="308.525" y="261.946" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="81" name="coins_Blue" x="244.521" y="165.726" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="82" name="coins_Blue" x="228.855" y="37.059" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="83" name="coins_Blue" x="180.521" y="102.392" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="84" name="coins_Orange" x="372.682" y="196.321" width="6.63685" height="6.02496">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
+  <object id="85" name="coins_Orange" x="293.682" y="117.321" width="6.63685" height="6.02496">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
+  <object id="86" name="coins_Orange" x="437.348" y="68.9875" width="6.63685" height="6.02496">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="9" name="interactions">
+  <object id="49" name="plataform" x="16" y="175.457" width="47.5378" height="10.0966"/>
+  <object id="63" name="lever" x="95.4821" y="109.517" width="16.7217" height="21.4495"/>
+  <object id="64" name="lever" x="95.6847" y="172.135" width="16.7217" height="21.4495"/>
+ </objectgroup>
+ <objectgroup id="8" name="hazards">
+  <object id="39" name="lava" x="305" y="300.667" width="16" height="16"/>
+  <object id="40" name="lava" x="319.667" y="301.001" width="16" height="16"/>
+  <object id="41" name="water" x="224.334" y="301.334" width="16" height="16"/>
+  <object id="42" name="water" x="239.833" y="301.333" width="16" height="16"/>
+  <object id="44" name="spikes" x="176" y="191.5" width="16" height="3.33333"/>
+  <object id="45" name="spikes" x="192" y="191.5" width="16" height="3.33333"/>
+ </objectgroup>
+ <objectgroup id="12" name="spawn">
+  <object id="58" name="Player1" gid="1673" x="37.3333" y="300" width="16" height="32"/>
+  <object id="59" name="Player2" gid="1680" x="38" y="252.667" width="16" height="32"/>
+  <object id="65" name="door" gid="1668" x="17.861" y="63.9081" width="48" height="48"/>
+ </objectgroup>
+ <layer id="15" name="door_closed" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgF9AItbAPtglEwCkbBKBgFo2AU0AMAAFMeAIs=
+  </data>
+ </layer>
+ <layer id="16" name="door_open" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgF9AKtbAPtglEwCkbBKBgFo2AU0AMAAFsSAIw=
+  </data>
+ </layer>
+</map>
