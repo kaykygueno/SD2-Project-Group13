@@ -24,6 +24,24 @@ public class MenuScreen implements Screen {
 
     private final boolean win;
 
+    // Accessors for testing (made public so tests in other packages can access)
+    public String getTitle() {
+        return win ? "CONGRATULATIONS!" : "FIRE AND WATER";
+    }
+
+    public String getSubtitle() {
+        return win ? "PRESS ENTER TO PLAY AGAIN" : "PRESS ENTER TO START";
+    }
+
+    // Public constructor primarily for tests that avoids libGDX initialization
+    public MenuScreen(boolean winOnly) {
+        this.game = null;
+        this.win = winOnly;
+        this.batch = null;
+        this.font = null;
+        this.layout = null;
+    }
+
     // This constructor initializes the menu screen and configures whether it should show the win message.
     public MenuScreen(Main game, boolean win) {
         this.game = game;
@@ -107,7 +125,7 @@ public class MenuScreen implements Screen {
     // This method disposes the menu rendering resources.
     @Override
     public void dispose() {
-        batch.dispose();
-        font.dispose();
+        if (batch != null) batch.dispose();
+        if (font != null) font.dispose();
     }
 }
