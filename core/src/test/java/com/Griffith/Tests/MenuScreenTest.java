@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MenuScreenTest {
 
+    // Verifies the normal menu copy and level labels.
     @Test
     public void nonWinMenuShowsTitleAndSubtitle() {
         MenuScreen menu = new MenuScreen(false);
@@ -16,6 +17,7 @@ public class MenuScreenTest {
         assertEquals("LEVEL 2 - CRYSTAL CAVERN", menu.getLevelTwoOption());
     }
 
+    // Verifies the win menu switches to the congratulations copy.
     @Test
     public void winMenuShowsCongratulationsAndPlayAgain() {
         MenuScreen menu = new MenuScreen(true);
