@@ -1,14 +1,14 @@
 .gitkeep
 blackout_ copy.tsx
-coin.png
-coin_blue.png
-coin_orange.png
+maps/Tree-background.tsx
 maps/background.tsx
 maps/blackout_ copy.tsx
 maps/caracters.tsx
 maps/caracthers2.tsx
 maps/coin.tsx
 maps/coins.tsx
+maps/coins_Blue.tsx
+maps/coins_Orange.tsx
 maps/dangerous.tsx
 maps/doors.tsx
 maps/foreground_.tsx
@@ -388,6 +388,24 @@ maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/frames/zombie_
 maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/frames/zombie_anim_f2.png
 maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/frames/zombie_anim_f3.png
 maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/tile_list_v1.7
+maps/images/Free Pixel Art Forest/Contact.txt
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0000_9.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0001_8.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0002_7.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0003_6.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0004_Lights.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0005_5.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0006_4.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0007_Lights.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0008_3.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0009_2.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0010_1.png
+maps/images/Free Pixel Art Forest/PNG/Background layers/Layer_0011_0.png
+maps/images/Free Pixel Art Forest/PSD/Background.psd
+maps/images/Free Pixel Art Forest/Preview/Background.png
+maps/images/Free Pixel Art Forest/changelog.txt
+maps/images/Free Pixel Art Forest/license.txt
+maps/images/Free Pixel Art Forest/readme.txt
 maps/images/Others/1.png
 maps/images/Others/doc.png
 maps/images/Others/docCopy.png
@@ -914,7 +932,6 @@ maps/images/Top Down Lava Tileset 16x16 Free/FREE TILESET FILES/PROPS ( With Ani
 maps/images/Top Down Lava Tileset 16x16 Free/FREE TILESET FILES/freelavatileset-Sheet.png
 maps/images/Top Down Lava Tileset 16x16 Free/FREE TILESET FILES/freelavatileset.aseprite
 maps/images/Top Down Lava Tileset 16x16 Free/Terms.txt
-maps/images/coin.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/- READ ME -.txt
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/background_/desertDungeon_.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/background_/dungeon_.png
@@ -931,6 +948,8 @@ maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/midground_/winter_.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/beehives_.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/coin_.png
+maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/coin_Blue.png
+maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/coin_Orange.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/eventBlock_.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/items_.png
 maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/objects_/staticObjects_.png
@@ -938,7 +957,19 @@ maps/images/pungeontexture/free/animations.png
 maps/images/pungeontexture/free/bat.png
 maps/images/pungeontexture/free/tileset.png
 maps/images/pungeontexture/free/todd.png
+maps/images/stringstar fields.zip
+maps/images/stringstar fields/!readme!.txt
+maps/images/stringstar fields/_stringstar_fields.aseprite
+maps/images/stringstar fields/background_0.png
+maps/images/stringstar fields/background_1.png
+maps/images/stringstar fields/background_2.png
+maps/images/stringstar fields/backgroung-Level2.png
+maps/images/stringstar fields/backgroung-Leveltwo.png
+maps/images/stringstar fields/example.png
+maps/images/stringstar fields/tileset.png
 maps/lava_water.tsx
+maps/levelOne.tmx
+maps/levelTwo.tmx
 maps/main.tmx
 maps/test.tsx
 maps/tiled.tiled-project
@@ -946,3 +977,4 @@ maps/tiled.tiled-session
 maps/tileset.tsx
 maps/tileset2.tsx
 maps/tileset3.tsx
+sounds/README.md
