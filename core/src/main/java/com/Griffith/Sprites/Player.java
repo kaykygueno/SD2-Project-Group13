@@ -278,6 +278,10 @@ public class Player {
         return bounds;
     }
 
+    public float getLastMoveX() {
+        return lastMoveX;
+    }
+
     // Cleans up every texture this player loaded.
     public void dispose() {
         for (Texture texture : ownedTextures) {

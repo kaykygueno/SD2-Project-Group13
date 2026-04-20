@@ -45,6 +45,9 @@ public class FirstScreen implements Screen {
     // Ground collision
     private Array<Rectangle> groundTiles = new Array<>();
     private Array<Rectangle> blockTiles = new Array<>();
+    private Array<Float> blockStartXs = new Array<>();
+    private Array<Float> blockStartYs = new Array<>();
+    private MapLayer blockVisualLayer;
 
     // Hazards
     private final Hazard hazardSystem = new Hazard();
@@ -107,6 +110,7 @@ public class FirstScreen implements Screen {
         loadSpawnObjects();
         loadGround();
         loadBlockColliders();
+        loadBlockVisualLayer();
         loadHazards();
         loadInteractions();
         loadLiftVisualLayer();
@@ -214,6 +218,8 @@ public class FirstScreen implements Screen {
         }
 
         blockTiles.clear();
+        blockStartXs.clear();
+        blockStartYs.clear();
 
         System.out.println("Block object count: " + blockLayer.getObjects().getCount());
 
@@ -228,7 +234,8 @@ public class FirstScreen implements Screen {
                         source.height);
 
                 blockTiles.add(rect);
-                groundTiles.add(rect);
+                blockStartXs.add(rect.x);
+                blockStartYs.add(rect.y);
 
                 System.out.println("Loaded block rect -> x:" + rect.x +
                         " y:" + rect.y +
@@ -238,6 +245,15 @@ public class FirstScreen implements Screen {
         }
 
         System.out.println("Final block collider count: " + blockTiles.size);
+    }
+
+    private void loadBlockVisualLayer() {
+        blockVisualLayer = map.getLayers().get("block_visual");
+        if (blockVisualLayer != null) {
+            blockVisualLayer.setOffsetX(0f);
+            blockVisualLayer.setOffsetY(0f);
+            System.out.println("Block visual layer loaded.");
+        }
     }
 
     // This method delegates hazard loading to the hazard system.
@@ -326,6 +342,8 @@ public class FirstScreen implements Screen {
                 player2.update(delta, activeGround);
             }
 
+            updateMovableBlocks();
+            resolvePlayersAgainstBlocks();
             buttonSystem.update(delta, player1, player2);
 
             updateCoins();
@@ -337,6 +355,8 @@ public class FirstScreen implements Screen {
 
         renderer.setView(camera);
         renderer.render();
+
+        drawMovableBlocks();
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -351,8 +371,8 @@ public class FirstScreen implements Screen {
         coinSystem.draw(batch);
 
         font.setColor(Color.WHITE);
-        font.draw(batch, "P1: A/D/W | P2: Arrows | R: Reset | F3: Debug", 10, 338);
-        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10, 355);
+        font.draw(batch, "P1: A/D/W | P2: Arrows | R: Reset | F3: Debug", 10, GameConstants.MAP_HEIGHT - 22);
+        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10, GameConstants.MAP_HEIGHT - 6);
 
         if (!message.isEmpty()) {
             font.setColor(Color.YELLOW);
@@ -481,6 +501,194 @@ public class FirstScreen implements Screen {
         buttonSystem.reset();
     }
 
+    private void updateMovableBlocks() {
+        pushBlocksForPlayer(player1);
+        pushBlocksForPlayer(player2);
+    }
+
+    private void pushBlocksForPlayer(Player player) {
+        if (player == null || player.isDead) {
+            return;
+        }
+
+        float moveX = player.getLastMoveX();
+        if (moveX == 0f) {
+            return;
+        }
+
+        Rectangle playerBounds = player.getBounds();
+
+        for (Rectangle block : blockTiles) {
+            float pushAmount = getBlockPushAmount(playerBounds, block, moveX);
+            if (pushAmount == 0f) {
+                continue;
+            }
+
+            float allowedMove = clampBlockMove(block, pushAmount);
+            if (allowedMove != 0f) {
+                carryPlayersStandingOnBlock(block, allowedMove);
+                block.x += allowedMove;
+                applyBlockVisualOffset();
+            }
+            break;
+        }
+    }
+
+    private float getBlockPushAmount(Rectangle playerBounds, Rectangle block, float moveX) {
+        boolean verticalOverlap = playerBounds.y + playerBounds.height > block.y + 1f
+                && playerBounds.y < block.y + block.height - 1f;
+        if (!verticalOverlap) {
+            return 0f;
+        }
+
+        if (moveX > 0f) {
+            float playerRight = playerBounds.x + playerBounds.width;
+            float pushRange = Math.max(moveX + 2f, 8f);
+            boolean closeToLeftSide = playerRight >= block.x - pushRange
+                    && playerBounds.x < block.x + block.width * 0.5f;
+            if (closeToLeftSide) {
+                return moveX;
+            }
+        }
+
+        if (moveX < 0f) {
+            float blockRight = block.x + block.width;
+            float pushRange = Math.max(-moveX + 2f, 8f);
+            boolean closeToRightSide = playerBounds.x <= blockRight + pushRange
+                    && playerBounds.x + playerBounds.width > block.x + block.width * 0.5f;
+            if (closeToRightSide) {
+                return moveX;
+            }
+        }
+
+        return 0f;
+    }
+
+    private float clampBlockMove(Rectangle block, float requestedMoveX) {
+        float allowedMove = requestedMoveX;
+        float leftBoundary = 16f;
+        float rightBoundary = GameConstants.MAP_WIDTH - 16f;
+
+        if (requestedMoveX > 0f) {
+            allowedMove = Math.min(allowedMove, rightBoundary - (block.x + block.width));
+        } else {
+            allowedMove = Math.max(allowedMove, leftBoundary - block.x);
+        }
+
+        Rectangle movedBlock = new Rectangle(block.x + allowedMove, block.y, block.width, block.height);
+
+        for (Rectangle otherBlock : blockTiles) {
+            if (otherBlock == block) {
+                continue;
+            }
+            if (movedBlock.overlaps(otherBlock)) {
+                allowedMove = limitMoveBeforeCollision(block, otherBlock, requestedMoveX);
+                movedBlock.set(block.x + allowedMove, block.y, block.width, block.height);
+            }
+        }
+
+        return allowedMove;
+    }
+
+    private float limitMoveBeforeCollision(Rectangle movingBlock, Rectangle obstacle, float requestedMoveX) {
+        if (requestedMoveX > 0f) {
+            return Math.max(0f, obstacle.x - (movingBlock.x + movingBlock.width));
+        }
+        return Math.min(0f, obstacle.x + obstacle.width - movingBlock.x);
+    }
+
+    private void resolvePlayersAgainstBlocks() {
+        resolvePlayerAgainstBlocks(player1);
+        resolvePlayerAgainstBlocks(player2);
+    }
+
+    private void resolvePlayerAgainstBlocks(Player player) {
+        if (player == null || player.isDead) {
+            return;
+        }
+
+        Rectangle playerBounds = player.getBounds();
+        for (Rectangle block : blockTiles) {
+            if (!playerBounds.overlaps(block)) {
+                continue;
+            }
+
+            if (resolvePlayerOnTopOfBlock(player, playerBounds, block)) {
+                playerBounds = player.getBounds();
+                continue;
+            }
+
+            float moveX = player.getLastMoveX();
+            if (moveX > 0f) {
+                player.x = block.x - playerBounds.width;
+            } else if (moveX < 0f) {
+                player.x = block.x + block.width;
+            } else if (playerBounds.x + playerBounds.width * 0.5f < block.x + block.width * 0.5f) {
+                player.x = block.x - playerBounds.width;
+            } else {
+                player.x = block.x + block.width;
+            }
+            player.bounds.setPosition(player.x, player.y);
+            playerBounds = player.getBounds();
+        }
+    }
+
+    private boolean resolvePlayerOnTopOfBlock(Player player, Rectangle playerBounds, Rectangle block) {
+        float blockTop = block.y + block.height;
+        boolean horizontallySupported = playerBounds.x + playerBounds.width > block.x + 2f
+                && playerBounds.x < block.x + block.width - 2f;
+        boolean landingOnTop = player.velocityY <= 0f
+                && playerBounds.y >= blockTop - 8f
+                && playerBounds.y < blockTop + 2f;
+
+        if (!horizontallySupported || !landingOnTop) {
+            return false;
+        }
+
+        player.y = blockTop;
+        player.velocityY = 0f;
+        player.setOnGround(true);
+        player.bounds.setPosition(player.x, player.y);
+        return true;
+    }
+
+    private void carryPlayersStandingOnBlock(Rectangle block, float moveX) {
+        carryPlayerStandingOnBlock(player1, block, moveX);
+        carryPlayerStandingOnBlock(player2, block, moveX);
+    }
+
+    private void carryPlayerStandingOnBlock(Player player, Rectangle block, float moveX) {
+        if (player == null || player.isDead) {
+            return;
+        }
+
+        Rectangle playerBounds = player.getBounds();
+        float blockTop = block.y + block.height;
+        boolean onTop = Math.abs(playerBounds.y - blockTop) <= 2f
+                && playerBounds.x + playerBounds.width > block.x + 2f
+                && playerBounds.x < block.x + block.width - 2f;
+
+        if (onTop) {
+            player.moveBy(moveX, 0f);
+        }
+    }
+
+    private void drawMovableBlocks() {
+        if (blockTiles.size == 0 || blockVisualLayer != null) {
+            return;
+        }
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        debugRenderer.setProjectionMatrix(camera.combined);
+        debugRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        debugRenderer.setColor(Color.WHITE);
+        for (Rectangle block : blockTiles) {
+            debugRenderer.rect(block.x, block.y, block.width, block.height);
+        }
+        debugRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+    }
+
     // This method restores players, door state, lift state, and coin progress for a
     // fresh run.
     private void resetGame() {
@@ -492,6 +700,7 @@ public class FirstScreen implements Screen {
         }
 
         resetLift();
+        resetBlocks();
 
         if (doorClosedLayer != null) {
             doorClosedLayer.setVisible(true);
@@ -506,6 +715,26 @@ public class FirstScreen implements Screen {
         coinSystem.reset();
         pumpkinCoinCount = 0;
         docCoinCount = 0;
+    }
+
+    private void resetBlocks() {
+        for (int i = 0; i < blockTiles.size; i++) {
+            blockTiles.get(i).x = blockStartXs.get(i);
+            blockTiles.get(i).y = blockStartYs.get(i);
+        }
+        applyBlockVisualOffset();
+    }
+
+    private void applyBlockVisualOffset() {
+        if (blockVisualLayer == null || blockTiles.size == 0 || blockStartXs.size == 0 || blockStartYs.size == 0) {
+            return;
+        }
+
+        Rectangle firstBlock = blockTiles.first();
+        float offsetX = firstBlock.x - blockStartXs.first();
+        float offsetY = firstBlock.y - blockStartYs.first();
+        blockVisualLayer.setOffsetX(offsetX);
+        blockVisualLayer.setOffsetY(-offsetY);
     }
 
     // This method updates the camera viewport when the window size changes.

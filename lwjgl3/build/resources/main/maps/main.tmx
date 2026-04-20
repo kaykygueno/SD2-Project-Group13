@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="20" nextobjectid="80">
+<map version="1.10" tiledversion="1.12.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="21" nextobjectid="87">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="1025" source="lava_water.tsx"/>
  <tileset firstgid="1074" source="background.tsx"/>
@@ -63,6 +63,8 @@
  <tileset firstgid="1688" source="foreground_.tsx"/>
  <tileset firstgid="1760" source="blackout_ copy.tsx"/>
  <tileset firstgid="1785" source="../blackout_ copy.tsx"/>
+ <tileset firstgid="1810" source="coins_Orange.tsx"/>
+ <tileset firstgid="1822" source="coins_Blue.tsx"/>
  <layer id="1" name="background" width="30" height="20" opacity="0.76">
   <data encoding="base64" compression="zlib">
    eJyN0mWUFWUABuBRwcLuVixsZekeuru7y24MDFQUsGVFseUaKIjosTuwUbG7OzCw22fu/S47ew878OM5c867c753329uWbUoqkNd6lGfBpRVkTekEY1pQlOa0ZwWxLSkFa1pQ1va0Z4OdKQTnelCV7rRPSPvQU960Zs+9KUf/RnAQAYxmCEMZRjDGcFIRjGaMYxlHOMz8glM5EAO4mAO4VAO43CO4EiO4miO4VgmcRzHcwInMpmTOJlTMvJTmcJpnM4ZTOVMzmIa05nB2ZzDuZzH+VzAhVzETMq5mFlckpFfymwu43Ku4Equ4mqu4VrmkOM6rucGbmQuN4VdM0t23VrojeVxaR72xqE3Lu7NVbE36V3qvYdCr71xsvfmQm9cnjp/YeX/J07nxXsu7k167/TOynpzFb1Rqnf53lnh/HSe3POCsClXcs93FHrz+SLnF++5+G7S+1rofTjszaXOT3/H0BvPC/dwi+eC8H7ozd/zc5564+Leyanvm9EbpXtXtFdvNL/QW2nvlIreaHFqb/kKer8t9EarsjfJH+PxQm/8hOeTlXujVO/yvfNXoXduyd7ykl16Y71xcpbeON07u6I3Dr35/G7u4d7KvfHSKnpL73Nh2Duv8FvJ58Xe5G+3cXvYW/xd3VXSex/38wAPpnof4dHUfS4q7Mqf/1Qqf7ckf5pneDb1fZ/nBV5kCS/xMq/warjn13mDN3mLt3knnP8e7/NBRv4hH/Exn/Apn/E5X/AlX/E134Tvm9zzd3zPD/zIMn7iZ37hV37LyH/nD/7kL/7mH/7lP6LqUbQaq7MG1ajOmqzF2qzDutRgPdZnAzbMyDdiYzZhUzZjc7ZgS7Zia7ZhW7Zje3ZgR3aiJjuzC7uyG7tTKyPfgz3Zi73Zh33Zj/05gNqUUYe61KM+DWhIIxrThKY0ozktMvKYlrSiNW1oSzva04GOdKIzXehKN7rTg570ojd96Es/+mfkAxjIIAYzhKEMYzgjGMkoRjOGsYxjPBOYyP+Ug0x0
@@ -88,45 +90,50 @@
    eJx7z8qw4D0rAwOdcQIQL2CgMxhoe1vYBsbeA8Awh+GNBDAyyGaDYHLtJdfd+1ghGOTe/ayE1VPLXlwAOfz2Q2li7eVgpLZr8NuL7FZiMTEgCikdUDuccblrPxp/oPMvNjl6xC96WOBiH4DmG3SxwZKPBsJeWHjsRwqbfSTkX1oCmL3Y4mwfmpupAS6zQjA9/XuJdWDsfQC07yEUQ+0lq61ygw2CkcVusUEwMe0cAGLSsTc=
   </data>
  </layer>
+ <layer id="20" name="coins_visual" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFxAB59oF2weAHwkMsjAZjnA61MBxKYDDG90CC0bQ2dAG2uBtN34MPAADsHAEB
+  </data>
+ </layer>
  <objectgroup id="19" name="coins">
-  <object id="70" name="coins" x="228.521" y="260.858" width="6.63685" height="6.02496">
+  <object id="70" name="coins_Orange" x="228.521" y="260.858" width="6.63685" height="6.02496">
    <properties>
     <property name="owner" value="blue"/>
    </properties>
   </object>
-  <object id="71" name="coins" x="324.858" y="260.946" width="6.29065" height="5.21535">
+  <object id="71" name="coins_Blue" x="308.525" y="261.946" width="6.29065" height="5.21535">
    <properties>
     <property name="owner" value="orange"/>
    </properties>
   </object>
-  <object id="74" name="coins" x="228" y="149.354" width="6.63685" height="6.02496">
+  <object id="81" name="coins_Blue" x="244.521" y="165.726" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="82" name="coins_Blue" x="228.855" y="37.059" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="83" name="coins_Blue" x="180.521" y="102.392" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="84" name="coins_Orange" x="372.682" y="196.321" width="6.63685" height="6.02496">
    <properties>
     <property name="owner" value="blue"/>
    </properties>
   </object>
-  <object id="75" name="coins" x="293" y="149.354" width="6.29065" height="5.21535">
-   <properties>
-    <property name="owner" value="orange"/>
-   </properties>
-  </object>
-  <object id="76" name="coins" x="244" y="109" width="6.38932" height="4.93968">
+  <object id="85" name="coins_Orange" x="293.682" y="117.321" width="6.63685" height="6.02496">
    <properties>
     <property name="owner" value="blue"/>
    </properties>
   </object>
-  <object id="77" name="coins" x="180" y="109" width="6.38932" height="4.93968">
-   <properties>
-    <property name="owner" value="orange"/>
-   </properties>
-  </object>
-  <object id="78" name="coins" x="212.793" y="27" width="6.54912" height="5.09647">
+  <object id="86" name="coins_Orange" x="437.348" y="68.9875" width="6.63685" height="6.02496">
    <properties>
     <property name="owner" value="blue"/>
-   </properties>
-  </object>
-  <object id="79" name="coins" x="287" y="29" width="6.54912" height="5.09647">
-   <properties>
-    <property name="owner" value="orange"/>
    </properties>
   </object>
  </objectgroup>
