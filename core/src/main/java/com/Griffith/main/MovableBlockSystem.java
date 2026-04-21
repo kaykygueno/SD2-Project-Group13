@@ -5,6 +5,10 @@ import com.badlogic.gdx.utils.Array;
 
 public class MovableBlockSystem {
 
+    private static final float SIDE_CONTACT_TOLERANCE = 2f;
+    private static final float VERTICAL_CONTACT_PADDING = 1f;
+    private static final float MIN_MOVEMENT_EPSILON = 0.001f;
+
     public static final class BlockPushResult {
         private static final BlockPushResult NONE = new BlockPushResult(null, 0f);
 
@@ -68,7 +72,7 @@ public class MovableBlockSystem {
         return blocks;
     }
 
-    public BlockPushResult push(Rectangle playerBounds, float moveX) {
+    public BlockPushResult push(Rectangle playerBounds, float moveX, Array<Rectangle> solidTiles) {
         if (playerBounds == null || moveX == 0f || blocks.size == 0) {
             return BlockPushResult.none();
         }
@@ -79,11 +83,18 @@ public class MovableBlockSystem {
                 continue;
             }
 
-            float allowedMove = clampBlockMove(block, pushAmount);
-            if (allowedMove != 0f) {
+            float allowedMove = clampBlockMove(block, pushAmount, solidTiles);
+            if (Math.abs(allowedMove) > MIN_MOVEMENT_EPSILON) {
+                float previousX = block.x;
                 block.x += allowedMove;
+                clampBlockToMap(block);
+                float actualMove = block.x - previousX;
+                if (Math.abs(actualMove) <= MIN_MOVEMENT_EPSILON) {
+                    return BlockPushResult.none();
+                }
+
                 updateVisualOffsets();
-                return new BlockPushResult(block, allowedMove);
+                return new BlockPushResult(block, actualMove);
             }
             return BlockPushResult.none();
         }
@@ -126,27 +137,34 @@ public class MovableBlockSystem {
     }
 
     private float getBlockPushAmount(Rectangle playerBounds, Rectangle block, float moveX) {
-        boolean verticalOverlap = playerBounds.y + playerBounds.height > block.y + 1f
-                && playerBounds.y < block.y + block.height - 1f;
+        float playerTop = playerBounds.y + playerBounds.height;
+        float playerBottom = playerBounds.y;
+        float blockTop = block.y + block.height;
+        boolean verticalOverlap = playerTop > block.y + VERTICAL_CONTACT_PADDING
+                && playerBottom < blockTop - VERTICAL_CONTACT_PADDING;
         if (!verticalOverlap) {
             return 0f;
         }
 
         if (moveX > 0f) {
+            float previousRight = playerBounds.x + playerBounds.width - moveX;
             float playerRight = playerBounds.x + playerBounds.width;
-            float pushRange = Math.max(moveX + 2f, 8f);
-            boolean closeToLeftSide = playerRight >= block.x - pushRange
-                    && playerBounds.x < block.x + block.width * 0.5f;
+            boolean crossedLeftFace = previousRight <= block.x + SIDE_CONTACT_TOLERANCE
+                    && playerRight >= block.x - SIDE_CONTACT_TOLERANCE;
+            boolean approachingFromLeft = playerBounds.x + playerBounds.width * 0.5f <= block.x + block.width * 0.5f;
+            boolean closeToLeftSide = crossedLeftFace && approachingFromLeft;
             if (closeToLeftSide) {
                 return moveX;
             }
         }
 
         if (moveX < 0f) {
+            float previousLeft = playerBounds.x - moveX;
             float blockRight = block.x + block.width;
-            float pushRange = Math.max(-moveX + 2f, 8f);
-            boolean closeToRightSide = playerBounds.x <= blockRight + pushRange
-                    && playerBounds.x + playerBounds.width > block.x + block.width * 0.5f;
+            boolean crossedRightFace = previousLeft >= blockRight - SIDE_CONTACT_TOLERANCE
+                    && playerBounds.x <= blockRight + SIDE_CONTACT_TOLERANCE;
+            boolean approachingFromRight = playerBounds.x + playerBounds.width * 0.5f >= block.x + block.width * 0.5f;
+            boolean closeToRightSide = crossedRightFace && approachingFromRight;
             if (closeToRightSide) {
                 return moveX;
             }
@@ -155,7 +173,7 @@ public class MovableBlockSystem {
         return 0f;
     }
 
-    private float clampBlockMove(Rectangle block, float requestedMoveX) {
+    private float clampBlockMove(Rectangle block, float requestedMoveX, Array<Rectangle> solidTiles) {
         float allowedMove = requestedMoveX;
 
         if (requestedMoveX > 0f) {
@@ -164,16 +182,51 @@ public class MovableBlockSystem {
             allowedMove = Math.max(allowedMove, leftBoundary - block.x);
         }
 
+        allowedMove = clampAgainstBlocks(block, requestedMoveX, allowedMove);
+        allowedMove = clampAgainstSolidTiles(block, requestedMoveX, allowedMove, solidTiles);
+
+        if (Math.abs(allowedMove) <= MIN_MOVEMENT_EPSILON) {
+            return 0f;
+        }
+
+        return allowedMove;
+    }
+
+    private float clampAgainstBlocks(Rectangle block, float requestedMoveX, float allowedMove) {
         Rectangle movedBlock = new Rectangle(block.x + allowedMove, block.y, block.width, block.height);
 
         for (Rectangle otherBlock : blocks) {
-            if (otherBlock == block) {
+            if (otherBlock == block || !movedBlock.overlaps(otherBlock)) {
                 continue;
             }
-            if (movedBlock.overlaps(otherBlock)) {
-                allowedMove = limitMoveBeforeCollision(block, otherBlock, requestedMoveX);
-                movedBlock.set(block.x + allowedMove, block.y, block.width, block.height);
+
+            float limitedMove = limitMoveBeforeCollision(block, otherBlock, requestedMoveX);
+            allowedMove = requestedMoveX > 0f
+                    ? Math.min(allowedMove, limitedMove)
+                    : Math.max(allowedMove, limitedMove);
+            movedBlock.set(block.x + allowedMove, block.y, block.width, block.height);
+        }
+
+        return allowedMove;
+    }
+
+    private float clampAgainstSolidTiles(Rectangle block, float requestedMoveX, float allowedMove, Array<Rectangle> solidTiles) {
+        if (solidTiles == null || solidTiles.size == 0) {
+            return allowedMove;
+        }
+
+        Rectangle movedBlock = new Rectangle(block.x + allowedMove, block.y, block.width, block.height);
+
+        for (Rectangle solidTile : solidTiles) {
+            if (!movedBlock.overlaps(solidTile)) {
+                continue;
             }
+
+            float limitedMove = limitMoveBeforeCollision(block, solidTile, requestedMoveX);
+            allowedMove = requestedMoveX > 0f
+                    ? Math.min(allowedMove, limitedMove)
+                    : Math.max(allowedMove, limitedMove);
+            movedBlock.set(block.x + allowedMove, block.y, block.width, block.height);
         }
 
         return allowedMove;
@@ -184,6 +237,16 @@ public class MovableBlockSystem {
             return Math.max(0f, obstacle.x - (movingBlock.x + movingBlock.width));
         }
         return Math.min(0f, obstacle.x + obstacle.width - movingBlock.x);
+    }
+
+    private void clampBlockToMap(Rectangle block) {
+        float minX = leftBoundary;
+        float maxX = rightBoundary - block.width;
+        if (block.x < minX) {
+            block.x = minX;
+        } else if (block.x > maxX) {
+            block.x = maxX;
+        }
     }
 
     private void updateVisualOffsets() {

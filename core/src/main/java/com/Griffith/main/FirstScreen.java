@@ -44,7 +44,7 @@ public class FirstScreen implements Screen {
 
     // Ground collision
     private Array<Rectangle> groundTiles = new Array<>();
-    private final MovableBlockSystem movableBlocks = new MovableBlockSystem(16f, GameConstants.MAP_WIDTH - 16f);
+    private final MovableBlockSystem movableBlocks = new MovableBlockSystem(0f, GameConstants.MAP_WIDTH);
     private MapLayer blockVisualLayer;
 
     // Hazards
@@ -503,7 +503,7 @@ public class FirstScreen implements Screen {
             return;
         }
 
-        MovableBlockSystem.BlockPushResult result = movableBlocks.push(player.getBounds(), moveX);
+        MovableBlockSystem.BlockPushResult result = movableBlocks.push(player.getBounds(), moveX, groundTiles);
         if (!result.moved()) {
             return;
         }
