@@ -1,5 +1,7 @@
 package com.Griffith.Sprites;
 
+import com.Griffith.audio.SoundManager;
+import com.Griffith.audio.SoundType;
 import com.Griffith.gameConstants.GameConstants;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -25,6 +27,7 @@ public class Player {
     private static final String ANIMATION_FRAME_ROOT = "maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/frames/";
     private static final float ANIMATION_FRAME_DURATION = 0.12f;
     private static final float RUN_THRESHOLD = 0.01f;
+    private static final float RUN_SOUND_INTERVAL = 0.24f;
     private static final float AIR_STATE_THRESHOLD = 15f;
     private static final float DEATH_ANIMATION_DURATION = 0.7f;
     private static final float RESPAWN_ANIMATION_DURATION = 0.7f;
@@ -56,6 +59,7 @@ public class Player {
     private float deathAnimationTime = 0f;
     private float respawnAnimationTime = 0f;
     private float lastMoveX = 0f;
+    private float runningSoundCooldown = 0f;
     private boolean facingRight = true;
 
     private float spawnX, spawnY;
@@ -81,6 +85,8 @@ public class Player {
     public void update(float delta, Array<Rectangle> ground) {
         if (isDead)
             return;
+
+        runningSoundCooldown = Math.max(0f, runningSoundCooldown - delta);
 
         float previousX = x;
         float previousY = y;
@@ -121,6 +127,7 @@ public class Player {
         if (Gdx.input.isKeyJustPressed(jumpKey) && onGround) {
             velocityY = JUMP_POWER;
             onGround = false;
+            SoundManager.play(SoundType.PLAYER_JUMP, 0.75f);
         }
 
         velocityY += GRAVITY * delta;
@@ -175,6 +182,7 @@ public class Player {
         }
         bounds.setPosition(x, y);
 
+        playRunningSoundIfNeeded(x - previousX);
         setAnimationState(selectAnimationState());
     }
 
@@ -246,13 +254,22 @@ public class Player {
 
     // Puts the player into the death state and kicks off the evaporation effect.
     public void die() {
+        die(true);
+    }
+
+    // Puts the player into the death state and optionally plays the defeat sound.
+    public void die(boolean playSound) {
         if (isDead) {
             return;
         }
         isDead = true;
         velocityY = 0;
+        runningSoundCooldown = 0f;
         deathAnimationTime = 0f;
         setAnimationState(AnimationState.DEATH);
+        if (playSound) {
+            SoundManager.play(SoundType.PLAYER_DEATH, 0.85f);
+        }
     }
 
     // Sends the player back to spawn and starts the short respawn flash.
@@ -262,6 +279,7 @@ public class Player {
         velocityY = 0;
         isDead = false;
         onGround = false;
+        runningSoundCooldown = 0f;
         bounds.setPosition(x, y);
         deathAnimationTime = 0f;
         respawnAnimationTime = RESPAWN_ANIMATION_DURATION;
@@ -287,6 +305,16 @@ public class Player {
         for (Texture texture : ownedTextures) {
             texture.dispose();
         }
+    }
+
+    // Plays a soft repeating footstep while the player is genuinely moving on the ground.
+    private void playRunningSoundIfNeeded(float actualMoveX) {
+        if (!onGround || Math.abs(actualMoveX) <= RUN_THRESHOLD || runningSoundCooldown > 0f) {
+            return;
+        }
+
+        SoundManager.play(SoundType.PLAYER_RUN_STEP, 0.35f);
+        runningSoundCooldown = RUN_SOUND_INTERVAL;
     }
 
     // Loads the base sprite plus any matching idle and run frames for this

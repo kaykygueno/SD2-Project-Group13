@@ -10,10 +10,14 @@ package com.Griffith.audio;
 public enum SoundType {
 
     // Player sounds
+    // Core movement SFX are procedurally generated in tools/generate_sfx.py.
+    // Reference targets are documented as comments there so the source intent stays traceable.
     PLAYER_JUMP("player_jump.wav"),
     PLAYER_LAND("player_land.wav"),
     PLAYER_DAMAGE("player_damage.wav"),
     PLAYER_DEATH("player_death.wav"),
+    PLAYER_RUN_STEP("player_run.wav"),
+    BLOCK_PUSH("block_push.wav"),
 
     // Collectibles
     COIN_COLLECT("coin_collect.wav"),
