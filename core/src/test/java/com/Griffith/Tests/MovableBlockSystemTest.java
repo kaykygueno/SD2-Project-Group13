@@ -1,6 +1,8 @@
 package com.Griffith.Tests;
 
 import com.Griffith.main.MovableBlockSystem;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,8 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MovableBlockSystemTest {
 
-    private static final float LEFT_BOUNDARY = 16f;
-    private static final float RIGHT_BOUNDARY = 464f;
+    private static final float LEFT_BOUNDARY = 0f;
+    private static final float RIGHT_BOUNDARY = 480f;
 
     // Verifies a player push moves the block and updates the visual offset.
     @Test
@@ -18,7 +20,7 @@ public class MovableBlockSystemTest {
         MovableBlockSystem system = new MovableBlockSystem(LEFT_BOUNDARY, RIGHT_BOUNDARY);
         system.addBlock(rect(100f, 20f, 16f, 16f));
 
-        MovableBlockSystem.BlockPushResult result = system.push(rect(86f, 20f, 16f, 16f), 6f);
+        MovableBlockSystem.BlockPushResult result = system.push(rect(86f, 20f, 16f, 16f), 6f, emptySolids());
 
         assertTrue(result.moved(), "block should move when the player pushes into it");
         assertEquals(106f, system.getBlocks().first().x);
@@ -31,13 +33,13 @@ public class MovableBlockSystemTest {
     @Test
     void pushStopsAtRightBoundary() {
         MovableBlockSystem system = new MovableBlockSystem(LEFT_BOUNDARY, RIGHT_BOUNDARY);
-        system.addBlock(rect(446f, 20f, 16f, 16f));
+        system.addBlock(rect(460f, 20f, 16f, 16f));
 
-        MovableBlockSystem.BlockPushResult result = system.push(rect(432f, 20f, 16f, 16f), 8f);
+        MovableBlockSystem.BlockPushResult result = system.push(rect(446f, 20f, 16f, 16f), 8f, emptySolids());
 
         assertTrue(result.moved(), "block should still move up to the wall");
-        assertEquals(2f, result.getMoveX());
-        assertEquals(448f, system.getBlocks().first().x);
+        assertEquals(4f, result.getMoveX());
+        assertEquals(464f, system.getBlocks().first().x);
     }
 
     // Verifies a pushed block stops before overlapping the next block.
@@ -47,7 +49,7 @@ public class MovableBlockSystemTest {
         system.addBlock(rect(100f, 20f, 16f, 16f));
         system.addBlock(rect(120f, 20f, 16f, 16f));
 
-        MovableBlockSystem.BlockPushResult result = system.push(rect(86f, 20f, 16f, 16f), 10f);
+        MovableBlockSystem.BlockPushResult result = system.push(rect(86f, 20f, 16f, 16f), 10f, emptySolids());
 
         assertTrue(result.moved(), "leading block should move until the gap closes");
         assertEquals(4f, result.getMoveX());
@@ -60,7 +62,7 @@ public class MovableBlockSystemTest {
         MovableBlockSystem system = new MovableBlockSystem(LEFT_BOUNDARY, RIGHT_BOUNDARY);
         system.addBlock(rect(100f, 20f, 16f, 16f));
 
-        system.push(rect(86f, 20f, 16f, 16f), 6f);
+        system.push(rect(86f, 20f, 16f, 16f), 6f, emptySolids());
         system.reset();
 
         assertEquals(100f, system.getBlocks().first().x);
@@ -96,7 +98,51 @@ public class MovableBlockSystemTest {
                 rect(100f, 20f, 16f, 16f)));
     }
 
-    private static com.badlogic.gdx.math.Rectangle rect(float x, float y, float width, float height) {
-        return new com.badlogic.gdx.math.Rectangle(x, y, width, height);
+    // Verifies wall colliders stop the block at the actual map wall instead of only a magic number.
+    @Test
+    void pushStopsAtSolidWallTile() {
+        MovableBlockSystem system = new MovableBlockSystem(LEFT_BOUNDARY, RIGHT_BOUNDARY);
+        system.addBlock(rect(440f, 128f, 16f, 16f));
+
+        Array<Rectangle> solidTiles = new Array<>();
+        solidTiles.add(rect(464f, 128f, 16f, 16f));
+
+        MovableBlockSystem.BlockPushResult result = system.push(rect(426f, 128f, 16f, 16f), 12f, solidTiles);
+
+        assertTrue(result.moved(), "block should move until it reaches the wall tile");
+        assertEquals(8f, result.getMoveX());
+        assertEquals(448f, system.getBlocks().first().x);
+    }
+
+    // Verifies walking on top of the block does not count as a side push.
+    @Test
+    void standingOnTopDoesNotPushBlock() {
+        MovableBlockSystem system = new MovableBlockSystem(LEFT_BOUNDARY, RIGHT_BOUNDARY);
+        system.addBlock(rect(100f, 20f, 16f, 16f));
+
+        MovableBlockSystem.BlockPushResult result = system.push(rect(100f, 36f, 16f, 16f), 6f, emptySolids());
+
+        assertFalse(result.moved(), "top contact should not move the block sideways");
+        assertEquals(100f, system.getBlocks().first().x);
+    }
+
+    // Verifies the player must actually reach the block face before it starts moving.
+    @Test
+    void distantPlayerDoesNotPushBlock() {
+        MovableBlockSystem system = new MovableBlockSystem(LEFT_BOUNDARY, RIGHT_BOUNDARY);
+        system.addBlock(rect(100f, 20f, 16f, 16f));
+
+        MovableBlockSystem.BlockPushResult result = system.push(rect(70f, 20f, 16f, 16f), 6f, emptySolids());
+
+        assertFalse(result.moved(), "there should be no push without side contact");
+        assertEquals(100f, system.getBlocks().first().x);
+    }
+
+    private static Array<Rectangle> emptySolids() {
+        return new Array<>();
+    }
+
+    private static Rectangle rect(float x, float y, float width, float height) {
+        return new Rectangle(x, y, width, height);
     }
 }
