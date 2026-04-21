@@ -321,6 +321,7 @@ public class FirstScreen implements Screen {
             Array<Rectangle> activeGround = new Array<>();
             activeGround.addAll(groundTiles);
             buttonSystem.addLiftParts(activeGround);
+            buttonSystem.addButtonParts(activeGround);
 
             if (player1 != null) {
                 player1.update(delta, activeGround);

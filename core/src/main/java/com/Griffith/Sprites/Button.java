@@ -9,6 +9,8 @@ import com.badlogic.gdx.utils.Array;
 
 public class Button {
 
+    private static final float BUTTON_TOP_TOLERANCE = 4f;
+
     private final Array<Rectangle> buttonRects = new Array<>();
     private final Array<Rectangle> liftParts = new Array<>();
     private final Array<Float> liftStartYs = new Array<>();
@@ -71,6 +73,11 @@ public class Button {
         target.addAll(liftParts);
     }
 
+    // This method appends solid button colliders so players can stand on levers.
+    public void addButtonParts(Array<Rectangle> target) {
+        target.addAll(buttonRects);
+    }
+
     // This method updates lift movement and carries any player standing on top of
     // the lift.
     public void update(float delta, Player player1, Player player2) {
@@ -122,8 +129,8 @@ public class Button {
         boolean anyPlayerOnButton = false;
 
         for (Rectangle button : buttonRects) {
-            boolean player1OnButton = player1 != null && player1.getBounds().overlaps(button);
-            boolean player2OnButton = player2 != null && player2.getBounds().overlaps(button);
+            boolean player1OnButton = isStandingOnButton(player1, button);
+            boolean player2OnButton = isStandingOnButton(player2, button);
 
             if (player1OnButton || player2OnButton) {
                 anyPlayerOnButton = true;
@@ -211,6 +218,26 @@ public class Button {
         }
 
         return allowedMove;
+    }
+
+    // This method checks whether a player is actually standing on the top face of a button.
+    private boolean isStandingOnButton(Player player, Rectangle button) {
+        if (player == null || player.isDead) {
+            return false;
+        }
+
+        return isStandingOnButton(player.getBounds(), player.velocityY, button);
+    }
+
+    // This method exposes the lever-top activation rule in a testable form.
+    public boolean isStandingOnButton(Rectangle playerBounds, float velocityY, Rectangle button) {
+        float buttonTop = button.y + button.height;
+        boolean horizontalSupport = playerBounds.x + playerBounds.width > button.x + 2f
+                && playerBounds.x < button.x + button.width - 2f;
+        boolean onTopSurface = Math.abs(playerBounds.y - buttonTop) <= BUTTON_TOP_TOLERANCE
+                && velocityY <= 0f;
+
+        return horizontalSupport && onTopSurface;
     }
 
     // This method applies the accumulated visual offset to the lift tile layer.
