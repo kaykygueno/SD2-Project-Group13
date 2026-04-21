@@ -7,22 +7,26 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ButtonActivationTest {
 
-    // Verifies levers are exposed as solid colliders so players can stand on them.
+    // Verifies levers are exposed as solid colliders so players can stand on them like ground.
     @Test
-    void addButtonPartsAddsLeverColliders() throws Exception {
+    void leverActsAsSolidGround() throws Exception {
         Button buttonSystem = new Button();
-        Array<Rectangle> buttonRects = setButtonRects(buttonSystem, rect(40f, 80f, 16f, 8f));
+        Rectangle lowerLever = rect(40f, 80f, 16f, 8f);
+        Rectangle upperLever = rect(96f, 144f, 16f, 8f);
+        Array<Rectangle> buttonRects = setButtonRects(buttonSystem, lowerLever, upperLever);
         Array<Rectangle> solids = new Array<>();
 
         buttonSystem.addButtonParts(solids);
 
-        assertSame(buttonRects.first(), solids.first(), "button colliders should be added to the ground list");
+        assertEquals(2, solids.size, "both levers should be added to the ground list");
+        assertTrue(solids.contains(buttonRects.first(), true), "the first lever should behave like solid ground");
+        assertTrue(solids.contains(buttonRects.peek(), true), "the second lever should behave like solid ground");
     }
 
     // Verifies standing on top of a lever counts as activation.
@@ -36,7 +40,7 @@ public class ButtonActivationTest {
 
     // Verifies side overlap alone does not activate the lever.
     @Test
-    void touchingLeverFromSideDoesNotActivateIt() {
+    void touchingLeverFromSideDoesNotActivateLever() {
         Button buttonSystem = new Button();
         boolean active = buttonSystem.isStandingOnButton(rect(24f, 80f, 16f, 16f), 0f, rect(40f, 80f, 16f, 8f));
 
