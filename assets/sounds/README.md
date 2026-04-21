@@ -1,13 +1,14 @@
 # Sound Assets Directory
 
 The core movement sounds in this project are generated in-house by
-`tools/generate_sfx.py`.
+`tools/GenerateSfx.java`.
 
 Reference targets documented as comments in that script:
 - `player_run.wav`: light stone-footstep ticks
 - `player_jump.wav`: short arcade jump chirp
 - `player_death.wav`: descending defeat sting
 - `block_push.wav`: muted crate/stone scrape
+- `coin_collect.wav`: bright pickup chime
 
 Create sound files in this directory with the naming convention used in `SoundType.java`.
 

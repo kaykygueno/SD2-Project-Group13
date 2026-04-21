@@ -1,5 +1,7 @@
 package com.Griffith.Sprites;
 
+import com.Griffith.audio.SoundManager;
+import com.Griffith.audio.SoundType;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -58,14 +60,28 @@ public class Coin {
     // Returns how many coins of the given owner were collected by the specified
     // player during this check.
     public int checkCollection(Player player, CoinOwner owner) {
+        if (player == null) {
+            return 0;
+        }
+
+        return checkCollection(player.getBounds(), owner);
+    }
+
+    // Returns how many coins of the given owner were collected by the specified
+    // bounds during this check.
+    public int checkCollection(Rectangle playerBounds, CoinOwner owner) {
         int collectedNow = 0;
 
         for (int i = 0; i < coins.size; i++) {
-            if (!collected.get(i) && owners.get(i) == owner && player.getBounds().overlaps(coins.get(i))) {
+            if (!collected.get(i) && owners.get(i) == owner && playerBounds.overlaps(coins.get(i))) {
                 collected.set(i, true);
                 removeVisualCoin(i);
                 collectedNow++;
             }
+        }
+
+        if (collectedNow > 0) {
+            SoundManager.play(SoundType.COIN_COLLECT, 0.5f);
         }
 
         return collectedNow;

@@ -15,7 +15,8 @@ public class SoundAssetAvailabilityTest {
             "player_run.wav",
             "player_jump.wav",
             "player_death.wav",
-            "block_push.wav");
+            "block_push.wav",
+            "coin_collect.wav");
 
     // Verifies the gameplay sound files used by running, jumping, dying, and pushing exist in assets.
     @Test
