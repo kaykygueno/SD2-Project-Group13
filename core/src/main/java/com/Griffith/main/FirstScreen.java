@@ -4,6 +4,8 @@ import com.Griffith.Sprites.Button;
 import com.Griffith.Sprites.Coin;
 import com.Griffith.Sprites.Hazard;
 import com.Griffith.Sprites.Player;
+import com.Griffith.audio.SoundManager;
+import com.Griffith.audio.SoundType;
 import com.Griffith.gameConstants.GameConstants;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -27,6 +29,8 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class FirstScreen implements Screen {
+
+    private static final float BLOCK_PUSH_SOUND_INTERVAL = 0.18f;
 
     // Map
     private TiledMap map;
@@ -66,6 +70,7 @@ public class FirstScreen implements Screen {
     private boolean levelComplete = false;
     private boolean showCollisionDebug = false;
     private String message = "";
+    private float blockPushSoundCooldown = 0f;
     private Main game;
     private final String mapPath;
     private final String levelCompleteMessage;
@@ -318,6 +323,7 @@ public class FirstScreen implements Screen {
         camera.update();
 
         if (!gameOver && !levelComplete) {
+            blockPushSoundCooldown = Math.max(0f, blockPushSoundCooldown - delta);
             Array<Rectangle> activeGround = new Array<>();
             activeGround.addAll(groundTiles);
             buttonSystem.addLiftParts(activeGround);
@@ -475,8 +481,8 @@ public class FirstScreen implements Screen {
                 doorOpenLayer.setVisible(true);
             }
 
-            player1.die();
-            player2.die();
+            player1.die(false);
+            player2.die(false);
 
             levelComplete = true;
             gameOver = true;
@@ -515,6 +521,7 @@ public class FirstScreen implements Screen {
                 result.getBlock().width,
                 result.getBlock().height);
         carryPlayersStandingOnBlock(blockBeforeMove, result.getMoveX());
+        playBlockPushSoundIfReady();
         applyBlockVisualOffset();
     }
 
@@ -624,6 +631,7 @@ public class FirstScreen implements Screen {
 
     private void resetBlocks() {
         movableBlocks.reset();
+        blockPushSoundCooldown = 0f;
         applyBlockVisualOffset();
     }
 
@@ -634,6 +642,16 @@ public class FirstScreen implements Screen {
 
         blockVisualLayer.setOffsetX(movableBlocks.getVisualOffsetX());
         blockVisualLayer.setOffsetY(-movableBlocks.getVisualOffsetY());
+    }
+
+    // Plays a short scrape only when the white block actually moved this frame.
+    private void playBlockPushSoundIfReady() {
+        if (blockPushSoundCooldown > 0f) {
+            return;
+        }
+
+        SoundManager.play(SoundType.BLOCK_PUSH, 0.45f);
+        blockPushSoundCooldown = BLOCK_PUSH_SOUND_INTERVAL;
     }
 
     // This method updates the camera viewport when the window size changes.

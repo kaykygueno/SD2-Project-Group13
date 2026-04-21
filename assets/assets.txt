@@ -978,3 +978,7 @@ maps/tileset.tsx
 maps/tileset2.tsx
 maps/tileset3.tsx
 sounds/README.md
+sounds/block_push.wav
+sounds/player_death.wav
+sounds/player_jump.wav
+sounds/player_run.wav
