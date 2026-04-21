@@ -10,7 +10,7 @@ package com.Griffith.audio;
 public enum SoundType {
 
     // Player sounds
-    // Core movement SFX are procedurally generated in tools/generate_sfx.py.
+    // Core movement SFX are procedurally generated in tools/GenerateSfx.java.
     // Reference targets are documented as comments there so the source intent stays traceable.
     PLAYER_JUMP("player_jump.wav"),
     PLAYER_LAND("player_land.wav"),
