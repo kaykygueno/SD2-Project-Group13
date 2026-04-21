@@ -150,10 +150,10 @@
   <object id="90" name="lever" x="97.6533" y="125.227" width="12.3672" height="3.77958"/>
  </objectgroup>
  <objectgroup id="8" name="hazards">
-  <object id="39" name="lava" x="305" y="300.667" width="16" height="16"/>
-  <object id="40" name="lava" x="319.667" y="301.001" width="16" height="16"/>
-  <object id="41" name="water" x="224.334" y="301.334" width="16" height="16"/>
-  <object id="42" name="water" x="239.833" y="301.333" width="16" height="16"/>
+  <object id="39" name="lava" x="304" y="302.667" width="16" height="16"/>
+  <object id="40" name="lava" x="319.667" y="303.001" width="16" height="16"/>
+  <object id="41" name="water" x="223.335" y="302.583" width="16" height="16"/>
+  <object id="42" name="water" x="239.833" y="302.333" width="16" height="16"/>
   <object id="44" name="spikes" x="176" y="191.5" width="16" height="3.33333"/>
   <object id="45" name="spikes" x="192" y="191.5" width="16" height="3.33333"/>
   <object id="87" name="spikes" x="384.685" y="223.8" width="16" height="3.33333"/>
