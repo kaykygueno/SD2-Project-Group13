@@ -55,8 +55,8 @@ public class DoorSystem {
                 doorOpenLayer.setVisible(true);
             }
 
-            player1.die();
-            player2.die();
+            player1.die(false);
+            player2.die(false);
             return "YOU WIN! Press R to play again.";
         }
 

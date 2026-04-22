@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="88">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="24" nextobjectid="121">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="1025" source="lava_water.tsx"/>
  <tileset firstgid="1074" source="background.tsx"/>
@@ -79,17 +79,27 @@
  </layer>
  <layer id="14" name="lift_visual" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJztwTEBAAAAwqD1T20JT6AAAHgaCWAAAQ==
+   eJxjYBgFo2AUjIJRQAgcYWVgOArEx1gH2iWjYBSMgqEAAPNwAl8=
+  </data>
+ </layer>
+ <layer id="23" name="block_visual" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjALcIJJtoF0wCkbBKBgFQw8AAPqtAGA=
+  </data>
+ </layer>
+ <layer id="13" name="surface" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AU0Ao8GWgHjAKaAmzx6wvFo2DwAWC8OIDwQLtjFAwNwMQCwchAhAWCiQEAMxoDuQ==
   </data>
  </layer>
  <layer id="2" name="ground" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJzbwM5w4D0rAwM98QZ2hoT17AwKDHQGQDsXjNo7au+ovaP2jto7au9ItRdYB484ezdAwtqB1hhoFxwD7WQAAOB0YsE=
+   eJzNluENgyAQhd8fy5qO0O7QQdxAXEAYw7hEV/AMXEIuUEUL9JIX5dR8xztUtIL9dEBNaYV+JKFyEHNoyX0/2nAtec6aDvRL7tXn585pr9eQngp4qfLcVIT+GX+swT2KGDes9azO+vuNeydSdRkx/iefa3KlF6lz698bmeP7crnFJga33uSaK8FlP4z3Jna9dX9jPZuDmnN6Fwv2mv0uPV/+dsto5TPtOXrt2DZXC/2zd4W5lcaryLHEPgcb3VGvUQ==
   </data>
  </layer>
  <layer id="20" name="coins_visual" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwVABwuyYYvJYxEbBwAIAcFoAQQ==
+   eJxjYBgFxAB59oF2weAHwkMsjAZjnA61MBxKYDDG90CC0bQ2dAG2uBtN34MPAADsHAEB
   </data>
  </layer>
  <objectgroup id="19" name="coins">
@@ -103,22 +113,68 @@
     <property name="owner" value="orange"/>
    </properties>
   </object>
+  <object id="81" name="coins_Blue" x="244.521" y="165.726" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="82" name="coins_Blue" x="228.855" y="37.059" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="83" name="coins_Blue" x="180.521" y="102.392" width="6.29065" height="5.21535">
+   <properties>
+    <property name="owner" value="orange"/>
+   </properties>
+  </object>
+  <object id="84" name="coins_Orange" x="372.682" y="196.321" width="6.63685" height="6.02496">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
+  <object id="85" name="coins_Orange" x="293.682" y="117.321" width="6.63685" height="6.02496">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
+  <object id="86" name="coins_Orange" x="437.348" y="68.9875" width="6.63685" height="6.02496">
+   <properties>
+    <property name="owner" value="blue"/>
+   </properties>
+  </object>
  </objectgroup>
- <objectgroup id="9" name="interactions"/>
- <objectgroup id="8" name="hazards"/>
+ <objectgroup id="9" name="interactions">
+  <object id="49" name="plataform" x="16" y="175.457" width="47.5378" height="10.0966"/>
+  <object id="64" name="lever" x="97.5367" y="188.805" width="12.3672" height="3.77958"/>
+  <object id="90" name="lever" x="97.6533" y="125.227" width="12.3672" height="3.77958"/>
+ </objectgroup>
+ <objectgroup id="8" name="hazards">
+  <object id="39" name="lava" x="304" y="302.667" width="16" height="16"/>
+  <object id="40" name="lava" x="319.667" y="303.001" width="16" height="16"/>
+  <object id="41" name="water" x="223.335" y="302.583" width="16" height="16"/>
+  <object id="42" name="water" x="239.833" y="302.333" width="16" height="16"/>
+  <object id="44" name="spikes" x="176" y="191.5" width="16" height="3.33333"/>
+  <object id="45" name="spikes" x="192" y="191.5" width="16" height="3.33333"/>
+  <object id="87" name="spikes" x="384.685" y="223.8" width="16" height="3.33333"/>
+  <object id="88" name="spikes" x="400.062" y="223.8" width="16" height="3.33333"/>
+ </objectgroup>
+ <objectgroup id="22" name="block">
+  <object id="120" name="white_block" x="400" y="128" width="16" height="16"/>
+ </objectgroup>
  <objectgroup id="12" name="spawn">
   <object id="58" name="Player1" gid="1673" x="37.3333" y="300" width="16" height="32"/>
-  <object id="59" name="Player2" gid="1680" x="60.4073" y="300.557" width="16" height="32"/>
-  <object id="87" name="door" gid="1668" x="416.5" y="305.5" width="48" height="48"/>
+  <object id="59" name="Player2" gid="1680" x="38" y="252.667" width="16" height="32"/>
+  <object id="65" name="door" gid="1668" x="17.861" y="63.9081" width="48" height="48"/>
  </objectgroup>
- <layer id="16" name="door_open" width="30" height="20">
-  <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwSgYHqCVbaBdAAEAUzIAjA==
-  </data>
- </layer>
  <layer id="15" name="door_closed" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjIJRMApGwSgYHqCFbaBdAAEAUqoAiw==
+   eJxjYBgF9AItbAPtglEwCkbBKBgFo2AU0AMAAFMeAIs=
+  </data>
+ </layer>
+ <layer id="16" name="door_open" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgF9AKtbAPtglEwCkbBKBgFo2AU0AMAAFsSAIw=
   </data>
  </layer>
 </map>

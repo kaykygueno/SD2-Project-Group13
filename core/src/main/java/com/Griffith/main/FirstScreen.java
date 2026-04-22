@@ -4,6 +4,8 @@ import com.Griffith.Sprites.Button;
 import com.Griffith.Sprites.Coin;
 import com.Griffith.Sprites.Hazard;
 import com.Griffith.Sprites.Player;
+import com.Griffith.audio.SoundManager;
+import com.Griffith.audio.SoundType;
 import com.Griffith.gameConstants.GameConstants;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -28,6 +30,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 public class FirstScreen implements Screen {
 
+    private static final float BLOCK_PUSH_SOUND_INTERVAL = 0.18f;
+
     // Map
     private TiledMap map;
     private OrthogonalTiledMapRenderer renderer;
@@ -44,7 +48,8 @@ public class FirstScreen implements Screen {
 
     // Ground collision
     private Array<Rectangle> groundTiles = new Array<>();
-    private Array<Rectangle> blockTiles = new Array<>();
+    private final MovableBlockSystem movableBlocks = new MovableBlockSystem(0f, GameConstants.MAP_WIDTH);
+    private MapLayer blockVisualLayer;
 
     // Hazards
     private final Hazard hazardSystem = new Hazard();
@@ -65,6 +70,7 @@ public class FirstScreen implements Screen {
     private boolean levelComplete = false;
     private boolean showCollisionDebug = false;
     private String message = "";
+    private float blockPushSoundCooldown = 0f;
     private Main game;
     private final String mapPath;
     private final String levelCompleteMessage;
@@ -107,6 +113,7 @@ public class FirstScreen implements Screen {
         loadSpawnObjects();
         loadGround();
         loadBlockColliders();
+        loadBlockVisualLayer();
         loadHazards();
         loadInteractions();
         loadLiftVisualLayer();
@@ -203,8 +210,7 @@ public class FirstScreen implements Screen {
         }
     }
 
-    // This method loads extra block colliders from the block object layer and adds
-    // them to the ground set.
+    // This method loads pushable block colliders from the block object layer.
     private void loadBlockColliders() {
         MapLayer blockLayer = map.getLayers().get("block");
 
@@ -213,7 +219,7 @@ public class FirstScreen implements Screen {
             return;
         }
 
-        blockTiles.clear();
+        movableBlocks.clear();
 
         System.out.println("Block object count: " + blockLayer.getObjects().getCount());
 
@@ -221,14 +227,7 @@ public class FirstScreen implements Screen {
             if (obj instanceof RectangleMapObject) {
                 Rectangle source = ((RectangleMapObject) obj).getRectangle();
 
-                Rectangle rect = new Rectangle(
-                        source.x,
-                        source.y,
-                        source.width,
-                        source.height);
-
-                blockTiles.add(rect);
-                groundTiles.add(rect);
+                Rectangle rect = movableBlocks.addBlock(source);
 
                 System.out.println("Loaded block rect -> x:" + rect.x +
                         " y:" + rect.y +
@@ -237,7 +236,16 @@ public class FirstScreen implements Screen {
             }
         }
 
-        System.out.println("Final block collider count: " + blockTiles.size);
+        System.out.println("Final block collider count: " + movableBlocks.getBlocks().size);
+    }
+
+    private void loadBlockVisualLayer() {
+        blockVisualLayer = map.getLayers().get("block_visual");
+        if (blockVisualLayer != null) {
+            blockVisualLayer.setOffsetX(0f);
+            blockVisualLayer.setOffsetY(0f);
+            System.out.println("Block visual layer loaded.");
+        }
     }
 
     // This method delegates hazard loading to the hazard system.
@@ -315,9 +323,11 @@ public class FirstScreen implements Screen {
         camera.update();
 
         if (!gameOver && !levelComplete) {
+            blockPushSoundCooldown = Math.max(0f, blockPushSoundCooldown - delta);
             Array<Rectangle> activeGround = new Array<>();
             activeGround.addAll(groundTiles);
             buttonSystem.addLiftParts(activeGround);
+            buttonSystem.addButtonParts(activeGround);
 
             if (player1 != null) {
                 player1.update(delta, activeGround);
@@ -326,6 +336,8 @@ public class FirstScreen implements Screen {
                 player2.update(delta, activeGround);
             }
 
+            updateMovableBlocks();
+            resolvePlayersAgainstBlocks();
             buttonSystem.update(delta, player1, player2);
 
             updateCoins();
@@ -337,6 +349,8 @@ public class FirstScreen implements Screen {
 
         renderer.setView(camera);
         renderer.render();
+
+        drawMovableBlocks();
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -351,8 +365,8 @@ public class FirstScreen implements Screen {
         coinSystem.draw(batch);
 
         font.setColor(Color.WHITE);
-        font.draw(batch, "P1: A/D/W | P2: Arrows | R: Reset | F3: Debug", 10, 338);
-        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10, 355);
+        font.draw(batch, "P1: A/D/W | P2: Arrows | R: Reset | F3: Debug", 10, GameConstants.MAP_HEIGHT - 22);
+        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10, GameConstants.MAP_HEIGHT - 6);
 
         if (!message.isEmpty()) {
             font.setColor(Color.YELLOW);
@@ -369,14 +383,14 @@ public class FirstScreen implements Screen {
             // normal ground
             debugRenderer.setColor(Color.GRAY);
             for (Rectangle tile : groundTiles) {
-                if (!blockTiles.contains(tile, true)) {
+                if (!movableBlocks.getBlocks().contains(tile, true)) {
                     debugRenderer.rect(tile.x, tile.y, tile.width, tile.height);
                 }
             }
 
             // block
             debugRenderer.setColor(Color.GREEN);
-            for (Rectangle block : blockTiles) {
+            for (Rectangle block : movableBlocks.getBlocks()) {
                 debugRenderer.rect(block.x, block.y, block.width, block.height);
             }
 
@@ -467,8 +481,8 @@ public class FirstScreen implements Screen {
                 doorOpenLayer.setVisible(true);
             }
 
-            player1.die();
-            player2.die();
+            player1.die(false);
+            player2.die(false);
 
             levelComplete = true;
             gameOver = true;
@@ -479,6 +493,112 @@ public class FirstScreen implements Screen {
     // This method resets the lift system back to its initial state.
     private void resetLift() {
         buttonSystem.reset();
+    }
+
+    private void updateMovableBlocks() {
+        pushBlocksForPlayer(player1);
+        pushBlocksForPlayer(player2);
+    }
+
+    private void pushBlocksForPlayer(Player player) {
+        if (player == null || player.isDead) {
+            return;
+        }
+
+        float moveX = player.getLastMoveX();
+        if (moveX == 0f) {
+            return;
+        }
+
+        MovableBlockSystem.BlockPushResult result = movableBlocks.push(player.getBounds(), moveX, groundTiles);
+        if (!result.moved()) {
+            return;
+        }
+
+        Rectangle blockBeforeMove = new Rectangle(
+                result.getBlock().x - result.getMoveX(),
+                result.getBlock().y,
+                result.getBlock().width,
+                result.getBlock().height);
+        carryPlayersStandingOnBlock(blockBeforeMove, result.getMoveX());
+        playBlockPushSoundIfReady();
+        applyBlockVisualOffset();
+    }
+
+    private void resolvePlayersAgainstBlocks() {
+        resolvePlayerAgainstBlocks(player1);
+        resolvePlayerAgainstBlocks(player2);
+    }
+
+    private void resolvePlayerAgainstBlocks(Player player) {
+        if (player == null || player.isDead) {
+            return;
+        }
+
+        Rectangle playerBounds = player.getBounds();
+        for (Rectangle block : movableBlocks.getBlocks()) {
+            if (!playerBounds.overlaps(block)) {
+                continue;
+            }
+
+            if (movableBlocks.landsOnTop(playerBounds, player.velocityY, block)) {
+                placePlayerOnTopOfBlock(player, block);
+                playerBounds = player.getBounds();
+                continue;
+            }
+
+            float moveX = player.getLastMoveX();
+            if (moveX > 0f) {
+                player.x = block.x - playerBounds.width;
+            } else if (moveX < 0f) {
+                player.x = block.x + block.width;
+            } else if (playerBounds.x + playerBounds.width * 0.5f < block.x + block.width * 0.5f) {
+                player.x = block.x - playerBounds.width;
+            } else {
+                player.x = block.x + block.width;
+            }
+            player.bounds.setPosition(player.x, player.y);
+            playerBounds = player.getBounds();
+        }
+    }
+
+    private void placePlayerOnTopOfBlock(Player player, Rectangle block) {
+        player.y = block.y + block.height;
+        player.velocityY = 0f;
+        player.setOnGround(true);
+        player.bounds.setPosition(player.x, player.y);
+    }
+
+    private void carryPlayersStandingOnBlock(Rectangle block, float moveX) {
+        carryPlayerStandingOnBlock(player1, block, moveX);
+        carryPlayerStandingOnBlock(player2, block, moveX);
+    }
+
+    private void carryPlayerStandingOnBlock(Player player, Rectangle block, float moveX) {
+        if (player == null || player.isDead) {
+            return;
+        }
+
+        Rectangle playerBounds = player.getBounds();
+        if (movableBlocks.isStandingOnTop(playerBounds, block)) {
+            player.moveBy(moveX, 0f);
+        }
+    }
+
+    private void drawMovableBlocks() {
+        if (movableBlocks.getBlocks().size == 0 || blockVisualLayer != null) {
+            return;
+        }
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        debugRenderer.setProjectionMatrix(camera.combined);
+        debugRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        debugRenderer.setColor(Color.WHITE);
+        for (Rectangle block : movableBlocks.getBlocks()) {
+            debugRenderer.rect(block.x, block.y, block.width, block.height);
+        }
+        debugRenderer.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     // This method restores players, door state, lift state, and coin progress for a
@@ -492,6 +612,7 @@ public class FirstScreen implements Screen {
         }
 
         resetLift();
+        resetBlocks();
 
         if (doorClosedLayer != null) {
             doorClosedLayer.setVisible(true);
@@ -506,6 +627,31 @@ public class FirstScreen implements Screen {
         coinSystem.reset();
         pumpkinCoinCount = 0;
         docCoinCount = 0;
+    }
+
+    private void resetBlocks() {
+        movableBlocks.reset();
+        blockPushSoundCooldown = 0f;
+        applyBlockVisualOffset();
+    }
+
+    private void applyBlockVisualOffset() {
+        if (blockVisualLayer == null || movableBlocks.getBlocks().size == 0) {
+            return;
+        }
+
+        blockVisualLayer.setOffsetX(movableBlocks.getVisualOffsetX());
+        blockVisualLayer.setOffsetY(-movableBlocks.getVisualOffsetY());
+    }
+
+    // Plays a short scrape only when the white block actually moved this frame.
+    private void playBlockPushSoundIfReady() {
+        if (blockPushSoundCooldown > 0f) {
+            return;
+        }
+
+        SoundManager.play(SoundType.BLOCK_PUSH, 0.45f);
+        blockPushSoundCooldown = BLOCK_PUSH_SOUND_INTERVAL;
     }
 
     // This method updates the camera viewport when the window size changes.

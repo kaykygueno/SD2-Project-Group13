@@ -198,6 +198,14 @@ distributions {
 startScripts.dependsOn(':lwjgl3:jar')
 startScripts.classpath = project.tasks.jar.outputs.files
 
+tasks.named("processResources", Copy) {
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  doNotTrackState("This task mirrors the entire assets tree and stale copied resources can block incremental reuse.")
+  doFirst {
+    delete(destinationDir)
+  }
+}
+
 if(enableGraalNative == 'true') {
   apply from: file("nativeimage.gradle")
 }

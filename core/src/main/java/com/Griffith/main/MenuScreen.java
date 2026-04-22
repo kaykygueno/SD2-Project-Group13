@@ -13,6 +13,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class MenuScreen implements Screen {
 
+    private static final int LEVEL_ONE = 1;
+    private static final int LEVEL_TWO = 2;
+
     private final Main game;
     private final SpriteBatch batch;
     private final BitmapFont font;
@@ -23,6 +26,7 @@ public class MenuScreen implements Screen {
     private Viewport viewport;
 
     private final boolean win;
+    private int selectedLevel = LEVEL_ONE;
 
     // Accessors for testing (made public so tests in other packages can access)
     public String getTitle() {
@@ -30,7 +34,15 @@ public class MenuScreen implements Screen {
     }
 
     public String getSubtitle() {
-        return win ? "PRESS ENTER TO PLAY AGAIN" : "PRESS ENTER TO START";
+        return win ? "SELECT A LEVEL TO PLAY AGAIN" : "SELECT A LEVEL";
+    }
+
+    public String getLevelOneOption() {
+        return "LEVEL 1 - ORIGINAL MAP";
+    }
+
+    public String getLevelTwoOption() {
+        return "LEVEL 2 - CRYSTAL CAVERN";
     }
 
     // Public constructor primarily for tests that avoids libGDX initialization
@@ -59,7 +71,7 @@ public class MenuScreen implements Screen {
         this(game, false);
     }
 
-    // This method draws the menu text and starts the gameplay screen when Enter is pressed.
+    // This method draws the menu text and starts the selected gameplay screen.
     @Override
     public void show() {
         camera = new OrthographicCamera();
@@ -78,25 +90,77 @@ public class MenuScreen implements Screen {
         viewport.apply();
         batch.setProjectionMatrix(camera.combined);
 
-        //Angelo: Fixed the text, english version
-        String title = win ? "CONGRATULATIONS!" : "FIRE AND WATER";
-        String subtitle = win ? "PRESS ENTER TO PLAY AGAIN" : "PRESS ENTER TO START";
+        handleMenuInput();
+
+        String title = getTitle();
+        String subtitle = getSubtitle();
+        String instructions = "UP/DOWN + ENTER OR PRESS 1/2";
 
         // centralização com viewport
         layout.setText(font, title);
         float titleX = (viewport.getWorldWidth() - layout.width) / 2f;
-        float titleY = viewport.getWorldHeight() / 2f + 40;
+        float titleY = viewport.getWorldHeight() / 2f + 95;
 
         layout.setText(font, subtitle);
         float subX = (viewport.getWorldWidth() - layout.width) / 2f;
-        float subY = viewport.getWorldHeight() / 2f - 20;
+        float subY = viewport.getWorldHeight() / 2f + 45;
 
         batch.begin();
+        font.setColor(1f, 1f, 1f, 1f);
         font.draw(batch, title, titleX, titleY);
         font.draw(batch, subtitle, subX, subY);
+        drawLevelOption(getLevelOneOption(), LEVEL_ONE, viewport.getWorldHeight() / 2f - 15);
+        drawLevelOption(getLevelTwoOption(), LEVEL_TWO, viewport.getWorldHeight() / 2f - 60);
+
+        font.setColor(0.75f, 0.85f, 1f, 1f);
+        layout.setText(font, instructions);
+        font.draw(batch, instructions, (viewport.getWorldWidth() - layout.width) / 2f, viewport.getWorldHeight() / 2f - 120);
+        font.setColor(1f, 1f, 1f, 1f);
         batch.end();
+    }
+
+    private void drawLevelOption(String text, int level, float y) {
+        String line = (selectedLevel == level ? "> " : "  ") + text;
+        layout.setText(font, line);
+        float x = (viewport.getWorldWidth() - layout.width) / 2f;
+
+        if (selectedLevel == level) {
+            font.setColor(1f, 0.86f, 0.24f, 1f);
+        } else {
+            font.setColor(0.9f, 0.9f, 0.9f, 1f);
+        }
+
+        font.draw(batch, line, x, y);
+    }
+
+    private void handleMenuInput() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+            selectedLevel = selectedLevel == LEVEL_ONE ? LEVEL_TWO : LEVEL_ONE;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            selectedLevel = selectedLevel == LEVEL_ONE ? LEVEL_TWO : LEVEL_ONE;
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1) || Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_1)) {
+            selectedLevel = LEVEL_ONE;
+            startSelectedLevel();
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2) || Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_2)) {
+            selectedLevel = LEVEL_TWO;
+            startSelectedLevel();
+        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            startSelectedLevel();
+        }
+    }
+
+    private void startSelectedLevel() {
+        if (selectedLevel == LEVEL_TWO) {
+            game.setScreen(new LevelTwoScreen(game));
+        } else {
             game.setScreen(new FirstScreen(game));
         }
     }
