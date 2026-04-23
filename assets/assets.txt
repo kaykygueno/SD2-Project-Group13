@@ -10,6 +10,8 @@ maps/coins.tsx
 maps/coins_Blue.tsx
 maps/coins_Orange.tsx
 maps/dangerous.tsx
+maps/door_golden.tsx
+maps/door_golden2.tsx
 maps/doors.tsx
 maps/foreground_.tsx
 maps/images/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7/0x72_DungeonTilesetII_v1.7.png
