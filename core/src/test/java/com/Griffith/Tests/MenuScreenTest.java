@@ -11,10 +11,10 @@ public class MenuScreenTest {
     @Test
     public void nonWinMenuShowsTitleAndSubtitle() {
         MenuScreen menu = new MenuScreen(false);
-        assertEquals("FIRE AND WATER", menu.getTitle());
+        assertEquals("DUNGEON QUEST", menu.getTitle());
         assertEquals("SELECT A LEVEL", menu.getSubtitle());
-        assertEquals("LEVEL 1 - ORIGINAL MAP", menu.getLevelOneOption());
-        assertEquals("LEVEL 2 - CRYSTAL CAVERN", menu.getLevelTwoOption());
+        assertEquals("LEVEL 1 - CRYSTAL CAVERN", menu.getLevelOneOption());
+        assertEquals("LEVEL 2 - GOLDEN DAY", menu.getLevelTwoOption());
     }
 
     // Verifies the win menu switches to the congratulations copy.

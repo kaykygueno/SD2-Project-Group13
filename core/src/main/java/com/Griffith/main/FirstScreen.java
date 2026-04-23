@@ -61,6 +61,8 @@ public class FirstScreen implements Screen {
 
     // Lift system
     private final Button buttonSystem = new Button();
+    private final LifttDownSystem lifttDownSystem = new LifttDownSystem();
+    private final LifttUpSystem lifttUpSystem = new LifttUpSystem();
     private final Coin coinSystem = new Coin();
     private int pumpkinCoinCount = 0;
     private int docCoinCount = 0;
@@ -77,7 +79,7 @@ public class FirstScreen implements Screen {
     private final boolean returnToMenuOnWin;
 
     public FirstScreen(Main game) {
-        this(game, "maps/levelOne.tmx", "LEVEL 1 COMPLETE! Press ENTER for Level 2.", false);
+        this(game, "maps/levelTwo.tmx", "LEVEL 1 COMPLETE! Press ENTER for Level 2.", false);
     }
 
     protected FirstScreen(Main game, String mapPath, String levelCompleteMessage, boolean returnToMenuOnWin) {
@@ -117,6 +119,8 @@ public class FirstScreen implements Screen {
         loadHazards();
         loadInteractions();
         loadLiftVisualLayer();
+        lifttDownSystem.load(map, mapPath);
+        lifttUpSystem.load(map, mapPath);
         loadDoorLayers();
         loadCoins();
     }
@@ -328,6 +332,8 @@ public class FirstScreen implements Screen {
             activeGround.addAll(groundTiles);
             buttonSystem.addLiftParts(activeGround);
             buttonSystem.addButtonParts(activeGround);
+            lifttDownSystem.addColliders(activeGround);
+            lifttUpSystem.addColliders(activeGround);
 
             if (player1 != null) {
                 player1.update(delta, activeGround);
@@ -339,6 +345,8 @@ public class FirstScreen implements Screen {
             updateMovableBlocks();
             resolvePlayersAgainstBlocks();
             buttonSystem.update(delta, player1, player2);
+            lifttDownSystem.update(delta, player1, player2, buttonSystem, activeGround);
+            lifttUpSystem.update(delta, player1, player2, buttonSystem, activeGround);
 
             updateCoins();
             checkHazards();
@@ -366,7 +374,8 @@ public class FirstScreen implements Screen {
 
         font.setColor(Color.WHITE);
         font.draw(batch, "P1: A/D/W | P2: Arrows | R: Reset | F3: Debug", 10, GameConstants.MAP_HEIGHT - 22);
-        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10, GameConstants.MAP_HEIGHT - 6);
+        font.draw(batch, "Pumpkin Coins: " + pumpkinCoinCount + " | Blue Coins: " + docCoinCount, 10,
+                GameConstants.MAP_HEIGHT - 6);
 
         if (!message.isEmpty()) {
             font.setColor(Color.YELLOW);
@@ -493,6 +502,8 @@ public class FirstScreen implements Screen {
     // This method resets the lift system back to its initial state.
     private void resetLift() {
         buttonSystem.reset();
+        lifttDownSystem.reset();
+        lifttUpSystem.reset();
     }
 
     private void updateMovableBlocks() {

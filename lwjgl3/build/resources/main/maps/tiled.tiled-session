@@ -1,5 +1,5 @@
 {
-    "activeFile": "main.tmx",
+    "activeFile": "levelTwo.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -8,8 +8,16 @@
         "": {
             "scaleInDock": 1
         },
+        "D:/Griffith/eclipse-workspace/SD2-Project-Group13/assets/blackout_ copy.tsx": {
+            "scaleInDock": 1
+        },
         "D:/Griffith/eclipse-workspace/SD2_Project_Group13/assets/blackout_ copy.tsx": {
             "scaleInDock": 1
+        },
+        "Tree-background.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "background.tsx": {
             "scaleInDock": 1,
@@ -32,23 +40,67 @@
             "scaleInDock": 1,
             "scaleInEditor": 5.5
         },
+        "coins_Blue.tsx": {
+            "scaleInDock": 1
+        },
+        "coins_Orange.tsx": {
+            "scaleInDock": 1
+        },
+        "dangerous.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "door_golden.tsx": {
+            "dynamicWrapping": false
+        },
         "doors.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 4
         },
         "foreground_.tsx": {
-            "scaleInDock": 1
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "lava_water.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 4
         },
-        "main.tmx": {
-            "scale": 3,
+        "levelOne.tmx": {
+            "expandedObjectLayers": [
+                8
+            ],
+            "scale": 2,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 353.8333333333333,
-                "y": 159.66666666666663
+                "x": 269.5,
+                "y": 137.5
+            }
+        },
+        "levelOne.tmx#tileset2": {
+            "scaleInDock": 1
+        },
+        "levelTwo.tmx": {
+            "expandedObjectLayers": [
+                9
+            ],
+            "scale": 2.2760416666666665,
+            "selectedLayer": -1,
+            "viewCenter": {
+                "x": 236.37528604118995,
+                "y": 159.9267734553776
+            }
+        },
+        "levelTwo.tmx#tileset2": {
+            "scaleInDock": 1
+        },
+        "main.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 211.3333333333333,
+                "y": 116.66666666666669
             }
         },
         "main.tmx#tileset2": {
@@ -59,33 +111,46 @@
             "scaleInEditor": 8
         },
         "tileset.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 4
         },
         "tileset2.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1,
             "scaleInEditor": 4
+        },
+        "tileset3.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         }
     },
     "frame.defaultDuration": 200,
-    "last.imagePath": "D:/Griffith/eclipse-workspace/SD2_Project_Group13/assets/maps/images/Others",
+    "last.imagePath": "D:/Griffith/eclipse-workspace/SD2-Project-Group13/assets/maps/images/fourSeasonsPlatformer_ [tileset, version 2.0]/fourSeasonsPlatformer_ [tileset, version 2.0]/background_",
     "map.lastUsedFormat": "tmx",
     "map.layerDataFormat": "3",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
-        "main.tmx",
+        "levelTwo.tmx",
+        "levelOne.tmx",
         "tileset.tsx",
         "background.tsx",
         "tileset2.tsx",
         "doors.tsx",
         "lava_water.tsx",
         "coins.tsx",
-        "caracthers2.tsx"
+        "caracthers2.tsx",
+        "tileset3.tsx",
+        "Tree-background.tsx"
     ],
     "project": "tiled.tiled-project",
     "property.type": "Prop",
     "recentFiles": [
+        "levelTwo.tmx",
+        "levelOne.tmx",
+        "Tree-background.tsx",
+        "tileset3.tsx",
         "caracthers2.tsx",
         "coins.tsx",
         "lava_water.tsx",
@@ -93,15 +158,13 @@
         "tileset2.tsx",
         "background.tsx",
         "tileset.tsx",
-        "main.tmx",
-        "test.tsx",
-        "caracters.tsx"
+        "dangerous.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.margin": 0,
     "tileset.spacing": 0,
     "tileset.tileSize": {
-        "height": 32,
-        "width": 16
+        "height": 48,
+        "width": 48
     }
 }

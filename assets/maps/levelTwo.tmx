@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="24" nextobjectid="121">
+<map version="1.10" tiledversion="1.12.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="24" nextobjectid="121">
  <tileset firstgid="1" source="tileset.tsx"/>
  <tileset firstgid="1025" source="lava_water.tsx"/>
  <tileset firstgid="1074" source="background.tsx"/>
@@ -66,7 +66,7 @@
  <tileset firstgid="1810" source="coins_Orange.tsx"/>
  <tileset firstgid="1822" source="coins_Blue.tsx"/>
  <tileset firstgid="1834" source="tileset2.tsx"/>
- <tileset firstgid="2114" source="Tree-background.tsx"/>
+ <tileset firstgid="2714" source="Tree-background.tsx"/>
  <layer id="4" name="backgroundtest" width="30" height="20" locked="1" opacity="0.7">
   <data encoding="base64" compression="zlib">
    eJztlM0KwDAIg3vqg3cvvlPBjcYk/dlpglBU/KJgS/ntK7vq8x19FJt1VUNk7pzNyau6nb7OnmZ3i7hs3lbHPjurw0VaGM/lxn01UNOEfaI44/b+Md5C/AS3mzJvpmGF29kojvq7XMRQ61fuCN3wO5/1V7mOTqZ7Zx9nt9kNZzOyv1LRybjsX1Vr2JtpPGk3upNgPg==
@@ -74,7 +74,13 @@
  </layer>
  <layer id="1" name="background" width="30" height="20" locked="1" opacity="0.9">
   <data encoding="base64" compression="zlib">
-   eJzF1mWzllUAhtEjiHAODdIt3aDSJXDo7kZpEZDu7u4G6ZZukJSUBiWkW7pBGlwMr+NP8JlZc+8Pe+b6tGee0AhBQUUoSjGKU4KSlKI0ZShLOcpTgYpUojJVqEo1qlODmtSiNnWoy7f8+xV2Dv0f2vVsfRrQkEY0pgnf05QfaEZzWvAjLWlFa9rQlna0pwMd6URnutCVbnQPdHvaXvSmD33pR38GMJBBDGYIQxnGcEYwklGMZgxjGcd4JjCRSUxmClMD3Wl2OjOYySxmM4e5zGM+C1jIIn5mMUtYyjKWs4KVrGI1a1jLOtazgY2B7ia7mS1sZRvb+ZUd7GQXu9nDXn5jH/s5wEEOcZgjHOUYv/MHxznBSU4FuqftGc5yjvNc4CKXuMwVrnKN6/zFDW5yi9vc4S73uM8DHvKIxzzhKc8C3ef2BS95xWve8JZ3vP9wLzgo6BPCEJZPCcdnhCcCwYQQkUhEJgpRiUZ0YhAz+GM3lo1NHOISj/gkICGJSEwSkpKML0hOClKSitSkIS3pSE8GMpKJzGQha6D7lf2abGQnBznJRW7ykJd85KcA31CQQhQmlCIUpRjFKUFJSlGaMpSlXKBbwVakEpWpQlWqUZ0a1KQWtalDXb7lO+pRnwY0pBGNacL3NOUHmtGcFoFuS9uK1rShLe1oTwc60onOdKEr3ehOD3rSi970oS/96M8ABjKIwQxhaKA73I5gJKMYzRjGMo7xTGAik5jMFKbyE9OYzgxmMovZzGEu85jPAhayKNBdbJewlGUsZwUrWcVq1rCWdaxnAxv5hU1sZgtb2cZ2fmUHO9nFbvawN9DdZ/dzgIMc4jBHOMoxfucPjnOCk5ziT05zhrOc4zwXuMglLnOFq1zjeqB7w97kFre5w13ucZ8HPOQRj3nCU57xN895wUte8Zo3vOUd7z90Qrx/whA25GM3nP2M8EQgmBAiEonIRCEq0YhODGLyObGITRziEo/4JCAhiUhMEpKSLNBNblOQklSkJg1pSUd6MpCRTGQmC1n5kq/4mmxkJwc5yUVu8pCXfOSnQKBb0BaiMKEUoSjFKE4JSlKK0pShLOUoTwUqUonKVKEq1ahODWpSi9rUCXR72J70ojd96Es/+jOAgQxiMEMYyjCGM4KRjGI0YxjLOMYzgYlMYnLIf/85/wCGhytS
+   
+   
+   
+   eJyN0mWUFWUABuBRwcLuVixsZekeuru7y24MDFQUsGVFseUaKIjosTuwUbG7OzCw22fu/S47ew878OM5c867c753329uWbUoqkNd6lGfBpRVkTekEY1pQlOa0ZwWxLSkFa1pQ1va0Z4OdKQTnelCV7rRPSPvQU960Zs+9KUf/RnAQAYxmCEMZRjDGcFIRjGaMYxlHOMz8glM5EAO4mAO4VAO43CO4EiO4miO4VgmcRzHcwInMpmTOJlTMvJTmcJpnM4ZTOVMzmIa05nB2ZzDuZzH+VzAhVzETMq5mFlckpFfymwu43Ku4Equ4mqu4VrmkOM6rucGbmQuN4VdM0t23VrojeVxaR72xqE3Lu7NVbE36V3qvYdCr71xsvfmQm9cnjp/YeX/J07nxXsu7k167/TOynpzFb1Rqnf53lnh/HSe3POCsClXcs93FHrz+SLnF++5+G7S+1rofTjszaXOT3/H0BvPC/dwi+eC8H7ozd/zc5564+Leyanvm9EbpXtXtFdvNL/QW2nvlIreaHFqb/kKer8t9EarsjfJH+PxQm/8hOeTlXujVO/yvfNXoXduyd7ykl16Y71xcpbeON07u6I3Dr35/G7u4d7KvfHSKnpL73Nh2Duv8FvJ58Xe5G+3cXvYW/xd3VXSex/38wAPpnof4dHUfS4q7Mqf/1Qqf7ckf5pneDb1fZ/nBV5kCS/xMq/warjn13mDN3mLt3knnP8e7/NBRv4hH/Exn/Apn/E5X/AlX/E134Tvm9zzd3zPD/zIMn7iZ37hV37LyH/nD/7kL/7mH/7lP6LqUbQaq7MG1ajOmqzF2qzDutRgPdZnAzbMyDdiYzZhUzZjc7ZgS7Zia7ZhW7Zje3ZgR3aiJjuzC7uyG7tTKyPfgz3Zi73Zh33Zj/05gNqUUYe61KM+DWhIIxrThKY0ozktMvKYlrSiNW1oSzva04GOdKIzXehKN7rTg570ojd96Es/+mfkAxjIIAYzhKEMYzgjGMkoRjOGsYxjPBOYyP+Ug0x0
+  
+  
+  
   </data>
  </layer>
  <layer id="14" name="lift_visual" width="30" height="20">
@@ -84,7 +90,7 @@
  </layer>
  <layer id="23" name="block_visual" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2AUjALcIJJtoF0wCkbBKBgFQw8AAPqtAGA=
+   eJxjYBgFo2AUjALcoI99oF0wCkbBKBgFQw8AABVyAJY=
   </data>
  </layer>
  <layer id="13" name="surface" width="30" height="20">
@@ -94,7 +100,7 @@
  </layer>
  <layer id="2" name="ground" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJzNluENgyAQhd8fy5qO0O7QQdxAXEAYw7hEV/AMXEIuUEUL9JIX5dR8xztUtIL9dEBNaYV+JKFyEHNoyX0/2nAtec6aDvRL7tXn585pr9eQngp4qfLcVIT+GX+swT2KGDes9azO+vuNeydSdRkx/iefa3KlF6lz698bmeP7crnFJga33uSaK8FlP4z3Jna9dX9jPZuDmnN6Fwv2mv0uPV/+dsto5TPtOXrt2DZXC/2zd4W5lcaryLHEPgcb3VGvUQ==
+   eJzNleENgyAQhd8fZc2OUHfoIG4gXUAYo3GJrtAzcAm5HFXaAn3Ji3JqvuOBag38cwBa2hpcFjIai5hzT+5t7MP1lDn7fuBfcj99fh2C934d+WqAydTn5pTm5+KxBfdIGjft9azP5vuO+41yfTkx/qecW3JlFrlzH98bWeP7SrnVJoaw3+Seq8HlPFzMRrvee321NVuTnkvWThNnzXnXni9/u6V65mwD25f6Qf/s3Wlto/EmapqJiRfpCbDZ
   </data>
  </layer>
  <layer id="20" name="coins_visual" width="30" height="20">
