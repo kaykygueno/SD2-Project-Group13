@@ -79,7 +79,7 @@ public class FirstScreen implements Screen {
     private final boolean returnToMenuOnWin;
 
     public FirstScreen(Main game) {
-        this(game, "maps/levelOne.tmx", "LEVEL 1 COMPLETE! Press ENTER for Level 2.", false);
+        this(game, "maps/levelTwo.tmx", "LEVEL 1 COMPLETE! Press ENTER for Level 2.", false);
     }
 
     protected FirstScreen(Main game, String mapPath, String levelCompleteMessage, boolean returnToMenuOnWin) {

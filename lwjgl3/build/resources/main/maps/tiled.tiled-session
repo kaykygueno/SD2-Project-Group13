@@ -68,11 +68,14 @@
             "scaleInEditor": 4
         },
         "levelOne.tmx": {
-            "scale": 2.2760416666666665,
+            "expandedObjectLayers": [
+                8
+            ],
+            "scale": 2,
             "selectedLayer": 4,
             "viewCenter": {
-                "x": 239.8901601830664,
-                "y": 150.70022883295195
+                "x": 269.5,
+                "y": 137.5
             }
         },
         "levelOne.tmx#tileset2": {

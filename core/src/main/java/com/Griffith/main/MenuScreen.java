@@ -21,7 +21,8 @@ public class MenuScreen implements Screen {
     private final BitmapFont font;
     private final GlyphLayout layout;
 
-    // Angelo: camera and viewport to handle different screen sizes and maintain aspect ratio
+    // Angelo: camera and viewport to handle different screen sizes and maintain
+    // aspect ratio
     private OrthographicCamera camera;
     private Viewport viewport;
 
@@ -30,7 +31,7 @@ public class MenuScreen implements Screen {
 
     // Accessors for testing (made public so tests in other packages can access)
     public String getTitle() {
-        return win ? "CONGRATULATIONS!" : "FIRE AND WATER";
+        return win ? "CONGRATULATIONS!" : "DUNGEON QUEST";
     }
 
     public String getSubtitle() {
@@ -38,11 +39,11 @@ public class MenuScreen implements Screen {
     }
 
     public String getLevelOneOption() {
-        return "LEVEL 1 - ORIGINAL MAP";
+        return "LEVEL 1 - CRYSTAL CAVERN";
     }
 
     public String getLevelTwoOption() {
-        return "LEVEL 2 - CRYSTAL CAVERN";
+        return "LEVEL 2 - GOLDEN DAY";
     }
 
     // Public constructor primarily for tests that avoids libGDX initialization
@@ -54,7 +55,8 @@ public class MenuScreen implements Screen {
         this.layout = null;
     }
 
-    // This constructor initializes the menu screen and configures whether it should show the win message.
+    // This constructor initializes the menu screen and configures whether it should
+    // show the win message.
     public MenuScreen(Main game, boolean win) {
         this.game = game;
         this.win = win;
@@ -76,7 +78,9 @@ public class MenuScreen implements Screen {
     public void show() {
         camera = new OrthographicCamera();
 
-        //Angelo: FitViewport keeps the aspect ratio consistent across different screen sizes by adding black bars if necessary. The virtual size is set to 800x600, which is a common resolution for games.
+        // Angelo: FitViewport keeps the aspect ratio consistent across different screen
+        // sizes by adding black bars if necessary. The virtual size is set to 800x600,
+        // which is a common resolution for games.
         viewport = new FitViewport(800, 600, camera); // resolução base
         viewport.apply();
     }
@@ -114,7 +118,8 @@ public class MenuScreen implements Screen {
 
         font.setColor(0.75f, 0.85f, 1f, 1f);
         layout.setText(font, instructions);
-        font.draw(batch, instructions, (viewport.getWorldWidth() - layout.width) / 2f, viewport.getWorldHeight() / 2f - 120);
+        font.draw(batch, instructions, (viewport.getWorldWidth() - layout.width) / 2f,
+                viewport.getWorldHeight() / 2f - 120);
         font.setColor(1f, 1f, 1f, 1f);
         batch.end();
     }
@@ -176,7 +181,8 @@ public class MenuScreen implements Screen {
     public void pause() {
     }
 
-    // This method is called when the application resumes while the menu screen is active.
+    // This method is called when the application resumes while the menu screen is
+    // active.
     @Override
     public void resume() {
     }
@@ -189,7 +195,9 @@ public class MenuScreen implements Screen {
     // This method disposes the menu rendering resources.
     @Override
     public void dispose() {
-        if (batch != null) batch.dispose();
-        if (font != null) font.dispose();
+        if (batch != null)
+            batch.dispose();
+        if (font != null)
+            font.dispose();
     }
 }
