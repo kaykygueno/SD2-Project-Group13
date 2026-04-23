@@ -159,7 +159,7 @@
  </objectgroup>
  <objectgroup id="12" name="spawn" offsetx="2.63616" offsety="0">
   <object id="58" name="Player1" gid="1673" x="17.1228" y="46.9291" width="16" height="32"/>
-  <object id="59" name="Player2" gid="1680" x="444.847" y="45.7288" width="16" height="32"/>
+  <object id="59" name="Player2" gid="2147485328" x="444.847" y="45.7288" width="16" height="32"/>
   <object id="122" name="door" gid="4254" x="221.162" y="257.3" width="48" height="48"/>
  </objectgroup>
  <layer id="15" name="door_closed" width="30" height="20">

@@ -1,6 +1,6 @@
 package com.Griffith.Tests;
 
-import com.Griffith.main.LifttDownSystem;
+import com.Griffith.main.LifttUpSystem;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class LifttDownSystemTest {
+public class LifttUpSystemTest {
 
-    // Verifies non-level-one maps do not activate the lift system.
+    // Verifies non-level-one maps do not activate the up-lift system.
     @Test
     void loadIgnoresNonLevelOneMap() {
-        LifttDownSystem system = new LifttDownSystem();
-        TiledMap map = createMapWithDownLift(32f);
+        LifttUpSystem system = new LifttUpSystem();
+        TiledMap map = createMapWithUpLift(32f, "platform-up");
         Array<Rectangle> colliders = new Array<>();
 
         system.load(map, "maps/levelTwo.tmx");
@@ -32,64 +32,77 @@ public class LifttDownSystemTest {
         assertEquals(0, colliders.size, "no colliders should be registered outside level one");
     }
 
-    // Verifies the down lever and platform become colliders after loading level
-    // one.
+    // Verifies the up lever and platform become colliders after loading level one.
     @Test
-    void loadRegistersDownLeverAndPlatformAsColliders() {
-        LifttDownSystem system = new LifttDownSystem();
-        TiledMap map = createMapWithDownLift(48f);
+    void loadRegistersUpLeverAndPlatformAsColliders() {
+        LifttUpSystem system = new LifttUpSystem();
+        TiledMap map = createMapWithUpLift(80f, "platform-up");
         Array<Rectangle> colliders = new Array<>();
 
         system.load(map, "maps/levelOne.tmx");
         system.addColliders(colliders);
 
-        assertEquals(2, colliders.size, "both down platform and lever should be in active ground");
-        assertTrue(containsRect(colliders, 16f, 48f, 48f, 10f), "down platform collider should be present");
-        assertTrue(containsRect(colliders, 300f, 92f, 12f, 4f), "down lever collider should be present");
+        assertEquals(2, colliders.size, "both up platform and lever should be in active ground");
+        assertTrue(containsRect(colliders, 260f, 80f, 30f, 10f), "up platform collider should be present");
+        assertTrue(containsRect(colliders, 300f, 188f, 12f, 4f), "up lever collider should be present");
     }
 
-    // Verifies reset returns the moving platform to its initial Y position.
+    // Verifies reset returns the moving up platform to its initial Y position.
     @Test
     void resetRestoresPlatformToStartY() throws Exception {
-        LifttDownSystem system = new LifttDownSystem();
-        TiledMap map = createMapWithDownLift(64f);
+        LifttUpSystem system = new LifttUpSystem();
+        TiledMap map = createMapWithUpLift(96f, "platform-up");
 
         system.load(map, "maps/levelOne.tmx");
 
-        Rectangle platform = getPrivateRectangle(system, "levelOnePlatformDown");
-        float startY = getPrivateFloat(system, "levelOnePlatformDownStartY");
-        platform.y = startY - 25f;
+        Rectangle platform = getPrivateRectangle(system, "levelOnePlatformUp");
+        float startY = getPrivateFloat(system, "levelOnePlatformUpStartY");
+        platform.y = startY + 30f;
 
         system.reset();
 
-        assertEquals(startY, platform.y, 0.0001f, "reset should place platform back at original Y");
+        assertEquals(startY, platform.y, 0.0001f, "reset should place up platform back at original Y");
     }
 
-    // Verifies level-one load splits visual cells into a dedicated runtime
-    // down-lift layer.
+    // Verifies level-one load splits visual cells into a dedicated runtime up-lift
+    // layer.
     @Test
-    void loadCreatesRuntimeVisualLayerForDownPlatform() {
-        LifttDownSystem system = new LifttDownSystem();
-        TiledMap map = createMapWithDownLift(48f);
+    void loadCreatesRuntimeVisualLayerForUpPlatform() {
+        LifttUpSystem system = new LifttUpSystem();
+        TiledMap map = createMapWithUpLift(80f, "platform-up");
 
         TiledMapTileLayer source = (TiledMapTileLayer) map.getLayers().get("lift_visual");
-        source.setCell(1, 3, new TiledMapTileLayer.Cell());
+        source.setCell(16, 5, new TiledMapTileLayer.Cell());
 
         system.load(map, "maps/levelOne.tmx");
 
-        TiledMapTileLayer runtime = (TiledMapTileLayer) map.getLayers().get("lift_visual_down_runtime");
-        assertNotNull(runtime, "runtime visual layer should be created for down platform");
-        assertNull(source.getCell(1, 3), "shared lift_visual layer should lose transferred platform cell");
-        assertNotNull(runtime.getCell(1, 3), "runtime down layer should receive transferred platform cell");
+        TiledMapTileLayer runtime = (TiledMapTileLayer) map.getLayers().get("lift_visual_up_runtime");
+        assertNotNull(runtime, "runtime visual layer should be created for up platform");
+        assertNull(source.getCell(16, 5), "shared lift_visual layer should lose transferred up platform cell");
+        assertNotNull(runtime.getCell(16, 5), "runtime up layer should receive transferred platform cell");
     }
 
-    private static TiledMap createMapWithDownLift(float platformY) {
+    // Verifies the map's alternate object naming (plataform-up) is accepted.
+    @Test
+    void loadAcceptsPlataformUpAlias() {
+        LifttUpSystem system = new LifttUpSystem();
+        TiledMap map = createMapWithUpLift(72f, "plataform-up");
+        Array<Rectangle> colliders = new Array<>();
+
+        system.load(map, "maps/levelOne.tmx");
+        system.addColliders(colliders);
+
+        assertEquals(2, colliders.size, "plataform-up alias should still register up platform and lever");
+        assertTrue(containsRect(colliders, 260f, 72f, 30f, 10f), "aliased up platform collider should be present");
+    }
+
+    private static TiledMap createMapWithUpLift(float platformY, String platformObjectName) {
         TiledMap map = new TiledMap();
 
         MapLayer interactions = new MapLayer();
         interactions.setName("interactions");
-        interactions.getObjects().add(namedRect("plataform-down", 16f, platformY, 48f, 10f));
-        interactions.getObjects().add(namedRect("lever-down", 300f, 92f, 12f, 4f));
+        interactions.getObjects().add(namedRect(platformObjectName, 260f, platformY, 30f, 10f));
+        interactions.getObjects().add(namedRect("lever-up", 300f, 188f, 12f, 4f));
         map.getLayers().add(interactions);
 
         TiledMapTileLayer liftVisual = new TiledMapTileLayer(40, 30, 16, 16);
