@@ -93,7 +93,7 @@
  </layer>
  <layer id="2" name="ground" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJzFlEsOgjAQQCcGw7IuPJAX8A5ewDupF5AjkLBVt8pW3YucwCmlpNYOTMvHSV4gZeB1hmaSGNLXHGBKkhg2RwQCY7vgrdmBzt0/vXcB8EQeItybCwXlNR3au48BJAdkFilk3o3Yx0UoTEdXnQXmv5FS/Pa5UGsVZe084fVM+H28Zgz5f+W97gPX21aTj5cTmaPPbbF2YHuX0Tf6rOVWTS6vmduFXTuVw/GGxpTnqq/Xp6fUc93nzOM8exfXM8b2UrVT3ozZL0645kifeq/1fzVnOHe/OKcbb9s7Q9RvfkN7XbNoTKQ3Ub1OA1jVdK1VoKsBnfABz+3PHQ==
+   eJzFlEsOgjAQQCcGw7IuPJAX8A5ewDupF5AjkLBVt8pW3fo9gVNKSa0dmJaPk7xAysDrDM0kMaSPMcCQJDEstggExnLCW7MDnat/es8C4IpcRLg3FwrKazq0dx0DSDbIKFLIvBOxj4NQmI6mOm+Y/0Lu4rfPT7VW8C6dO7zuCb+P14wu/6+8133geutq8vFyInP0uS7mDmzvNPpGn7XcqsnlNXObsGuncjje0BjyXLX1+vSUeq77nHmcZ+/iWkbfXqp2ypsx+8UJ1xxpU++x/K/mDOfuF+d05a17p4v6zW9or2sW9Yn0JqrXaQCzkqa1AnRVoBM+nmXPFg==
   </data>
  </layer>
  <layer id="20" name="coins_visual" width="30" height="20">
@@ -150,16 +150,16 @@
   <object id="125" name="lever-up" x="305.761" y="187.913" width="12.3672" height="3.77958"/>
  </objectgroup>
  <objectgroup id="8" name="hazards">
-  <object id="39" name="lava" x="304.561" y="128.438" width="63.4508" height="16"/>
+  <object id="39" name="lava" x="304.304" y="125.37" width="63.4508" height="16"/>
   <object id="40" name="lava" x="319.667" y="301.001" width="16" height="16"/>
-  <object id="41" name="water" x="63.5285" y="64.9587" width="16" height="16"/>
-  <object id="42" name="water" x="79.4669" y="64.5184" width="16" height="16"/>
+  <object id="41" name="water" x="63.5285" y="61.8832" width="16" height="16"/>
+  <object id="42" name="water" x="79.7169" y="62.4503" width="15.5606" height="16"/>
   <object id="44" name="spikes" x="15.6339" y="299.143" width="447.89" height="3.33333"/>
-  <object id="45" name="spikes" x="161.245" y="141.413" width="76.6316" height="3.33333"/>
+  <object id="45" name="spikes" x="161.684" y="139.216" width="76.6316" height="3.33333"/>
  </objectgroup>
  <objectgroup id="12" name="spawn" offsetx="2.63616" offsety="0">
   <object id="58" name="Player1" gid="1673" x="17.1228" y="46.9291" width="16" height="32"/>
-  <object id="59" name="Player2" gid="2147485328" x="444.847" y="45.7288" width="16" height="32"/>
+  <object id="59" name="Player2" gid="1680" x="444.847" y="45.7288" width="16" height="32"/>
   <object id="122" name="door" gid="4254" x="221.162" y="257.3" width="48" height="48"/>
  </objectgroup>
  <layer id="15" name="door_closed" width="30" height="20">

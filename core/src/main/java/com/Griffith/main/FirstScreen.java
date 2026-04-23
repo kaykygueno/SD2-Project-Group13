@@ -333,7 +333,7 @@ public class FirstScreen implements Screen {
             buttonSystem.addLiftParts(activeGround);
             buttonSystem.addButtonParts(activeGround);
             lifttDownSystem.addColliders(activeGround);
-                lifttUpSystem.addColliders(activeGround);
+            lifttUpSystem.addColliders(activeGround);
 
             if (player1 != null) {
                 player1.update(delta, activeGround);
@@ -345,8 +345,8 @@ public class FirstScreen implements Screen {
             updateMovableBlocks();
             resolvePlayersAgainstBlocks();
             buttonSystem.update(delta, player1, player2);
-            lifttDownSystem.update(delta, player1, player2, buttonSystem);
-                lifttUpSystem.update(delta, player1, player2, buttonSystem);
+            lifttDownSystem.update(delta, player1, player2, buttonSystem, activeGround);
+            lifttUpSystem.update(delta, player1, player2, buttonSystem, activeGround);
 
             updateCoins();
             checkHazards();
@@ -503,7 +503,7 @@ public class FirstScreen implements Screen {
     private void resetLift() {
         buttonSystem.reset();
         lifttDownSystem.reset();
-            lifttUpSystem.reset();
+        lifttUpSystem.reset();
     }
 
     private void updateMovableBlocks() {
