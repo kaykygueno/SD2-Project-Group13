@@ -10,22 +10,22 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 
-public class LifttDownSystem {
+public class LifttUpSystem {
 
-    private static final float LEVEL_ONE_DOWN_LIFT_SPEED = 40f;
-    private static final int LEVEL_ONE_DOWN_LIFT_BLOCKS = 3;
-    private static final float LEVEL_ONE_DOWN_LIFT_ACCEL = 180f;
-    private static final float LEVEL_ONE_DOWN_LIFT_MIN_SPEED = 8f;
+    private static final float LEVEL_ONE_UP_LIFT_SPEED = 40f;
+    private static final int LEVEL_ONE_UP_LIFT_BLOCKS = 8;
+    private static final float LEVEL_ONE_UP_LIFT_ACCEL = 180f;
+    private static final float LEVEL_ONE_UP_LIFT_MIN_SPEED = 8f;
 
-    private Rectangle levelOneLeverDown;
-    private Rectangle levelOnePlatformDown;
-    private float levelOnePlatformDownStartY = 0f;
+    private Rectangle levelOneLeverUp;
+    private Rectangle levelOnePlatformUp;
+    private float levelOnePlatformUpStartY = 0f;
     private float levelOnePlatformLastDeltaY = 0f;
     private float levelOnePlatformVelocityY = 0f;
     private TiledMapTileLayer levelOnePlatformVisualLayer;
 
-    // This method initializes the Level-One-only down lift pair and captures its
-    // visual tiles so only that platform graphic moves.
+    // This method initializes the Level-One-only up lift pair and creates a
+    // dedicated runtime visual layer for that platform.
     public void load(TiledMap map, String mapPath) {
         clear();
 
@@ -46,51 +46,47 @@ public class LifttDownSystem {
             Rectangle source = ((RectangleMapObject) obj).getRectangle();
             Rectangle copy = new Rectangle(source.x, source.y, source.width, source.height);
 
-            if ("lever-down".equals(obj.getName())) {
-                levelOneLeverDown = copy;
-            } else if ("plataform-down".equals(obj.getName())) {
-                levelOnePlatformDown = copy;
-                levelOnePlatformDownStartY = copy.y;
+            if ("lever-up".equals(obj.getName())) {
+                levelOneLeverUp = copy;
+            } else if ("platform-up".equals(obj.getName()) || "plataform-up".equals(obj.getName())) {
+                levelOnePlatformUp = copy;
+                levelOnePlatformUpStartY = copy.y;
             }
         }
 
-        if (levelOnePlatformDown == null) {
-            return;
-        }
-
-        levelOnePlatformVisualLayer = buildPlatformVisualLayer(map, levelOnePlatformDown, "lift_visual_down_runtime");
+        levelOnePlatformVisualLayer = buildPlatformVisualLayer(map, levelOnePlatformUp, "lift_visual_up_runtime");
         applyLevelOnePlatformVisualOffset();
     }
 
     public void addColliders(Array<Rectangle> activeGround) {
-        if (levelOnePlatformDown != null) {
-            activeGround.add(levelOnePlatformDown);
+        if (levelOnePlatformUp != null) {
+            activeGround.add(levelOnePlatformUp);
         }
-        if (levelOneLeverDown != null) {
-            activeGround.add(levelOneLeverDown);
+        if (levelOneLeverUp != null) {
+            activeGround.add(levelOneLeverUp);
         }
     }
 
-    // This method lowers the platform while a player stands on the matching lever
+    // This method raises the platform while a player stands on the matching lever
     // and restores it when the lever is released.
     public void update(float delta, Player player1, Player player2, Button buttonSystem) {
         levelOnePlatformLastDeltaY = 0f;
 
-        if (levelOneLeverDown == null || levelOnePlatformDown == null || player1 == null || player2 == null) {
+        if (levelOneLeverUp == null || levelOnePlatformUp == null || player1 == null || player2 == null) {
             return;
         }
 
         boolean player1OnLever = buttonSystem.isStandingOnButton(player1.getBounds(), player1.velocityY,
-                levelOneLeverDown);
+                levelOneLeverUp);
         boolean player2OnLever = buttonSystem.isStandingOnButton(player2.getBounds(), player2.velocityY,
-                levelOneLeverDown);
+                levelOneLeverUp);
         boolean pressed = player1OnLever || player2OnLever;
 
         float tileHeight = levelOnePlatformVisualLayer != null ? levelOnePlatformVisualLayer.getTileHeight() : 16f;
-        float maxTravel = tileHeight * LEVEL_ONE_DOWN_LIFT_BLOCKS;
-        float targetY = pressed ? levelOnePlatformDownStartY - maxTravel : levelOnePlatformDownStartY;
+        float maxTravel = tileHeight * LEVEL_ONE_UP_LIFT_BLOCKS;
+        float targetY = pressed ? levelOnePlatformUpStartY + maxTravel : levelOnePlatformUpStartY;
 
-        float deltaY = targetY - levelOnePlatformDown.y;
+        float deltaY = targetY - levelOnePlatformUp.y;
         float distance = Math.abs(deltaY);
 
         if (distance < 0.001f) {
@@ -99,18 +95,17 @@ public class LifttDownSystem {
             return;
         }
 
-        float desiredSpeed = Math.signum(deltaY) * LEVEL_ONE_DOWN_LIFT_SPEED;
+        float desiredSpeed = Math.signum(deltaY) * LEVEL_ONE_UP_LIFT_SPEED;
         float slowRadius = tileHeight * 1.25f;
 
         if (distance < slowRadius) {
             float speedScale = distance / slowRadius;
-            float scaledSpeed = LEVEL_ONE_DOWN_LIFT_SPEED * speedScale;
-            scaledSpeed = Math.max(LEVEL_ONE_DOWN_LIFT_MIN_SPEED, scaledSpeed);
+            float scaledSpeed = LEVEL_ONE_UP_LIFT_SPEED * speedScale;
+            scaledSpeed = Math.max(LEVEL_ONE_UP_LIFT_MIN_SPEED, scaledSpeed);
             desiredSpeed = Math.signum(deltaY) * scaledSpeed;
         }
 
-        levelOnePlatformVelocityY = approach(levelOnePlatformVelocityY, desiredSpeed,
-                LEVEL_ONE_DOWN_LIFT_ACCEL * delta);
+        levelOnePlatformVelocityY = approach(levelOnePlatformVelocityY, desiredSpeed, LEVEL_ONE_UP_LIFT_ACCEL * delta);
 
         float move = levelOnePlatformVelocityY * delta;
         if (Math.abs(move) > distance) {
@@ -123,20 +118,20 @@ public class LifttDownSystem {
             return;
         }
 
-        levelOnePlatformDown.y += move;
+        levelOnePlatformUp.y += move;
         levelOnePlatformLastDeltaY = move;
         applyLevelOnePlatformVisualOffset();
 
-        carryPlayerOnLevelOneDownPlatform(player1);
-        carryPlayerOnLevelOneDownPlatform(player2);
+        carryPlayerOnLevelOneUpPlatform(player1);
+        carryPlayerOnLevelOneUpPlatform(player2);
     }
 
     public void reset() {
-        if (levelOnePlatformDown == null) {
+        if (levelOnePlatformUp == null) {
             return;
         }
 
-        levelOnePlatformDown.y = levelOnePlatformDownStartY;
+        levelOnePlatformUp.y = levelOnePlatformUpStartY;
         levelOnePlatformLastDeltaY = 0f;
         levelOnePlatformVelocityY = 0f;
         applyLevelOnePlatformVisualOffset();
@@ -144,9 +139,9 @@ public class LifttDownSystem {
 
     // This method clears the cached level-one lift state before loading a map.
     private void clear() {
-        levelOneLeverDown = null;
-        levelOnePlatformDown = null;
-        levelOnePlatformDownStartY = 0f;
+        levelOneLeverUp = null;
+        levelOnePlatformUp = null;
+        levelOnePlatformUpStartY = 0f;
         levelOnePlatformLastDeltaY = 0f;
         levelOnePlatformVelocityY = 0f;
         levelOnePlatformVisualLayer = null;
@@ -154,15 +149,15 @@ public class LifttDownSystem {
 
     // This method carries any player standing on the platform so the player stays
     // attached to the moving surface.
-    private void carryPlayerOnLevelOneDownPlatform(Player player) {
-        if (player == null || player.isDead || levelOnePlatformLastDeltaY == 0f || levelOnePlatformDown == null) {
+    private void carryPlayerOnLevelOneUpPlatform(Player player) {
+        if (player == null || player.isDead || levelOnePlatformLastDeltaY == 0f || levelOnePlatformUp == null) {
             return;
         }
 
         Rectangle p = player.getBounds();
-        boolean standingOnTop = p.x + p.width > levelOnePlatformDown.x
-                && p.x < levelOnePlatformDown.x + levelOnePlatformDown.width
-                && Math.abs(p.y - (levelOnePlatformDown.y + levelOnePlatformDown.height)) < 4f
+        boolean standingOnTop = p.x + p.width > levelOnePlatformUp.x
+                && p.x < levelOnePlatformUp.x + levelOnePlatformUp.width
+                && Math.abs(p.y - (levelOnePlatformUp.y + levelOnePlatformUp.height)) < 4f
                 && player.velocityY <= 0f;
 
         if (standingOnTop) {
@@ -172,11 +167,11 @@ public class LifttDownSystem {
 
     // This method keeps the runtime visual layer aligned with the platform collider.
     private void applyLevelOnePlatformVisualOffset() {
-        if (levelOnePlatformVisualLayer == null || levelOnePlatformDown == null) {
+        if (levelOnePlatformVisualLayer == null || levelOnePlatformUp == null) {
             return;
         }
 
-        float pixelDelta = levelOnePlatformDown.y - levelOnePlatformDownStartY;
+        float pixelDelta = levelOnePlatformUp.y - levelOnePlatformUpStartY;
         levelOnePlatformVisualLayer.setOffsetY(-pixelDelta);
     }
 

@@ -68,14 +68,8 @@
             "scaleInEditor": 4
         },
         "levelOne.tmx": {
-            "expandedObjectLayers": [
-                12,
-                8,
-                19,
-                9
-            ],
             "scale": 2.2760416666666665,
-            "selectedLayer": 7,
+            "selectedLayer": 4,
             "viewCenter": {
                 "x": 239.8901601830664,
                 "y": 150.70022883295195
@@ -89,7 +83,7 @@
                 9
             ],
             "scale": 2.2760416666666665,
-            "selectedLayer": 4,
+            "selectedLayer": -1,
             "viewCenter": {
                 "x": 236.37528604118995,
                 "y": 159.9267734553776

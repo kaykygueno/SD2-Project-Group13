@@ -93,7 +93,7 @@
  </layer>
  <layer id="2" name="ground" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJzFlEsOgjAQhicGw7IuPJAX8A5ewDupF7BHIGGrbtWtuvdxAqeU6kg6MC0P/+QLpAW+zpRUp5DdxwBDolNYbBGIzHIiG6sGnat/ei8K4IZcVbz3rCyc180bnHedAhg2yCixmLWcmHUclIU6mur0ed3cw44VvErnDq97xh/ipelyf82964PUW1dTiFeS3NPnusw9VL3T5Be6pzQ+L322iWrt3DMSb2yG/K/aekN6ys27PucB/3NwcS3Tt5ernfPmwn5J4jtH2tR7LPeVnuHS9T7V11v3Thf10284r+8s6hPj1bbXWQSzkqaxAnR9QCe8Ae/Ezrc=
+   eJzFlEsOgjAQQCcGw7IuPJAX8A5ewDupF5AjkLBVt8pW3YucwCmlpNYOTMvHSV4gZeB1hmaSGNLXHGBKkhg2RwQCY7vgrdmBzt0/vXcB8EQeItybCwXlNR3au48BJAdkFilk3o3Yx0UoTEdXnQXmv5FS/Pa5UGsVZe084fVM+H28Zgz5f+W97gPX21aTj5cTmaPPbbF2YHuX0Tf6rOVWTS6vmduFXTuVw/GGxpTnqq/Xp6fUc93nzOM8exfXM8b2UrVT3ozZL0645kifeq/1fzVnOHe/OKcbb9s7Q9RvfkN7XbNoTKQ3Ub1OA1jVdK1VoKsBnfABz+3PHQ==
   </data>
  </layer>
  <layer id="20" name="coins_visual" width="30" height="20">
@@ -159,7 +159,7 @@
  </objectgroup>
  <objectgroup id="12" name="spawn" offsetx="2.63616" offsety="0">
   <object id="58" name="Player1" gid="1673" x="17.1228" y="46.9291" width="16" height="32"/>
-  <object id="59" name="Player2" gid="1680" x="444.847" y="45.7288" width="16" height="32"/>
+  <object id="59" name="Player2" gid="2147485328" x="444.847" y="45.7288" width="16" height="32"/>
   <object id="122" name="door" gid="4254" x="221.162" y="257.3" width="48" height="48"/>
  </objectgroup>
  <layer id="15" name="door_closed" width="30" height="20">

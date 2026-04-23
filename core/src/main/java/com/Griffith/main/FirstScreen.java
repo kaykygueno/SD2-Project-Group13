@@ -62,6 +62,7 @@ public class FirstScreen implements Screen {
     // Lift system
     private final Button buttonSystem = new Button();
     private final LifttDownSystem lifttDownSystem = new LifttDownSystem();
+    private final LifttUpSystem lifttUpSystem = new LifttUpSystem();
     private final Coin coinSystem = new Coin();
     private int pumpkinCoinCount = 0;
     private int docCoinCount = 0;
@@ -119,6 +120,7 @@ public class FirstScreen implements Screen {
         loadInteractions();
         loadLiftVisualLayer();
         lifttDownSystem.load(map, mapPath);
+        lifttUpSystem.load(map, mapPath);
         loadDoorLayers();
         loadCoins();
     }
@@ -331,6 +333,7 @@ public class FirstScreen implements Screen {
             buttonSystem.addLiftParts(activeGround);
             buttonSystem.addButtonParts(activeGround);
             lifttDownSystem.addColliders(activeGround);
+                lifttUpSystem.addColliders(activeGround);
 
             if (player1 != null) {
                 player1.update(delta, activeGround);
@@ -343,6 +346,7 @@ public class FirstScreen implements Screen {
             resolvePlayersAgainstBlocks();
             buttonSystem.update(delta, player1, player2);
             lifttDownSystem.update(delta, player1, player2, buttonSystem);
+                lifttUpSystem.update(delta, player1, player2, buttonSystem);
 
             updateCoins();
             checkHazards();
@@ -499,6 +503,7 @@ public class FirstScreen implements Screen {
     private void resetLift() {
         buttonSystem.reset();
         lifttDownSystem.reset();
+            lifttUpSystem.reset();
     }
 
     private void updateMovableBlocks() {
