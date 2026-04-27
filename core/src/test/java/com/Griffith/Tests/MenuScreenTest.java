@@ -15,6 +15,7 @@ public class MenuScreenTest {
         assertEquals("SELECT A LEVEL", menu.getSubtitle());
         assertEquals("LEVEL 1 - CRYSTAL CAVERN", menu.getLevelOneOption());
         assertEquals("LEVEL 2 - GOLDEN DAY", menu.getLevelTwoOption());
+        //test that level 3 option is now added
         assertEquals("LEVEL 3 - SHADOW REALM", menu.getLevelThreeOption());
     }
 
