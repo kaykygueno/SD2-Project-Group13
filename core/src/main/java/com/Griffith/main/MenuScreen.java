@@ -15,6 +15,7 @@ public class MenuScreen implements Screen {
 
     private static final int LEVEL_ONE = 1;
     private static final int LEVEL_TWO = 2;
+    private static final int LEVEL_THREE = 3;
 
     private final Main game;
     private final SpriteBatch batch;
@@ -44,6 +45,10 @@ public class MenuScreen implements Screen {
 
     public String getLevelTwoOption() {
         return "LEVEL 2 - GOLDEN DAY";
+    }
+
+    public String getLevelThreeOption() {
+        return "LEVEL 3 - SHADOW REALM";
     }
 
     // Public constructor primarily for tests that avoids libGDX initialization
@@ -98,7 +103,7 @@ public class MenuScreen implements Screen {
 
         String title = getTitle();
         String subtitle = getSubtitle();
-        String instructions = "UP/DOWN + ENTER OR PRESS 1/2";
+        String instructions = "UP/DOWN + ENTER OR PRESS 1-3 TO SELECT LEVEL";
 
         // centralização com viewport
         layout.setText(font, title);
@@ -115,11 +120,11 @@ public class MenuScreen implements Screen {
         font.draw(batch, subtitle, subX, subY);
         drawLevelOption(getLevelOneOption(), LEVEL_ONE, viewport.getWorldHeight() / 2f - 15);
         drawLevelOption(getLevelTwoOption(), LEVEL_TWO, viewport.getWorldHeight() / 2f - 60);
-
+        drawLevelOption(getLevelThreeOption(), LEVEL_THREE, viewport.getWorldHeight() / 2f - 105);
         font.setColor(0.75f, 0.85f, 1f, 1f);
         layout.setText(font, instructions);
         font.draw(batch, instructions, (viewport.getWorldWidth() - layout.width) / 2f,
-                viewport.getWorldHeight() / 2f - 120);
+                viewport.getWorldHeight() / 2f - 160);
         font.setColor(1f, 1f, 1f, 1f);
         batch.end();
     }
@@ -139,12 +144,22 @@ public class MenuScreen implements Screen {
     }
 
     private void handleMenuInput() {
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-            selectedLevel = selectedLevel == LEVEL_ONE ? LEVEL_TWO : LEVEL_ONE;
-        }
+        
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            selectedLevel = selectedLevel == LEVEL_ONE ? LEVEL_TWO : LEVEL_ONE;
+        if (selectedLevel == LEVEL_ONE) {
+                selectedLevel = LEVEL_TWO;
+            } else if (selectedLevel == LEVEL_TWO) {
+                selectedLevel = LEVEL_THREE;
+            }
+        }
+        
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
+            if (selectedLevel == LEVEL_THREE) {
+                selectedLevel = LEVEL_TWO;
+            } else if (selectedLevel == LEVEL_TWO) {
+                selectedLevel = LEVEL_ONE;
+            }
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1) || Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_1)) {
@@ -157,6 +172,11 @@ public class MenuScreen implements Screen {
             startSelectedLevel();
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3) || Gdx.input.isKeyJustPressed(Input.Keys.NUMPAD_3)) {
+            selectedLevel = LEVEL_THREE;
+            startSelectedLevel();
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             startSelectedLevel();
         }
@@ -165,6 +185,8 @@ public class MenuScreen implements Screen {
     private void startSelectedLevel() {
         if (selectedLevel == LEVEL_TWO) {
             game.setScreen(new LevelTwoScreen(game));
+        } else if (selectedLevel == LEVEL_THREE) {
+            game.setScreen(new LevelThreeScreen(game));
         } else {
             game.setScreen(new FirstScreen(game));
         }
@@ -173,7 +195,7 @@ public class MenuScreen implements Screen {
     // This method is called when the menu screen viewport changes size.
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height, true); // 🔥 ISSO FAZ FUNCIONAR
+        viewport.update(width, height, true); 
     }
 
     // This method is called when the application is paused on the menu screen.

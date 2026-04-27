@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="17">
+ <tileset firstgid="1" source="Tree-background.tsx"/>
+ <tileset firstgid="541" source="tileset3.tsx"/>
+ <tileset firstgid="761" source="tileset.tsx"/>
+ <tileset firstgid="1785" source="background.tsx"/>
+ <tileset firstgid="2097" source="caracters.tsx"/>
+ <tileset firstgid="2105" source="caracthers2.tsx"/>
+ <tileset firstgid="2113" source="doors.tsx"/>
+ <tileset firstgid="2119" source="door_golden2.tsx"/>
+ <layer id="19" name="backgroundtest" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20JT6AAAHgaCWAAAQ==
+  </data>
+ </layer>
+ <layer id="2" name="background" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJzl1WXTVlUUBmBeursb6Qbplm6QbukGUToElA7plm6QbukG6e4u6ZaS8nrHZ0b/gx+uOXvmrFn3OmfPnh0nRIgQcYlHfBKQkEQkJglJaUwQIQlFaMIQlnCEJwIRiURkohCVaEQnBjGJRQ5ykovc5CEv+chPAQoGcpORnBR8QUpSkZo0pCUd6clARjKRmSxkJRvZqUJVqlGdGtSkFrWpQ91AbiEKU4SvKEoxilOCkpSiNGUoSznKU4GKVKIyHfiO7+lIJzrTha50o3sgtx71acA3NKRR4F0TmtKM5rSgJa1oTRva0o72jGAkoxjNGMYyjvFMYGKgdw960osf6E0f+gZ/a6h/9LPuzwAGMojBDGEowxjOEpayjOWsYCWrWM0a1gZyJzGZKfzCVKYxnRnMZBazmcNc5jGfBSxkEYs5wEEOcZgjHOUYxznBSXawjvVs4Dc2sonNbGEr29geqN/JLnazh73sYz93ucd9HvCQRzzmCU95xntOcZoznOUc57nARS5xmStc5RrXucFNbnGbO4RxKMMSjvBEICKRiEwUopKA5+pf8JI/ecVr3vCWd//Z5w/WH/nEZ4IPfxAhCUVKUpGaNKQlHenJQEYykYdoRCcGMYlFbOIQl3jED8yYkEQkJglJSUZyUlCUYhSnBCUpRWnKUJZydCIzWchKNrLzJTnISS5yB2bMSz7yU4CCFKIwRWhIIxrThKY0ozktaEkrqlGeClSkEpX5mipUDdRUpwY1qUVt6lCXetSnAb3pQ19+5Cf60Z8BDGRQoGdr2tCWdrTnWzoE/buvHQP/pjNd6Eo3utODnvRiKtOYzgxmMovZzGEu8zjLYIYwlGEM52dGMJJRjGYMYxnHeCYwkUlMZgob2cRmtrCVbWxnBzvZxT7ms4CFLGIxv7KEpSxjOStYySpWs4a1rGM9GzjHeS5wkUtc5gpXucZ1brKbPewNzLGf3znAQQ5xmCMc5RjHOcFJTnGaM7ziNW94yzv+4j0f+MinQO6NwPMWt7nDH9zlHvd5wEMe8ZgnPOUZz3nBS2K5yGMTh7jEIz4JSEgiEhOTz+qDL/4gQhKK0IQhLOEITwQiEonIRCEq0YhOjOC+4f9f/gYa5ghx
+  </data>
+ </layer>
+ <layer id="18" name="lift_visual" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20JT6AAAHgaCWAAAQ==
+  </data>
+ </layer>
+ <layer id="16" name="surface" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20JT6AAAHgaCWAAAQ==
+  </data>
+ </layer>
+ <layer id="4" name="ground" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYKANKGKCYHoDWttbADQ7H4v52Ox14yDfHm2gWTpArAs1swtIV+GxV5UJt15KAMjeFiL9Swwg1m3E2qtK5bimtn9xAWzxi89eavsTBkbjF7u9lILR+MVvLzKmJsBlLz5ATtgTG7+0BqTYS0zcURq/IKAHFNfHIZfHhMDY6lFCgNxwbmFC4FYq2IvPj8gAAF6tLFA=
+  </data>
+ </layer>
+ <layer id="17" name="coins_visual" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJztwTEBAAAAwqD1T20JT6AAAHgaCWAAAQ==
+  </data>
+ </layer>
+ <objectgroup id="15" name="coins"/>
+ <objectgroup id="14" name="interactions"/>
+ <objectgroup id="11" name="hazards">
+  <object id="9" name="spike 3" x="289.369" y="75.4875" width="29.6918" height="3.52275"/>
+  <object id="10" name="spike 2" x="321.074" y="138.897" width="30.6983" height="5.53575"/>
+  <object id="11" name="spike 1" x="288.362" y="203.816" width="30.195" height="3.52275"/>
+ </objectgroup>
+ <objectgroup id="5" name="spawn">
+  <object id="1" name="Player1" gid="2104" x="4.58125" y="283.729" width="16" height="32"/>
+  <object id="2" name="Player2" gid="2105" x="35.2795" y="282.723" width="16" height="32"/>
+  <object id="16" name="door" gid="2124" x="432.448" y="48.6593" width="48" height="48"/>
+ </objectgroup>
+ <layer id="13" name="door_closed" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFtAKuHAPtglEwCkbBKBgFo2AUDAQAAHKqAE4=
+  </data>
+ </layer>
+ <layer id="12" name="door_open" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFtAJuHAPtglEwCkbBKBgFo2AUDAQAAHquAE8=
+  </data>
+ </layer>
+</map>

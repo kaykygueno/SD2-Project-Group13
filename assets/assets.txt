@@ -971,6 +971,7 @@ maps/images/stringstar fields/example.png
 maps/images/stringstar fields/tileset.png
 maps/lava_water.tsx
 maps/levelOne.tmx
+maps/levelThree.tmx
 maps/levelTwo.tmx
 maps/main.tmx
 maps/test.tsx

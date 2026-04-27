@@ -73,13 +73,14 @@ public class FirstScreen implements Screen {
     private boolean showCollisionDebug = false;
     private String message = "";
     private float blockPushSoundCooldown = 0f;
-    private Main game;
+    protected Main game;
     private final String mapPath;
     private final String levelCompleteMessage;
     private final boolean returnToMenuOnWin;
 
     public FirstScreen(Main game) {
-        this(game, "maps/levelTwo.tmx", "LEVEL 1 COMPLETE! Press ENTER for Level 2.", false);
+        this(game, "maps/levelTwo.tmx", "LEVEL COMPLETED! Press ENTER for next Level.", false);
+
     }
 
     protected FirstScreen(Main game, String mapPath, String levelCompleteMessage, boolean returnToMenuOnWin) {
@@ -88,6 +89,14 @@ public class FirstScreen implements Screen {
         this.levelCompleteMessage = levelCompleteMessage;
         this.returnToMenuOnWin = returnToMenuOnWin;
     }
+
+    protected Screen getNextScreen() {
+    return new LevelTwoScreen(game);
+}
+
+    
+
+    
 
     // This method creates the screen resources and loads all map-driven gameplay
     // data.
@@ -313,7 +322,7 @@ public class FirstScreen implements Screen {
             if (returnToMenuOnWin) {
                 game.setScreen(new MenuScreen(game, true));
             } else {
-                game.setScreen(new LevelTwoScreen(game));
+                game.setScreen(getNextScreen());
             }
             return;
         }
