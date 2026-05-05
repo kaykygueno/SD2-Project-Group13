@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="22" nextobjectid="17">
+<map version="1.10" tiledversion="1.12.1" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="27" nextobjectid="50">
  <tileset firstgid="1" source="Tree-background.tsx"/>
  <tileset firstgid="541" source="tileset3.tsx"/>
  <tileset firstgid="761" source="tileset.tsx"/>
@@ -8,19 +8,25 @@
  <tileset firstgid="2105" source="caracthers2.tsx"/>
  <tileset firstgid="2113" source="doors.tsx"/>
  <tileset firstgid="2119" source="door_golden2.tsx"/>
- <layer id="19" name="backgroundtest" width="30" height="20">
-  <data encoding="base64" compression="zlib">
-   eJztwTEBAAAAwqD1T20JT6AAAHgaCWAAAQ==
-  </data>
- </layer>
+ <tileset firstgid="2125" source="tileset2.tsx"/>
+ <tileset firstgid="3005" source="door_golden.tsx"/>
+ <tileset firstgid="3059" source="foreground_.tsx"/>
+ <tileset firstgid="3131" source="lava_water.tsx"/>
+ <tileset firstgid="3180" source="coins_Orange.tsx"/>
+ <tileset firstgid="3192" source="coins_Blue.tsx"/>
  <layer id="2" name="background" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   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
+   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
+  </data>
+ </layer>
+ <layer id="19" name="backgroundtest" width="30" height="20" opacity="0.5">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo4AwcGUeaBeMglEwfAAoP43mqVEw0oExD2kYBkx5iMcDCQAzvwaY
   </data>
  </layer>
  <layer id="18" name="lift_visual" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJztwTEBAAAAwqD1T20JT6AAAHgaCWAAAQ==
+   eJxjYBgFo4A44Mo80C4YBaNgFIyCUTBcgA0PaRgG/HiIxwMJAPVbB4c=
   </data>
  </layer>
  <layer id="16" name="surface" width="30" height="20">
@@ -30,34 +36,52 @@
  </layer>
  <layer id="4" name="ground" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYKANKGKCYHoDWttbADQ7H4v52Ox14yDfHm2gWTpArAs1swtIV+GxV5UJt15KAMjeFiL9Swwg1m3E2qtK5bimtn9xAWzxi89eavsTBkbjF7u9lILR+MVvLzKmJsBlLz5ATtgTG7+0BqTYS0zcURq/IKAHFNfHIZfHhMDY6lFCgNxwbmFC4FYq2IvPj8gAAF6tLFA=
+   eJw7zs3AcHyAMC1AERMEYwNDyV5toFk6QKzLhGr+Lg7a2osOcJkPE0/jwJTDZy+6v8i1Fxugh39hANnf1IxfYt1Drr3Emj8av5TZOxq/+O1FxsTYSyzAF564AC3jl9r2ogNS7IW5mdrxGwxMQ6FI6UgPKK6PRT/M3jwmCM4nMbzQ7SUWDFT7BoQB0Xd0Yg==
   </data>
  </layer>
  <layer id="17" name="coins_visual" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJztwTEBAAAAwqD1T20JT6AAAHgaCWAAAQ==
+   eJxjYBgFhEAlz0C7YBSMNJBLhTRHarodrumcGmE5CkYBvcFITrfklEWDMbwAUPgD+Q==
   </data>
  </layer>
- <objectgroup id="15" name="coins"/>
- <objectgroup id="14" name="interactions"/>
+ <objectgroup id="15" name="coins">
+  <object id="37" name="coins_Orange" x="118.083" y="261.837" width="3.99315" height="6.84541"/>
+  <object id="38" name="coins_Orange" x="213.349" y="165.431" width="4.56361" height="7.41586"/>
+  <object id="39" name="coins_Blue" x="166.001" y="293.782" width="3.99315" height="6.84541"/>
+  <object id="40" name="coins_Blue" x="118.654" y="133.485" width="3.4227" height="6.84541"/>
+  <object id="41" name="coins_Blue" x="213.919" y="37.0793" width="3.99315" height="6.27496"/>
+  <object id="42" name="coins_Blue" x="311.466" y="133.485" width="3.99315" height="6.84541"/>
+  <object id="44" name="coins_Orange" x="326.298" y="117.513" width="4.56361" height="6.84541"/>
+  <object id="46" name="coins_Orange" x="374.786" y="293.782" width="3.99315" height="6.84541"/>
+ </objectgroup>
+ <objectgroup id="14" name="interactions">
+  <object id="47" name="underwater" x="65.0314" y="290.93" width="189.96" height="13.6908"/>
+  <object id="49" name="underlava" x="289.218" y="290.93" width="175.128" height="14.2613"/>
+ </objectgroup>
  <objectgroup id="11" name="hazards">
-  <object id="9" name="spike 3" x="289.369" y="75.4875" width="29.6918" height="3.52275"/>
-  <object id="10" name="spike 2" x="321.074" y="138.897" width="30.6983" height="5.53575"/>
-  <object id="11" name="spike 1" x="288.362" y="203.816" width="30.195" height="3.52275"/>
+  <object id="9" name="spikes" x="288.228" y="75.4875" width="29.6918" height="3.52275"/>
+  <object id="10" name="spikes" x="319.933" y="185.104" width="30.6983" height="5.53575"/>
+  <object id="20" name="water" x="64.4609" y="289.218" width="191.101" height="17.1135"/>
+  <object id="21" name="lava" x="288.078" y="289.789" width="180.262" height="17.1135"/>
  </objectgroup>
  <objectgroup id="5" name="spawn">
-  <object id="1" name="Player1" gid="2104" x="4.58125" y="283.729" width="16" height="32"/>
-  <object id="2" name="Player2" gid="2105" x="35.2795" y="282.723" width="16" height="32"/>
-  <object id="16" name="door" gid="2124" x="432.448" y="48.6593" width="48" height="48"/>
+  <object id="1" name="Player1" gid="2104" x="21.6948" y="286.011" width="16" height="32"/>
+  <object id="2" name="Player2" gid="2105" x="46.1181" y="285.575" width="16" height="32"/>
+  <object id="16" name="door" gid="2124" x="415.905" y="48.0888" width="48" height="48"/>
  </objectgroup>
+ <layer id="24" name="underliquid_overlay" width="30" height="20" opacity="0.5">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUjIJRMApGwSigLzDmIQ3DgCkP8XggAQD6XQXA
+  </data>
+ </layer>
  <layer id="13" name="door_closed" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFtAKuHAPtglEwCkbBKBgFo2AUDAQAAHKqAE4=
+   eJxjYKAPOM6NiukFngPtegHEL+ls71ugXe+A+D2d7R0Fo2AUjIJRMApGwcADAHDKCrE=
   </data>
  </layer>
  <layer id="12" name="door_open" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFtAJuHAPtglEwCkbBKBgFo2AUDAQAAHquAE8=
+   eJxjYKAPOM6NigcCjDR7R8EoGAWjYBSMglEwMAAA4YQE7Q==
   </data>
  </layer>
 </map>
