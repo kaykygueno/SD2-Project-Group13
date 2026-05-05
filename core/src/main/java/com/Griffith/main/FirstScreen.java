@@ -50,6 +50,7 @@ public class FirstScreen implements Screen {
     private Array<Rectangle> groundTiles = new Array<>();
     private final MovableBlockSystem movableBlocks = new MovableBlockSystem(0f, GameConstants.MAP_WIDTH);
     private MapLayer blockVisualLayer;
+    
 
     // Hazards
     private final Hazard hazardSystem = new Hazard();
@@ -77,6 +78,10 @@ public class FirstScreen implements Screen {
     private final String mapPath;
     private final String levelCompleteMessage;
     private final boolean returnToMenuOnWin;
+    
+    //angelo
+    private Array<Rectangle> underWaterZones = new Array<>();
+    private Array<Rectangle> underLavaZones = new Array<>();
 
     public FirstScreen(Main game) {
         this(game, "maps/levelTwo.tmx", "LEVEL COMPLETED! Press ENTER for next Level.", false);
@@ -111,6 +116,8 @@ public class FirstScreen implements Screen {
 
         camera.setToOrtho(false, GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT);
 
+        
+
         batch = new SpriteBatch();
         font = new BitmapFont();
         debugRenderer = new ShapeRenderer();
@@ -124,6 +131,7 @@ public class FirstScreen implements Screen {
         loadSpawnObjects();
         loadGround();
         loadBlockColliders();
+        loadLiquidZones();
         loadBlockVisualLayer();
         loadHazards();
         loadInteractions();
@@ -351,6 +359,11 @@ public class FirstScreen implements Screen {
                 player2.update(delta, activeGround);
             }
 
+            //angelo: apply liquid effects before block pushing and player-block collision resolution to ensure 
+            // they affect player movement and interactions correctly during the frame they occur
+            applyLiquidEffect(player1, false);
+            applyLiquidEffect(player2, true);
+
             updateMovableBlocks();
             resolvePlayersAgainstBlocks();
             buttonSystem.update(delta, player1, player2);
@@ -470,6 +483,33 @@ public class FirstScreen implements Screen {
             docCoinCount += coinSystem.checkCollection(player2, Coin.CoinOwner.DOC);
         }
     }
+
+
+    // This method applies the effects of being underwater or under lava to a player, including slowing movement and causing death in lava.
+    private void applyLiquidEffect(Player player, boolean diesInLava) {
+    if (player == null || player.isDead) {
+        return;
+    }
+
+    if (diesInLava && isInsideZone(player, underLavaZones)) {
+        player.die(true);
+        gameOver = true;
+        message = "Player2 fell into lava! Press R to restart.";
+        return;
+    }
+
+    player.setSubmerged(isInsideZone(player, underWaterZones) || isInsideZone(player, underLavaZones));
+}
+
+    //--------------------------------------------------------------------------
+    private boolean isInsideZone(Player player, Array<Rectangle> zones) {
+    if (player == null) {
+        return false;
+    }
+
+    return LiquidSystem.isInsideZone(player.getBounds(), zones);
+    }
+    //--------------------------------------------------------------------------
 
     // This method checks whether either player touched a hazard and records the
     // resulting loss message.
@@ -712,5 +752,17 @@ public class FirstScreen implements Screen {
             player2.dispose();
         }
         coinSystem.dispose();
+    }
+
+    // This method loads the underwater and underlava zones from the map using
+    // the CollisionLoader and stores them for hazard checking and debug rendering.
+    private void loadLiquidZones() {
+    CollisionData collisionData = new CollisionLoader().load(map);
+
+    underWaterZones = collisionData.underWaterZones();
+    underLavaZones = collisionData.underLavaZones();
+
+    System.out.println("Underwater zones loaded: " + underWaterZones.size);
+    System.out.println("Underlava zones loaded: " + underLavaZones.size);
     }
 }

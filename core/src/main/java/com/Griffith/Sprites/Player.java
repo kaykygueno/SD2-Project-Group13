@@ -45,6 +45,9 @@ public class Player {
     private int leftKey, rightKey, jumpKey;
     private boolean onGround = false;
 
+    //angelo: added this flag to track whether the player is currently submerged in water or lava, which will affect their movement and interactions
+    private boolean submerged = false;
+
     public Rectangle bounds;
     private final Array<Texture> ownedTextures = new Array<>();
     private Animation<TextureRegion> idleAnimation;
@@ -63,6 +66,7 @@ public class Player {
     private boolean facingRight = true;
 
     private float spawnX, spawnY;
+    
 
     // Sets up the player at its spawn point, hooks up the controls, and loads the
     // visuals.
@@ -91,13 +95,16 @@ public class Player {
         float previousX = x;
         float previousY = y;
 
+        //angelo: adjusted movement speed
         float moveX = 0f;
+        float currentSpeed = submerged ? SPEED * 0.3f : SPEED;
+
         if (Gdx.input.isKeyPressed(leftKey)) {
-            moveX -= SPEED * delta;
+            moveX -= currentSpeed * delta;
         }
         if (Gdx.input.isKeyPressed(rightKey)) {
-            moveX += SPEED * delta;
-        }
+            moveX += currentSpeed * delta;
+}
 
         lastMoveX = moveX;
         if (moveX < 0f) {
@@ -235,19 +242,23 @@ public class Player {
             float pulse = 0.65f + 0.35f
                     * Math.abs((float) Math.sin((RESPAWN_ANIMATION_DURATION - respawnAnimationTime) * 18f));
             batch.setColor(1f, 1f, 1f, pulse);
-        }
+    }
 
-        batch.draw(
-                currentFrame,
-                drawX,
-                drawY,
-                WIDTH * 0.5f,
-                HEIGHT * 0.5f,
-                WIDTH,
-                HEIGHT,
-                scaleX,
-                scaleY,
-                rotation);
+            if (submerged && animationState != AnimationState.RESPAWN) {
+                batch.setColor(0.5f, 0.8f, 1f, 0.75f);
+            }
+
+            batch.draw(
+                    currentFrame,
+                    drawX,
+                    drawY,
+                    WIDTH * 0.5f,
+                    HEIGHT * 0.5f,
+                    WIDTH,
+                    HEIGHT,
+                    scaleX,
+                    scaleY,
+                    rotation);
 
         batch.setColor(originalR, originalG, originalB, originalA);
     }
@@ -291,6 +302,11 @@ public class Player {
         this.onGround = val;
     }
 
+    //angelo: added this setter so the liquid zones can mark the player as submerged or not, which will affect their movement and interactions
+    public void setSubmerged(boolean submerged) {
+    this.submerged = submerged;
+    }
+
     // Gives back the collision rectangle used by the rest of the game.
     public Rectangle getBounds() {
         return bounds;
@@ -308,14 +324,20 @@ public class Player {
     }
 
     // Plays a soft repeating footstep while the player is genuinely moving on the ground.
+    //angelo: now factors in whether the player is submerged to adjust the sound frequency and volume accordingly, 
+    // and also checks the actual horizontal movement to prevent playing the 
+    // sound when the player is stuck against a wall or just barely moving
     private void playRunningSoundIfNeeded(float actualMoveX) {
-        if (!onGround || Math.abs(actualMoveX) <= RUN_THRESHOLD || runningSoundCooldown > 0f) {
-            return;
-        }
-
-        SoundManager.play(SoundType.PLAYER_RUN_STEP, 0.35f);
-        runningSoundCooldown = RUN_SOUND_INTERVAL;
+    if (!onGround || Math.abs(actualMoveX) <= RUN_THRESHOLD || runningSoundCooldown > 0f) {
+        return;
     }
+
+    float interval = submerged ? RUN_SOUND_INTERVAL * 1.8f : RUN_SOUND_INTERVAL;
+    float volume = submerged ? 0.2f : 0.35f;
+
+    SoundManager.play(SoundType.PLAYER_RUN_STEP, volume);
+    runningSoundCooldown = interval;
+}
 
     // Loads the base sprite plus any matching idle and run frames for this
     // character.

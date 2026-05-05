@@ -19,12 +19,12 @@
    eJzl1WXTkEUUBuD3pbu7kW6QkhLpBumWbhCVBilpkG7pBumWbpDuDgVBpUtKygt9/oUfrtmd2TPnPrMzOxs/JCQkAQlJRGKSkJRkJCcFTQglDGEJR3giEJFIRCYKUYlGdGIQk1jEJg5xyU0e8pKP/HxCAQpSiMJBbkpSkZqPSENa0pGeDGQkE5nJQlaykZ0c5CQXValGdWpQk1rUpg51qRfkFuFTivIZxShOCUpSitKUoSzlKE8FKlKJylShI1/xNd/Qic50oSvd6B7k1qcBDfmCRjQOzprSjOa0oCWtaE0b2tKO9nRgJKMYzRjGMo7xTGAik4LePehJL76lN33oSz/68x0DGMggBjOEoQxjOCNYyjKWs4KVrGI1a1jLuiB3MlOYyg9MYzozmMksZjOHucxjPgtYyCIWs4SDHOIwRzjKMY5zgpOcYifr2cBGfmITm9nCVraxnR1B/S52s4e97GM/B/iDP7nNHe5yj/s84CGPeM1pznCWc5znAhe5xGWucJVr/MKvXOcGv3GTW4T3KCMQkUhEJgpRiUZ0YpCYx+qf8JS/eMZzXvCSV4QJ/c8b+7e84z0fHn9ocBaWNKQlHenJQEYykZksZCU/MYlFbOIQl3jEJwEJSRTMmISkJCM5KUhJKlJTjOKUoCSlKE0ZylKO8nQiG9nJQU5y8TG5yUNe8gUzfkIBClKIwhThU4rSiMY0oSnNaE4LWtKK1lSnAhWpRGWq8DlVqRbU1KAmtahNHepSj/o0oCG96UNf+tGf7xjAQAYxOOjZhra0oz0d+JKOTA18E9xNZ7rQlW50pwc96cU0pjODmcxiNnOYyzzmc44hDGUYwxnB94xkFKMZw1jGMZ4JTGQSk5kSzLeJzWxhK9vYzg52sovd7GcBC1nEYpbwI0tZxnJWsJJVrGYNa1nHejawkfNc4CKXuMwVrnKNX/iVG+xhL/uCOQ7wMwc5xGGOcJRjHOcEJznFac5wlmc85wUvecXfvOYNb3kX5F4P1t+4yS1+5w/+5DZ3uMs97vOAhzziMU94SlwfeTzik4CEJCIxSUhKMuLwPjTk348/lDCEJRzhiUBEIhGZKEQlGtGJQUxiEftD30j/L/8ApXII/A==
   </data>
  </layer>
- <layer id="19" name="backgroundtest" width="30" height="20" opacity="0.5">
+ <layer id="19" name="backgroundtest" width="30" height="20" opacity="0.8">
   <data encoding="base64" compression="zlib">
    eJxjYBgFo4AwcGUeaBeMglEwfAAoP43mqVEw0oExD2kYBkx5iMcDCQAzvwaY
   </data>
  </layer>
- <layer id="18" name="lift_visual" width="30" height="20">
+ <layer id="18" name="lift_visual" width="30" height="20" opacity="0.55">
   <data encoding="base64" compression="zlib">
    eJxjYBgFo4A44Mo80C4YBaNgFIyCUTBcgA0PaRgG/HiIxwMJAPVbB4c=
   </data>
@@ -36,7 +36,7 @@
  </layer>
  <layer id="4" name="ground" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJw7zs3AcHyAMC1AERMEYwNDyV5toFk6QKzLhGr+Lg7a2osOcJkPE0/jwJTDZy+6v8i1Fxugh39hANnf1IxfYt1Drr3Emj8av5TZOxq/+O1FxsTYSyzAF564AC3jl9r2ogNS7IW5mdrxGwxMQ6FI6UgPKK6PRT/M3jwmCM4nMbzQ7SUWDFT7BoQB0Xd0Yg==
+   eJw7zs3AcHyAMC1AERMEYwNDyV5toFk6QKzLhGr+Lg7s9qKLk2svOsDlL3L9i+4vatgL8/tg9C8ugCt+cdk7Gr+D07+4wGj84rcXGRNjL7EAn79wAVrGLy5QxEF//8LcTM34BfmjGC3t6gHF9bHoh9mbxwTB+STGE7K9pICBat+AMABaG3a9
   </data>
  </layer>
  <layer id="17" name="coins_visual" width="30" height="20">

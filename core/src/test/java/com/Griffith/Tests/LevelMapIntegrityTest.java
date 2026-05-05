@@ -158,14 +158,21 @@ public class LevelMapIntegrityTest {
     // Verifies lift and lever interaction objects are present.
     @Test
     void interactionsContainLiftAndButtons() throws Exception {
-        for (String mapName : LEVEL_MAPS) {
-            Document map = parseMap(mapName);
-            Element interactions = findObjectGroup(map, "interactions");
+    for (String mapName : LEVEL_MAPS) {
+        Document map = parseMap(mapName);
+        Element interactions = findObjectGroup(map, "interactions");
 
-            assertTrue(countObjectsNamed(interactions, "plataform") >= 1, mapName + " should have a lift platform");
-            assertTrue(countObjectsNamed(interactions, "lever") >= 1, mapName + " should have at least one lever");
-        }
+        boolean hasPlatform =
+                hasObjectNameContaining(interactions, "plataform") ||
+                hasObjectNameContaining(interactions, "platform");
+
+        assertTrue(hasPlatform, mapName + " should have a lift platform");
+
+        boolean hasLever = hasObjectNameContaining(interactions, "lever");
+
+        assertTrue(hasLever, mapName + " should have at least one lever");
     }
+}
 
     // Verifies coin objects declare which player can collect them.
     @Test
@@ -318,4 +325,32 @@ public class LevelMapIntegrityTest {
         }
         return cells;
     }
+
+    private static boolean hasObjectNameContaining(Element group, String text) {
+    NodeList objects = group.getElementsByTagName("object");
+
+    for (int i = 0; i < objects.getLength(); i++) {
+        Element object = (Element) objects.item(i);
+        String name = object.getAttribute("name");
+
+        if (name != null && name.toLowerCase().contains(text)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+    // Verifies level three includes underwater and underlava zones for the liquid system.
+    @Test
+    void levelThreeContainsLiquidZones() throws Exception {
+    Document map = parseMap("levelThree.tmx");
+    Element interactions = findObjectGroup(map, "interactions");
+
+    assertNotNull(interactions, "levelThree should have interactions object group");
+    assertTrue(countObjectsNamed(interactions, "underwater") >= 1,
+            "levelThree should have at least one underwater zone");
+    assertTrue(countObjectsNamed(interactions, "underlava") >= 1,
+            "levelThree should have at least one underlava zone");
+}
 }

@@ -16,11 +16,16 @@ public class CollisionLoader {
     public CollisionData load(TiledMap map) {
         Array<Rectangle> groundTiles = new Array<>();
         Array<Rectangle> blockTiles = new Array<>();
+        //angelo: added these two arrays to store the underwater and underlava zones
+        Array<Rectangle> underWaterZones = new Array<>();
+        Array<Rectangle> underLavaZones = new Array<>();
 
         loadGround(map, groundTiles);
         loadBlocks(map, groundTiles, blockTiles);
+        loadUnderWaterZones(map, underWaterZones);
+        loadUnderLavaZones(map, underLavaZones);
 
-        return new CollisionData(groundTiles, blockTiles);
+        return new CollisionData(groundTiles, blockTiles, underWaterZones, underLavaZones);
     }
 
     // This method loads the ground tiles from the "ground" layer of the TiledMap
@@ -110,4 +115,46 @@ public class CollisionLoader {
 
         System.out.println("Final block collider count: " + blockTiles.size);
     }
+
+    private void loadUnderWaterZones(TiledMap map, Array<Rectangle> underWaterZones) {
+    MapLayer layer = map.getLayers().get("interactions");
+
+    if (layer == null) {
+        System.out.println("⚠️ interactions layer not found!");
+        return;
+    }
+
+    for (MapObject obj : layer.getObjects()) {
+        if ("underwater".equals(obj.getName()) && obj instanceof RectangleMapObject) {
+            Rectangle source = ((RectangleMapObject) obj).getRectangle();
+            underWaterZones.add(new Rectangle(source.x, source.y, source.width, source.height));
+
+            System.out.println("Loaded underwater zone -> x:" + source.x +
+                    " y:" + source.y +
+                    " w:" + source.width +
+                    " h:" + source.height);
+        }
+    }
+}
+
+private void loadUnderLavaZones(TiledMap map, Array<Rectangle> underLavaZones) {
+    MapLayer layer = map.getLayers().get("interactions");
+
+    if (layer == null) {
+        System.out.println("⚠️ interactions layer not found!");
+        return;
+    }
+
+    for (MapObject obj : layer.getObjects()) {
+        if ("underlava".equals(obj.getName()) && obj instanceof RectangleMapObject) {
+            Rectangle source = ((RectangleMapObject) obj).getRectangle();
+            underLavaZones.add(new Rectangle(source.x, source.y, source.width, source.height));
+
+            System.out.println("Loaded underlava zone -> x:" + source.x +
+                    " y:" + source.y +
+                    " w:" + source.width +
+                    " h:" + source.height);
+        }
+    }
+}
 }

@@ -38,6 +38,7 @@ public enum SoundType {
     // Ambience (looping)
     AMBIENCE_CAVE("ambience_cave.wav");
 
+
     private final String fileName;
 
     SoundType(String fileName) {

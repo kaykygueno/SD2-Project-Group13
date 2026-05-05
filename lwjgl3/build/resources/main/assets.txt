@@ -413,6 +413,7 @@ maps/images/Others/doc.png
 maps/images/Others/docCopy.png
 maps/images/Others/industrial.v1.png
 maps/images/Others/industrial.v2.png
+maps/images/Others/menu_bg.png
 maps/images/Others/pumpkin_dude.png
 maps/images/Others/pumpkin_dudeCopy.png
 maps/images/Parallax_Backgrounds_Cave/0.png
@@ -983,6 +984,7 @@ maps/tileset3.tsx
 sounds/README.md
 sounds/block_push.wav
 sounds/coin_collect.wav
+sounds/level_soundTrack.wav
 sounds/player_death.wav
 sounds/player_jump.wav
 sounds/player_run.wav
